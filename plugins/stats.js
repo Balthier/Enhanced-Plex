@@ -11,7 +11,7 @@ stats = {
 
         var stats_link = document.createElement("a");
         stats_link.setAttribute("id", "stats-page-link");
-        stats_link.setAttribute("title", "Transmogrify for Plex stats");
+        stats_link.setAttribute("title", "EnhancedPLEX stats");
         stats_link.setAttribute("href", utils.getStatsURL());
         stats_link.setAttribute("target", "_blank");
 
