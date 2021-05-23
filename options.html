@@ -7,19 +7,8 @@
 </head>
 
 <body>
-    <div class="field-row">
-        <div class="field-row">
-            <div class="label">IMDB link:</div>
-
-            <div class="field">
-                <input type="checkbox" id="imdb_movies" name="imdb_movies" value="movies">
-                <label for="imdb_movies">MOVIES</label>
-
-                <input type="checkbox" id="imdb_shows" name="imdb_shows" value="shows">
-                <label for="imdb_shows">SHOWS</label>
-            </div>
-        </div>
-        <div class="field-row">
+    <div class="field-row" id="container">
+        <div class="field-row" id="tmdb">
             <div class="label">The Movie Database link:</div>
 
             <div class="field">
@@ -31,7 +20,7 @@
             </div>
         </div>
 
-        <div class="field-row">
+        <div class="field-row" id="tvdb">
             <div class="label">TheTVDB link:</div>
 
             <div class="field">
@@ -43,19 +32,7 @@
             </div>
         </div>
 
-        <div class="field-row">
-            <div class="label">Trakt link:</div>
-
-            <div class="field">
-                <input type="checkbox" id="trakt_movies" name="trakt_movies" value="movies">
-                <label for="trakt_movies">MOVIES</label>
-
-                <input type="checkbox" id="trakt_shows" name="trakt_shows" value="shows">
-                <label for="trakt_shows">SHOWS</label>
-            </div>
-        </div>
-
-        <div class="field-row">
+        <div class="field-row" id="missing_eps">
             <div class="label">Show missing seasons/episodes:</div>
 
             <div class="field">
@@ -67,7 +44,7 @@
             </div>
         </div>
 
-        <div class="field-row">
+        <div class="field-row" id="stats">
             <div class="label">Stats page link:</div>
 
             <div class="field">
@@ -76,6 +53,42 @@
 
                 <input type="radio" id="stats_link_off" name="stats_link" value="off" />
                 <label for="stats_link_off">OFF</label>
+            </div>
+        </div>
+
+        <!--<div class="field-row" id="darken_watched">
+            <div class="label">Darken watched items:</div>
+
+            <div class="field">
+                <input type="radio" id="hide_watched_on" name="hide_watched" value="on" />
+                <label for="hide_watched_on">ON</label>
+
+                <input type="radio" id="hide_watched_off" name="hide_watched" value="off" />
+                <label for="hide_watched_off">OFF</label>
+            </div>
+        </div>-->
+
+        <div class="field-row" id="trakt">
+            <div class="label">Trakt link:</div>
+
+            <div class="field">
+                <input type="checkbox" id="trakt_movies" name="trakt_movies" value="movies">
+                <label for="trakt_movies">MOVIES</label>
+
+                <input type="checkbox" id="trakt_shows" name="trakt_shows" value="shows">
+                <label for="trakt_shows">SHOWS</label>
+            </div>
+        </div>
+
+        <div class="field-row" id="tmdb">
+            <div class="label">IMDB link:</div>
+
+            <div class="field">
+                <input type="checkbox" id="imdb_movies" name="imdb_movies" value="movies">
+                <label for="imdb_movies">MOVIES</label>
+
+                <input type="checkbox" id="imdb_shows" name="imdb_shows" value="shows">
+                <label for="imdb_shows">SHOWS</label>
             </div>
         </div>
 
@@ -100,7 +113,7 @@
             </div>
         </div>
 
-        <div class="field-row">
+        <div class="field-row" id="cache">
             <div class="label">Clear cached extension data:</div>
 
             <div class="field">

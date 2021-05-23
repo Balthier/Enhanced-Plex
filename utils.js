@@ -12,7 +12,7 @@ utils = {
                     output = output.replace(/\d+\.\d+\.\d+\.\d+/, "XXX.XXX.X.XX");
                 }
 
-                console.log("Transmogrify for Plex log: " + output);
+                console.log("EnhancedPLEX log: " + output);
             }
             else {
                 // don't filter xml, use nodeType attribute to detect
@@ -316,6 +316,9 @@ utils = {
             if (!("stats_link" in settings)) {
                 utils.storage_set("stats_link", "on");
             }
+            /*if (!("hide_watched" in settings)) {
+                utils.storage_set("hide_watched", "on");
+            }*/
 
             if (!("last_version" in settings)) {
                 utils.storage_set("last_version", "");

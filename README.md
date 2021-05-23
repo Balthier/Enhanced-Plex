@@ -13,27 +13,31 @@ Features
 
 Version History
 --------------
+**v2.1.4**
+- Enhancement: Reformatted "Version History" to improve readability, and better distinguish different types of changes
+- Bug: Reverted back to manifest v2 to fix issue with Stats
+
 **v2.1.3**
-- Set default IMDB options to "on"
-- Migrated to manifest v3
-- Removed some old references
-- Fixed Issue with TVDB link not displaying
+- Bug: Set default IMDB options to "on"
+- Bug: Fixed Issue with TVDB link not displaying
+- Enhancement: Removed some old references
+- Miscellaneous: Migrated to manifest v3
 
 **v2.1.2**
-- Fixed Issue where the plugin would fail to start for Non-Plex Admins
+- Bug: Fixed Issue where the plugin would fail to start for Non-Plex Admins
 
 **v2.1.1**
-- Fixed Issue with TMDB link not displaying
+- Bug: Fixed Issue with TMDB link not displaying
 
 **v2.1.0**
-- Added IMDB link and logo to Movie pages
-- Added IMDB link and logo to TV show pages
+- Enhancement: Added IMDB link and logo to Movie pages
+- Enhancement: Added IMDB link and logo to TV show pages
 
 **v2.0.1**
-- Updated to be working with Plex for Web 4.54.5
+- Bug: Updated to be working with Plex for Web 4.54.5
 
 **v2.0.0**
-- Updated to be working with Plex for Web 4.50.1
+- Bug: Updated to be working with Plex for Web 4.50.1
 
 [See here for updates and contributors for versions below v2.0.0, before the forkening.](https://github.com/Transmogrify-for-Plex/Transmogrify-for-Plex-chrome)
 
