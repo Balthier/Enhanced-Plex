@@ -7,9 +7,17 @@ function saveOptions() {
     var trakt_shows = document.querySelector("input[name='trakt_shows']").checked;
     var missing_episodes = document.querySelector("input[name='missing_episodes']:checked").value;
     var stats_link = document.querySelector("input[name='stats_link']:checked").value;
-
+    //var hide_watched = document.querySelector("input[name='hide_watched']:checked").value;
     var debug = document.querySelector("input[name='debug']:checked").value;
     var debug_unfiltered = document.querySelector("input[name='debug_unfiltered']:checked").value;
+
+    utils.storage_set("themoviedb_link", themoviedb_link);
+    utils.storage_set("tvdb_link", tvdb_link);
+    utils.storage_set("missing_episodes", missing_episodes);
+    utils.storage_set("stats_link", stats_link);
+    //utils.storage_set("hide_watched", hide_watched);
+    utils.storage_set("debug", debug);
+    utils.storage_set("debug_unfiltered", debug_unfiltered);
 
     if (imdb_movies) {
         utils.storage_set("imdb_movies", "on");
@@ -23,10 +31,6 @@ function saveOptions() {
     else {
         utils.storage_set("imdb_shows", "off");
     }
-    utils.storage_set("themoviedb_link", themoviedb_link);
-    utils.storage_set("tvdb_link", tvdb_link);
-    utils.storage_set("missing_episodes", missing_episodes);
-    utils.storage_set("stats_link", stats_link);
     if (trakt_movies) {
         utils.storage_set("trakt_movies", "on");
     }
@@ -39,15 +43,31 @@ function saveOptions() {
     else {
         utils.storage_set("trakt_shows", "off");
     }
-
-    utils.storage_set("debug", debug);
-    utils.storage_set("debug_unfiltered", debug_unfiltered);
 }
 
 function restoreOptions() {
     utils.setDefaultOptions(function (settings) {
         utils.storage_get_all(function (results) {
+            var themoviedb_link_radio_button = document.getElementById("themoviedb_" + results["themoviedb_link"]);
+            var tvdb_link_radio_button = document.getElementById("tvdb_" + results["tvdb_link"]);
+            var missing_episodes_radio_button = document.getElementById("missing_episodes_" + results["missing_episodes"]);
+            var stats_link_radio_button = document.getElementById("stats_link_" + results["stats_link"]);
+            //var hide_watched_radio_button = document.getElementById("hide_watched_" + results["hide_watched"]);
             var imdb_movies_checkbox = document.getElementById("imdb_movies");
+            var imdb_shows_checkbox = document.getElementById("imdb_shows");
+            var trakt_movies_checkbox = document.getElementById("trakt_movies");
+            var trakt_shows_checkbox = document.getElementById("trakt_shows");
+            var debug_radio_button = document.getElementById("debug_" + results["debug"]);
+            var debug_unfiltered_radio_button = document.getElementById("debug_unfiltered_" + results["debug_unfiltered"]);
+
+            themoviedb_link_radio_button.checked = true;
+            tvdb_link_radio_button.checked = true;
+            missing_episodes_radio_button.checked = true;
+            stats_link_radio_button.checked = true;
+            //hide_watched_radio_button.checked = true;
+            debug_radio_button.checked = true;
+            debug_unfiltered_radio_button.checked = true;
+
             if (results["imdb_movies"] === "on") {
                 imdb_movies_checkbox.checked = true;
             }
@@ -55,7 +75,6 @@ function restoreOptions() {
                 imdb_movies_checkbox.checked = false;
             }
 
-            var imdb_shows_checkbox = document.getElementById("imdb_shows");
             if (results["imdb_shows"] === "on") {
                 imdb_shows_checkbox.checked = true;
             }
@@ -63,19 +82,6 @@ function restoreOptions() {
                 imdb_shows_checkbox.checked = false;
             }
 
-            var themoviedb_link_radio_button = document.getElementById("themoviedb_" + results["themoviedb_link"]);
-            themoviedb_link_radio_button.checked = true;
-
-            var tvdb_link_radio_button = document.getElementById("tvdb_" + results["tvdb_link"]);
-            tvdb_link_radio_button.checked = true;
-
-            var missing_episodes_radio_button = document.getElementById("missing_episodes_" + results["missing_episodes"]);
-            missing_episodes_radio_button.checked = true;
-
-            var stats_link_radio_button = document.getElementById("stats_link_" + results["stats_link"]);
-            stats_link_radio_button.checked = true;
-
-            var trakt_movies_checkbox = document.getElementById("trakt_movies");
             if (results["trakt_movies"] === "on") {
                 trakt_movies_checkbox.checked = true;
             }
@@ -83,19 +89,12 @@ function restoreOptions() {
                 trakt_movies_checkbox.checked = false;
             }
 
-            var trakt_shows_checkbox = document.getElementById("trakt_shows");
             if (results["trakt_shows"] === "on") {
                 trakt_shows_checkbox.checked = true;
             }
             else {
                 trakt_shows_checkbox.checked = false;
             }
-
-            var debug_radio_button = document.getElementById("debug_" + results["debug"]);
-            debug_radio_button.checked = true;
-
-            var debug_unfiltered_radio_button = document.getElementById("debug_unfiltered_" + results["debug_unfiltered"]);
-            debug_unfiltered_radio_button.checked = true;
             refreshDebugExtraOptions();
         });
         document.getElementById("debug_on").addEventListener("click", refreshDebugExtraOptions, false);

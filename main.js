@@ -2,7 +2,7 @@ document.onreadystatechange = function () {
     setTimeout(function () {
         if (document.readyState === "complete") {
             var show_update_text = false;
-            var update_text = "Enhanced Plex. Made from the ashes of Transmogrify"
+            var update_text = "EnhancedPLEX. Made from the ashes of Transmogrify"
             var settings;
             var global_plex_token;
             var global_server_addresses;
@@ -342,7 +342,13 @@ document.onreadystatechange = function () {
                     // check if on dashboard page
                     if (MainPageDetection.test(page_url)) {
                         utils.debug("Main: Detected we are on dashboard page");
-
+                        /*if (settings["hide_watched"] === "on") {
+                            utils.debug("Main: hide_watched plugin is enabled");
+                            hide_watched.init();
+                        }
+                        else {
+                            utils.debug("Main: hide_watched plugin is disabled");
+                        }*/
                         // only purge caches when viewing main page
                         utils.purgeStaleCaches();
                     }
