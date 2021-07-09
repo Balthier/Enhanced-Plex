@@ -1,3 +1,7 @@
+## **v2.1.5**
+#### 2021-05-23
+- Bug: Fixed a display issue with the latest Plex for Web version for the Missing Episodes/Seasons plugin
+
 ## **v2.1.4**
 #### 2021-05-23
 - Enhancement: Reformatted "Version History" to improve readability, and better distinguish different types of changes
