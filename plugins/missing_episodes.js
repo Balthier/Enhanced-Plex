@@ -180,6 +180,8 @@ missing_episodes = {
         episode_tile.style.marginRight = "20px";
         episode_tile.style.marginBottom = "20px";
         episode_tile.style.transform = "";
+        episode_tile.style.left = "0px";
+        episode_tile.style.top = "0px";
 
         poster_link.setAttribute("href", "https://trakt.tv/shows/" + show_name + "/seasons/" + episode["season"] + "/episodes/" + episode["number"]);
         poster_link.setAttribute("target", "_blank");
@@ -252,6 +254,8 @@ missing_episodes = {
         season_tile.style.marginRight = "20px";
         season_tile.style.marginBottom = "20px";
         season_tile.style.transform = "";
+        season_tile.style.left = "0px";
+        season_tile.style.top = "0px";
 
         poster_link.setAttribute("href", "https://trakt.tv/shows/" + show_name + "/seasons/" + season["number"]);
         poster_link.setAttribute("target", "_blank");
@@ -284,6 +288,11 @@ missing_episodes = {
             episode_tile_list_elements[i].style.marginRight = "20px";
             episode_tile_list_elements[i].style.marginBottom = "20px";
             episode_tile_list_elements[i].style.transform = "";
+            episode_tile_list_elements[i].style.left = "0px";
+            episode_tile_list_elements[i].style.top = "0px";
+
+            episode_tile_list_elements[i].removeAttribute("data-qa-id");
+            episode_tile_list_elements[i].setAttribute("class", "missing_episode_form");
             episode_tiles[episode_num] = episode_tile_list_elements[i];
         }
 
@@ -317,6 +326,12 @@ missing_episodes = {
             season_tile_list_elements[i].style.marginRight = "20px";
             season_tile_list_elements[i].style.marginBottom = "20px";
             season_tile_list_elements[i].style.transform = "";
+            season_tile_list_elements[i].style.left = "0px";
+            season_tile_list_elements[i].style.top = "0px";
+
+            season_tile_list_elements[i].removeAttribute("data-qa-id");
+            season_tile_list_elements[i].setAttribute("class", "missing_season_form");
+
             if (season_num) {
                 season_tiles[season_num] = season_tile_list_elements[i];
             }
