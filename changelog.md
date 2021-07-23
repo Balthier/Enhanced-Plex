@@ -1,3 +1,11 @@
+## **v2.1.7**
+#### 2021-07-23
+- Enhancement: Improved the reliability of the TMDB plugin
+
+## **v2.1.6**
+#### 2021-07-23
+- Bug: Fixed a display issue with the latest Plex for Web version for the various plugin links
+
 ## **v2.1.5**
 #### 2021-05-23
 - Bug: Fixed a display issue with the latest Plex for Web version for the Missing Episodes/Seasons plugin

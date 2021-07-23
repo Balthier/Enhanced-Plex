@@ -16,12 +16,12 @@
       ],
       "js": [
         "utils.js",
-        "apis/themoviedb.js",
+        "apis/tmdb.js",
         "apis/trakt.js",
         "plugins/imdb.js",
         "plugins/missing_episodes.js",
         "plugins/stats.js",
-        "plugins/themoviedb.js",
+        "plugins/tmdb.js",
         "plugins/trakt.js",
         "plugins/tvdb.js",
         "main.js"

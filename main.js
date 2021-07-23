@@ -466,10 +466,10 @@ document.onreadystatechange = function () {
                                     utils.debug("Main: imdb_movies is disabled");
                                 }
 
-                                // insert themoviedb link
-                                if (settings["themoviedb_link"] === "on") {
+                                // insert tmdb link
+                                if (settings["tmdb_link"] === "on") {
                                     utils.debug("Main: TMDB plugin is enabled");
-                                    themoviedb.init(metadata_xml);
+                                    tmdb.init(metadata_xml);
                                 }
                                 else {
                                     utils.debug("Main: TMDB plugin is disabled");
