@@ -116,11 +116,11 @@ trakt = {
 
         // insert trakt link element to bottom of metadata container
         utils.debug("trakt plugin: Inserting trakt container into page");
-        document.querySelectorAll("[class*=PrePlayTertiaryTitle-tertiaryTitle]")[0].appendChild(trakt_container);
+        document.querySelectorAll("[class*=chroma_Flex_module_l]")[0].appendChild(trakt_container);
     },
 
     constructTraktLink: function (trakt_url, trakt_rating) {
-        var sister_containers = document.querySelectorAll("[class*=PrePlayTertiaryTitleSpacer-tertiaryTitleSpacer-]")[0].parentNode.children;
+        var sister_containers = document.querySelectorAll("[class*=chroma_Flex_module_l]")[0].children;
         var container_element_template = sister_containers[0]
         var logo_url = utils.getResourcePath("trakt/trakt_logo.png");
         var trakt_container_element = document.createElement("span");

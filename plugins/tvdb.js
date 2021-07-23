@@ -47,7 +47,7 @@ tvdb = {
 
     createTvdbLink: function (tvdb_id) {
         var logo_url = utils.getResourcePath("tvdb/tvdb_logo.png");
-        var sister_containers = document.querySelectorAll("[class*=PrePlayTertiaryTitleSpacer-tertiaryTitleSpacer-]")[0].parentNode.children;
+        var sister_containers = document.querySelectorAll("[class*=chroma_Flex_module_l]")[0].children;
         var container_element_template = sister_containers[0];
         var tvdb_container_element = document.createElement("span");
         tvdb_container_element.setAttribute("id", "tvdb-container");
@@ -76,6 +76,6 @@ tvdb = {
     insertTvdbLink: function (tvdb_link) {
         // insert tvdb link element to bottom of metadata container
         utils.debug("tvdb plugin: Inserting tvdb container into page");
-        document.querySelectorAll("[class*=PrePlayTertiaryTitle-tertiaryTitle]")[0].appendChild(tvdb_link);
+        document.querySelectorAll("[class*=chroma_Flex_module_l]")[0].appendChild(tvdb_link);
     }
 }
