@@ -1,7 +1,7 @@
 function saveOptions() {
     var imdb_movies = document.querySelector("input[name='imdb_movies']").checked;
     var imdb_shows = document.querySelector("input[name='imdb_shows']").checked;
-    var themoviedb_link = document.querySelector("input[name='themoviedb_link']:checked").value;
+    var tmdb_link = document.querySelector("input[name='tmdb_link']:checked").value;
     var tvdb_link = document.querySelector("input[name='tvdb_link']:checked").value;
     var trakt_movies = document.querySelector("input[name='trakt_movies']").checked;
     var trakt_shows = document.querySelector("input[name='trakt_shows']").checked;
@@ -11,7 +11,7 @@ function saveOptions() {
     var debug = document.querySelector("input[name='debug']:checked").value;
     var debug_unfiltered = document.querySelector("input[name='debug_unfiltered']:checked").value;
 
-    utils.storage_set("themoviedb_link", themoviedb_link);
+    utils.storage_set("tmdb_link", tmdb_link);
     utils.storage_set("tvdb_link", tvdb_link);
     utils.storage_set("missing_episodes", missing_episodes);
     utils.storage_set("stats_link", stats_link);
@@ -48,7 +48,7 @@ function saveOptions() {
 function restoreOptions() {
     utils.setDefaultOptions(function (settings) {
         utils.storage_get_all(function (results) {
-            var themoviedb_link_radio_button = document.getElementById("themoviedb_" + results["themoviedb_link"]);
+            var tmdb_link_radio_button = document.getElementById("tmdb_" + results["tmdb_link"]);
             var tvdb_link_radio_button = document.getElementById("tvdb_" + results["tvdb_link"]);
             var missing_episodes_radio_button = document.getElementById("missing_episodes_" + results["missing_episodes"]);
             var stats_link_radio_button = document.getElementById("stats_link_" + results["stats_link"]);
@@ -60,7 +60,7 @@ function restoreOptions() {
             var debug_radio_button = document.getElementById("debug_" + results["debug"]);
             var debug_unfiltered_radio_button = document.getElementById("debug_unfiltered_" + results["debug_unfiltered"]);
 
-            themoviedb_link_radio_button.checked = true;
+            tmdb_link_radio_button.checked = true;
             tvdb_link_radio_button.checked = true;
             missing_episodes_radio_button.checked = true;
             stats_link_radio_button.checked = true;

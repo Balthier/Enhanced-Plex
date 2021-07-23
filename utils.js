@@ -305,8 +305,8 @@ utils = {
                 utils.storage_set("imdb_shows", "on");
             }
 
-            if (!("themoviedb_link" in settings)) {
-                utils.storage_set("themoviedb_link", "on");
+            if (!("tmdb_link" in settings)) {
+                utils.storage_set("tmdb_link", "on");
             }
 
             if (!("tvdb_link" in settings)) {
