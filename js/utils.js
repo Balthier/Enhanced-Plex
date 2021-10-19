@@ -47,12 +47,12 @@ utils = {
     },
 
     getOptionsURL: function () {
-        var options_url = chrome.runtime.getURL("options.html");
+        var options_url = chrome.runtime.getURL("resources/options/options.html");
         return options_url;
     },
 
     getStatsURL: function () {
-        var stats_url = chrome.runtime.getURL("stats.html");
+        var stats_url = chrome.runtime.getURL("resources/stats/stats.html");
         return stats_url;
     },
 
