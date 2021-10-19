@@ -3,6 +3,7 @@
   "name": "Enhanced Plex",
   "description": "Adds several features to the Plex/Web client for Plex",
   "version": "2.1.8",
+
   "options_page": "options.html",
   "content_scripts": [
     {
