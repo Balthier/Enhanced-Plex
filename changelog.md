@@ -4,7 +4,8 @@
 - Bug: Fixed a display issue with the Missing Seasons
 - Miscellaneous: Added Link to for reporting issues in the Options
 - Miscellaneous: Added Link to for adding a review in the Options
-- Miscellanrous: Removed references and API calls for Trakt Ratings. Plex natively supports ratings
+- Miscellaneous: Removed references and API calls for Trakt Ratings. Plex natively supports ratings
+- Miscellaneous: Brought TMDB in line with other plugins
 
 ## **v2.1.7**
 #### 2021-07-23
