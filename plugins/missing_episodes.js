@@ -142,7 +142,7 @@ missing_episodes = {
         var episode_link = document.createElement("a");
         var episode_number = document.createElement("span");
 
-        episode_tile.setAttribute("class", "missing_episode_tile");
+        episode_tile.setAttribute("class", "missing_episode");
         poster_container.id = "poster_container";
         poster_tile.id = "poster_tile";
         poster.id = "poster";
@@ -216,7 +216,7 @@ missing_episodes = {
         var season_link = document.createElement("a");
         var season_episodes = document.createElement("span");
 
-        season_tile.setAttribute("class", "missing_season_tile");
+        season_tile.setAttribute("class", "missing_season");
         poster_container.id = "poster_container";
         poster_tile.id = "poster_tile";
         poster.id = "poster";
@@ -276,10 +276,6 @@ missing_episodes = {
         episode_tile_list.style.padding = "0 50px 20px";
         var episode_tile_list_elements = episode_tile_list.children;
 
-        // remove episode tile list node first
-        var parent_node = episode_tile_list.parentNode;
-        parent_node.removeChild(episode_tile_list);
-
         // insert already present episodes into episode_tiles array
         for (var i = 0; i < episode_tile_list_elements.length; i++) {
             var episode_num = episode_tile_list_elements[i].querySelectorAll("[class*=MetadataPosterCardTitle-isSecondary]")[0].innerText.match(/\d+/);
@@ -291,10 +287,14 @@ missing_episodes = {
             episode_tile_list_elements[i].style.left = "0px";
             episode_tile_list_elements[i].style.top = "0px";
 
-            episode_tile_list_elements[i].removeAttribute("data-qa-id");
-            episode_tile_list_elements[i].setAttribute("class", "missing_episode_form");
+            episode_tile_list_elements[i].removeAttribute("data-testid");
+            episode_tile_list_elements[i].setAttribute("class", "existing_episode");
             episode_tiles[episode_num] = episode_tile_list_elements[i];
         }
+
+        // remove episode tile list node first
+        var parent_node = episode_tile_list.parentNode;
+        parent_node.removeChild(episode_tile_list);
 
         // iterate over all episode tiles, present and missing, to reinsert back into episode tile list in order
         var j = 0;
@@ -310,89 +310,60 @@ missing_episodes = {
     },
 
     insertSeasonTiles: function (season_tiles) {
-        var season_tile_list = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[0].parentElement.parentElement;
-        season_tile_list.style.padding = "0 50px 20px";
-        var season_tile_list_elements = season_tile_list.children;
+        setTimeout(function () {
+            var season_tile_list = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[0].parentElement.parentElement;
+            season_tile_list.style.padding = "0 50px 20px";
+            var season_tile_list_elements = season_tile_list.children;
 
-        // remove season tile list node first
-        var parent_node = season_tile_list.parentNode;
-        parent_node.removeChild(season_tile_list);
+            // insert already present seasons into season_tiles array
+            for (var i = 0; i < season_tile_list_elements.length; i++) {
+                var season_num = season_tile_list_elements[i].querySelectorAll("[class*=MetadataPosterCardTitle-singleLineTitle]")[0].innerHTML.match(/\d+/);
+                season_tile_list_elements[i].style.position = "relative";
+                season_tile_list_elements[i].style.float = "left";
+                season_tile_list_elements[i].style.marginRight = "20px";
+                season_tile_list_elements[i].style.marginBottom = "20px";
+                season_tile_list_elements[i].style.transform = "";
+                season_tile_list_elements[i].style.left = "0px";
+                season_tile_list_elements[i].style.top = "0px";
 
-        // insert already present seasons into season_tiles array
-        for (var i = 0; i < season_tile_list_elements.length; i++) {
-            var season_num = season_tile_list_elements[i].querySelectorAll("[class*=MetadataPosterCardTitle-singleLineTitle]")[0].innerHTML.match(/\d+/);
-            season_tile_list_elements[i].style.position = "relative";
-            season_tile_list_elements[i].style.float = "left";
-            season_tile_list_elements[i].style.marginRight = "20px";
-            season_tile_list_elements[i].style.marginBottom = "20px";
-            season_tile_list_elements[i].style.transform = "";
-            season_tile_list_elements[i].style.left = "0px";
-            season_tile_list_elements[i].style.top = "0px";
+                season_tile_list_elements[i].removeAttribute("data-testid");
+                season_tile_list_elements[i].setAttribute("class", "existing_season");
 
-            season_tile_list_elements[i].removeAttribute("data-qa-id");
-            season_tile_list_elements[i].setAttribute("class", "missing_season_form");
-
-            if (season_num) {
-                season_tiles[season_num] = season_tile_list_elements[i];
-            }
-            else {
-                season_tiles["specials"] = season_tile_list_elements[i];
-            }
-        }
-
-        // iterate over all season tiles, present and missing, to reinsert back into season tile list in order
-        var j = 0;
-        for (var season_number in season_tiles) {
-            var season_tile = season_tiles[season_number];
-
-            // Stick specials season first
-            if (season_number === "specials") {
-                season_tile_list.insertBefore(season_tile, season_tile_list_elements[0]);
-            }
-            else {
-                season_tile_list.insertBefore(season_tile, season_tile_list_elements[j]);
-                j++;
-            }
-        }
-
-        // reinsert season tile list node
-        parent_node.appendChild(season_tile_list);
-    },
-
-    insertSeasonAirdates: function (tvdb_id, season_tiles) {
-        // TODO: Unused with new trakt.tv API
-        Object.keys(season_tiles).forEach(function (season_number) {
-            var season_tile = season_tiles[season_number];
-
-            // skip if not missing season
-            if (!season_tiles[season_number].classList.contains("missing-season")) {
-                return;
-            }
-
-            trakt_api.getAllEpisodes(tvdb_id, season_number, function (all_episodes) {
-                var first_episode = all_episodes[0];
-
-                var date_text;
-                if (first_episode["first_aired_utc"] === 0 || first_episode["first_aired_utc"] === null) {
-                    date_text = "TBA";
+                if (season_num) {
+                    season_tiles[season_num] = season_tile_list_elements[i];
                 }
                 else {
-                    var local_utc_offset = new Date().getTimezoneOffset() * 60000;
-                    var utc_air_date = first_episode["first_aired_utc"] * 1000;
-                    var localized_air_date = new Date(utc_air_date - local_utc_offset);
-                    date_text = localized_air_date.toDateString();
+                    season_tiles["specials"] = season_tile_list_elements[i];
                 }
+            }
 
-                var overlay_text_element_text_node = document.createTextNode("Air Date:");
-                var overlay_text_element_linebreak = document.createElement("br");
-                var overlay_text_element_date_text_node = document.createTextNode(date_text);
+            // remove season tile list node first
+            var parent_node = season_tile_list.parentNode;
+            parent_node.removeChild(season_tile_list);
 
-                var overlay_text_element = season_tile.getElementsByClassName("overlay-missing-season-text")[0];
-                overlay_text_element.appendChild(overlay_text_element_text_node);
-                overlay_text_element.appendChild(overlay_text_element_linebreak);
-                overlay_text_element.appendChild(overlay_text_element_date_text_node);
-            });
-        });
+            // iterate over all season tiles, present and missing, to reinsert back into season tile list in order
+            var j = 0;
+            for (var season_number in season_tiles) {
+                var season_tile = season_tiles[season_number];
+
+                // Stick specials season first
+                if (season_number === "specials") {
+                    season_tile_list.insertBefore(season_tile, season_tile_list_elements[0]);
+                }
+                else {
+                    season_tile_list.insertBefore(season_tile, season_tile_list_elements[j]);
+                    j++;
+                }
+            }
+
+            // reinsert season tile list node
+            parent_node.appendChild(season_tile_list);
+
+            parent_node.firstElementChild.style.height = "auto";
+            var season_break = document.createElement("br");
+            season_break.style.clear = "both";
+            parent_node.appendChild(season_break);
+        }, 1000);
     },
 
     insertSwitch: function () {
@@ -413,8 +384,6 @@ missing_episodes = {
         switch_container.appendChild(glyph);
         // insert switch before secondary actions dropdown
         action_bar.insertBefore(switch_container, document.querySelectorAll("[id*=plex-icon-toolbar-more]")[1].parentElement);
-
-
     },
 
     switchState: function () {
@@ -422,7 +391,7 @@ missing_episodes = {
         var glyph = missing_switch.getElementsByTagName("i")[0];
         var state = missing_switch.getAttribute("data-state");
 
-        var missing_episodes = document.getElementsByClassName("missing_episode_tile");
+        var missing_episodes = document.getElementsByClassName("missing_episode");
         for (var i = 0; i < missing_episodes.length; i++) {
             if (state === "show") {
                 missing_episodes[i].style.display = "none";
@@ -432,7 +401,7 @@ missing_episodes = {
             }
         }
 
-        var missing_seasons = document.getElementsByClassName("missing_season_tile");
+        var missing_seasons = document.getElementsByClassName("missing_season");
         for (var i = 0; i < missing_seasons.length; i++) {
             if (state === "show") {
                 missing_seasons[i].style.display = "none";

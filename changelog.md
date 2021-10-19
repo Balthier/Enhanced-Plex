@@ -1,3 +1,11 @@
+## **v2.1.8**
+#### 2021-10-17
+- Bug: Fixed a display issue from a Plex Update. Now working with Plex Web 4.67.1
+- Bug: Fixed a display issue with the Missing Seasons
+- Miscellaneous: Added Link to for reporting issues in the Options
+- Miscellaneous: Added Link to for adding a review in the Options
+- Miscellanrous: Removed references and API calls for Trakt Ratings. Plex natively supports ratings
+
 ## **v2.1.7**
 #### 2021-07-23
 - Enhancement: Improved the reliability of the TMDB plugin

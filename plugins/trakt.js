@@ -27,15 +27,8 @@ trakt = {
         }
         show_name = show_name.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, "-");
         utils.debug("trakt plugin: Got show name - " + show_name);
-
-        trakt_api.getShowRating(show_name, function (trakt_json) {
-            if (trakt_json) {
-                var rating = Math.round(trakt_json.rating * 10);
-                var url = "http://trakt.tv/shows/" + show_name;
-
-                trakt.insertTraktLink(url, rating);
-            }
-        });
+        var url = "http://trakt.tv/shows/" + show_name;
+        trakt.insertTraktLink(url);
     },
 
     processEpisode: function () {
@@ -59,15 +52,8 @@ trakt = {
             utils.debug("trakt plugin: Got show name - " + show_name);
             utils.debug("trakt plugin: Got season number - " + season);
             utils.debug("trakt plugin: Got episode number - " + episode);
-
-            trakt_api.getEpisodeRating(show_name, season, episode, function (trakt_json) {
-                if (trakt_json) {
-                    var rating = Math.round(trakt_json.rating * 10);
-                    var url = "http://trakt.tv/shows/" + show_name + "/seasons/" + season + "/episodes/" + episode;
-
-                    trakt.insertTraktLink(url, rating);
-                }
-            });
+            var url = "http://trakt.tv/shows/" + show_name + "/seasons/" + season + "/episodes/" + episode;
+            trakt.insertTraktLink(url);
         });
     },
 
@@ -101,26 +87,20 @@ trakt = {
         var url = "http://trakt.tv/movies/";
         // trakt.tv URLS will properly resolve with imdb ids, so use that when possible
         url += imdb_id ? imdb_id : movie_title.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, "-") + "-" + movie_year;
-
-        trakt_api.getMovieRating(query, function (trakt_json) {
-            if (trakt_json) {
-                var rating = Math.round(trakt_json.rating * 10);
-                trakt.insertTraktLink(url, rating);
-            }
-        });
+        trakt.insertTraktLink(url);
     },
 
-    insertTraktLink: function (url, rating) {
+    insertTraktLink: function (url) {
         // create trakt link element
-        var trakt_container = trakt.constructTraktLink(url, rating);
+        var trakt_container = trakt.constructTraktLink(url);
 
         // insert trakt link element to bottom of metadata container
         utils.debug("trakt plugin: Inserting trakt container into page");
-        document.querySelectorAll("[class*=chroma_Flex_module_l]")[0].appendChild(trakt_container);
+        document.querySelectorAll("[class*=sprinkles_display_flex]")[2].appendChild(trakt_container);
     },
 
-    constructTraktLink: function (trakt_url, trakt_rating) {
-        var sister_containers = document.querySelectorAll("[class*=chroma_Flex_module_l]")[0].children;
+    constructTraktLink: function (trakt_url) {
+        var sister_containers = document.querySelectorAll("[class*=sprinkles_display_flex]")[2].children;
         var container_element_template = sister_containers[0]
         var logo_url = utils.getResourcePath("trakt/trakt_logo.png");
         var trakt_container_element = document.createElement("span");

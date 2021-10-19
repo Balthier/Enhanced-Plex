@@ -20,14 +20,14 @@ tvdb = {
             tv_year = tvdb.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("year");
             tv_title = tvdb.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("title");
             utils.debug("tvdb plugin: Not using thetvdb agent, attempting search via TMDB using title (" + tv_title + ") and year (" + tv_year + ")");
-            var api_url = "https://api.themoviedb.org/3/search/tv?language=en-US&page=1&include_adult=false&query=" + tv_title + "&first_air_date_year=" + tv_year + "&api_key=" + themoviedb_api.api_key;
+            var api_url = "https://api.themoviedb.org/3/search/tv?language=en-US&page=1&include_adult=false&query=" + tv_title + "&first_air_date_year=" + tv_year + "&api_key=" + tmdb_api.api_key;
             utils.debug("tvdb plugin: Connecting to endpoint" + api_url);
             response = await fetch(api_url);
             json = await response.json();
             var tmdb_id = await json.results[0].id;
             if (tmdb_id) {
                 utils.debug("tvdb plugin:  tmdb id found - " + tmdb_id);
-                var api_url = "https://api.themoviedb.org/3/tv/" + tmdb_id + "/external_ids?api_key=" + themoviedb_api.api_key;
+                var api_url = "https://api.themoviedb.org/3/tv/" + tmdb_id + "/external_ids?api_key=" + tmdb_api.api_key;
                 utils.debug("tvdb plugin: Connecting to endpoint" + api_url);
                 response = await fetch(api_url);
                 json = await response.json();
@@ -47,7 +47,7 @@ tvdb = {
 
     createTvdbLink: function (tvdb_id) {
         var logo_url = utils.getResourcePath("tvdb/tvdb_logo.png");
-        var sister_containers = document.querySelectorAll("[class*=chroma_Flex_module_l]")[0].children;
+        var sister_containers = document.querySelectorAll("[class*=sprinkles_display_flex]")[2].children;
         var container_element_template = sister_containers[0];
         var tvdb_container_element = document.createElement("span");
         tvdb_container_element.setAttribute("id", "tvdb-container");
@@ -76,6 +76,6 @@ tvdb = {
     insertTvdbLink: function (tvdb_link) {
         // insert tvdb link element to bottom of metadata container
         utils.debug("tvdb plugin: Inserting tvdb container into page");
-        document.querySelectorAll("[class*=chroma_Flex_module_l]")[0].appendChild(tvdb_link);
+        document.querySelectorAll("[class*=sprinkles_display_flex]")[2].appendChild(tvdb_link);
     }
 }
