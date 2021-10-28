@@ -10,14 +10,14 @@
         "https://app.plex.tv/desktop*",
         "http://app.plex.tv/desktop*"
       ],
-      "run_at": "document_end",
+      "run_at": "document_idle",
       "css": [
         "css/enhancedplex.css"
       ],
       "js": [
         "js/utils.js",
-        "apis/tmdb.js",
-        "apis/trakt.js",
+        "apis/trakt_api.js",
+        "apis/tmdb_api.js",
         "plugins/imdb.js",
         "plugins/missing_episodes.js",
         "plugins/stats.js",
