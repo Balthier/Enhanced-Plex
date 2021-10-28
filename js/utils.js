@@ -12,7 +12,7 @@ utils = {
                     output = output.replace(/\d+\.\d+\.\d+\.\d+/, "XXX.XXX.X.XX");
                 }
 
-                console.log("EnhancedPLEX log: " + output);
+                console.log("EnhancedPLEX Debug: " + output);
             }
             else {
                 // don't filter xml, use nodeType attribute to detect
@@ -58,10 +58,10 @@ utils = {
 
     insertOverlay: function () {
         // don't run if overlay exists on page
-        utils.debug("Checking if overlay already exists before creating");
+        utils.debug("Utils: Checking if overlay already exists before creating");
         var existing_overlay = document.getElementById("overlay");
         if (existing_overlay) {
-            utils.debug("Overlay already exists. Passing");
+            utils.debug("Utils: Overlay already exists. Passing");
             return existing_overlay;
         }
 
@@ -69,7 +69,7 @@ utils = {
         overlay.setAttribute("id", "overlay");
 
         document.body.appendChild(overlay);
-        utils.debug("Inserted overlay");
+        utils.debug("Utils: Inserted overlay");
 
         return overlay;
     },
@@ -110,11 +110,12 @@ utils = {
         chrome.storage.local.set(hash);
     },
 
-    local_storage_get: function (key, callback) {
-        chrome.storage.local.get(key, function (result) {
+    local_storage_get: function (key) {
+        result = chrome.storage.local.get(key);
+        if (result) {
             var value = result[key];
-            callback(value);
-        });
+            return value;
+        }
     },
 
     local_storage_remove: function (key) {
@@ -122,39 +123,35 @@ utils = {
     },
 
     cache_set: function (key, data) {
-        utils.local_storage_get("cache_keys", function (cache_keys) {
-            // check if cache keys don't exist yet
-            if (!cache_keys) {
-                cache_keys = {};
-            }
+        cache_keys = utils.local_storage_get("cache_keys")
+        if (!cache_keys) {
+            cache_keys = {};
+        }
+        // store cached url keys with timestamps
+        cache_keys[key] = { "timestamp": new Date().getTime() };
+        utils.local_storage_set("cache_keys", cache_keys);
 
-            // store cached url keys with timestamps
-            cache_keys[key] = { "timestamp": new Date().getTime() };
-            utils.local_storage_set("cache_keys", cache_keys);
-
-            // store cached data with url key
-            utils.local_storage_set(key, data);
-        });
+        // store cached data with url key
+        utils.local_storage_set(key, data);
     },
 
-    cache_get: function (key, callback) {
-        utils.local_storage_get(key, function (result) {
-            if (result) {
-                utils.debug("Cache hit");
-                callback(result);
-            }
-            else {
-                utils.debug("Cache miss");
-                callback(null);
-            }
-        });
+    cache_get: function (key) {
+        var data = utils.local_storage_get(key)
+        if (data) {
+            utils.debug("Utils: Cache hit");
+            return data
+        }
+        else {
+            utils.debug("Utils: Cache miss");
+            return
+        }
     },
 
     purgeStaleCaches: function (force) {
         utils.local_storage_get("cache_keys", function (cache_keys) {
             // check if there is any cached data yet
             if (!cache_keys) {
-                utils.debug("No cached data, skipping cache purge");
+                utils.debug("Utils: No cached data, skipping cache purge");
                 return;
             }
 
@@ -166,7 +163,7 @@ utils = {
 
                 // 3 day cache
                 if (time_now - timestamp > 259200000 || force) {
-                    utils.debug("Found stale data, removing " + key);
+                    utils.debug("Utils: Found stale data, removing " + key);
                     utils.local_storage_remove(key);
 
                     delete cache_keys[key];
@@ -180,23 +177,25 @@ utils = {
         return chrome.runtime.getURL("resources/" + resource);
     },
 
-    getApiKey: function (api_name) {
+    getApiKey: async (api_name) => {
         var file_path = utils.getResourcePath("api_keys/" + api_name + ".txt");
         var text;
-        var rawFile = new XMLHttpRequest();
-        rawFile.open("GET", file_path, false);
-        rawFile.onreadystatechange = function () {
-            if (rawFile.readyState === 4) {
-                if (rawFile.status === 200 || rawFile.status == 0) {
-                    text = rawFile.responseText;
-                }
-            }
-        }
-        rawFile.send(null);
+        response = await fetch(file_path);
+        text = await response.text();
         return text;
     },
+    getXML: async (url) => {
+        utils.debug("Utils: Fetching XML from " + url);
+        response = await fetch(url);
+        text = await response.text();
+        var parser = new DOMParser();
+        var xml = parser.parseFromString(text, "application/xml");
+        utils.debug("Utils: Recieved XML response " + url);
+        utils.debug(xml);
+        return xml;
+    },
 
-    getXML: function (url, callback) {
+    getXMLOld: function (url, callback) {
         utils.debug("Fetching XML from " + url);
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
@@ -218,71 +217,63 @@ utils = {
         xhr.send();
     },
 
-    getXMLWithTimeout: function (url, timeout, callback) {
-        utils.debug("Fetching XML from " + url);
+    getXMLWithTimeout: function (url, timeout) {
+        utils.debug("Utils: Fetching XML from " + url);
         var xhr = new XMLHttpRequest();
         xhr.open("GET", url, true);
         xhr.onload = function (e) {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
-                    utils.debug("Recieved XML response");
+                    utils.debug("Utils: Recieved XML response from " + url);
                     utils.debug(xhr.responseXML);
-                    callback(xhr.responseXML);
+                    return xhr.responseXML;
                 }
                 else {
-                    callback(xhr.statusText);
+                    return xhr.statusText;
                 }
             }
         };
         xhr.onerror = function () {
-            callback(xhr.statusText);
+            return xhr.statusText;
         };
         xhr.timeout = timeout;
         xhr.ontimeout = function () {
-            callback(xhr.statusText);
+            return xhr.statusText;
         };
         xhr.send();
     },
 
-    getJSONWithCache: function (url, callback, custom_headers) {
-        utils.debug("Fetching JSON from " + url);
-        utils.cache_get("cache-" + url, function (result) {
-            if (result) {
-                callback(result);
-            }
-            else {
-                // cache missed or stale, grabbing new data
-                utils.getJSON(url, function (result) {
-                    utils.cache_set("cache-" + url, result);
-                    callback(result);
-                }, custom_headers);
-            }
-        });
-    },
-
-    getJSON: function (url, callback, custom_headers) {
-        utils.debug("Fetching JSON from " + url);
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-        for (var header_name in custom_headers) {
-            xhr.setRequestHeader(header_name, custom_headers[header_name])
+    getJSONWithCache: async (url, custom_headers) => {
+        utils.debug("Utils: Checking for JSON Cache for " + url);
+        var cacheCheck = await utils.cache_get("cache-" + url);
+        if (cacheCheck) {
+            return cacheCheck;
         }
-        xhr.onload = function (e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    utils.debug("Recieved JSON response");
-                    utils.debug(xhr.responseText);
-                    callback(JSON.parse(xhr.responseText));
-                }
-                else {
-                    callback({ "error": xhr.statusText });
-                }
+        else {
+            // cache missed or stale, grabbing new data
+            var data = await utils.getJSON(url, custom_headers);
+            if (data) {
+                utils.cache_set("cache-" + url, data);
+                return data;
             }
-        };
-        xhr.onerror = function () {
-            callback({ "error": xhr.statusText });
-        };
-        xhr.send();
+        }
+    },
+
+    getJSON: async (url, custom_headers) => {
+        var data
+        utils.debug("Utils: Fetching JSON from " + url);
+        response = await fetch(url, {
+            method: 'GET',
+            headers: custom_headers
+        });
+        if (response.ok) {
+            json = await response.json();
+            utils.debug("Utils: Recieved JSON response");
+            utils.debug(json);
+            //data = JSON.parse(json);
+        }
+        //return data
+        return json
     },
 
     setDefaultOptions: function (callback) {
