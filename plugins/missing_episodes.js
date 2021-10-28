@@ -4,134 +4,194 @@ missing_episodes = {
 
     init: function (metadata_xml, server, type) {
         missing_episodes.server = server;
-        missing_episodes.metadata_xml = metadata_xml;
 
         missing_episodes.insertSwitch();
         if (type === "episodes") {
-            missing_episodes.processEpisodes();
+            missing_episodes.processEpisodes(type, metadata_xml);
         }
         else if (type === "seasons") {
-            missing_episodes.processSeasons();
+            missing_episodes.processSeasons(type, metadata_xml);
         }
     },
 
-    processEpisodes: function () {
-        var directory_metadata = missing_episodes.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0];
+    processEpisodes: async (type, metadata_xml) => {
+        var site = "imdb";
+        utils.debug("Missing Episodes Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+        var imdb_id = await tmdb_api.getId(site, type, metadata_xml);
+        utils.debug("Missing Episodes Plugin: TMDB API returned the following IMDB ID (" + imdb_id + ")");
+        if (imdb_id) {
+            var show_id = imdb_id;
+        }
+        else {
+            utils.debug("Missing Episodes Plugin: IMDB ID not found, falling back to show name");
+            var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("year");
+            var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("title");
+            utils.debug("Missing Episodes Plugin: Got title - " + title);
+            var show_id = title.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, "-") + "-" + year;
+        }
+
+        var directory_metadata = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0];
         var season_metadata_id = directory_metadata.getAttribute("ratingKey");
         var agent = directory_metadata.getAttribute("guid");
         var season_num = directory_metadata.getAttribute("index");
 
-        utils.debug("missing_episodes plugin: Finding all present and all existing episodes");
-
-        var show_name = missing_episodes.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("parentTitle");
-        show_name = show_name.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, "-");
+        utils.debug("Missing Episodes Plugin: Finding all present and all existing episodes");
 
         // store current page hash so plugin doesn't insert tiles if page changed
         var current_hash = location.hash;
 
-        missing_episodes.getPresentEpisodes(season_metadata_id, function (present_episodes) {
-            trakt_api.getAllEpisodes(show_name, season_num, function (all_episodes) {
-                var tiles_to_insert = {};
-                for (var i = 0; i < all_episodes.length; i++) {
-                    var episode = all_episodes[i];
-                    if (present_episodes.indexOf(episode["episode"]) === -1) {
-                        var episode_tile = missing_episodes.createEpisodeTile(show_name, episode);
-                        tiles_to_insert[episode["number"]] = episode_tile;
-                    }
-                }
+        var present_episodes = await missing_episodes.getPresentEpisodes(season_metadata_id);
+        var retry = 0
+        while (present_episodes == null) {
+            retry++
+            if (retry < 10) {
+                utils.debug("Missing Episodes Plugin: Current episodes not returned yet...[" + retry + "]");
+            }
+            else {
+                utils.debug("Missing Episodes Plugin: Could not set current episodes... Aborting.");
+                return
+            }
+        }
+        var all_episodes = trakt_api.getAllMissing(show_id, "episodes", season_num);
 
-                // check if page changed before inserting tiles
-                if (current_hash === location.hash) {
-                    missing_episodes.insertEpisodeTiles(tiles_to_insert);
-                }
-                else {
-                    utils.debug("missing_episodes plugin: Page changed before episode tiles could be inserted");
-                }
-            });
-        });
-    },
-
-    processSeasons: function () {
-        var directory_metadata = missing_episodes.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0];
-        var show_metadata_id = directory_metadata.getAttribute("ratingKey");
-        var agent = directory_metadata.getAttribute("guid");
-
-        var show_name;
-        utils.debug("missing_episodes plugin: Finding all present and all existing seasons");
-        if (missing_episodes.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("originalTitle") != null) {
-            show_name = missing_episodes.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("originalTitle");
+        var tiles_to_insert = {};
+        for (var i = 0; i < all_episodes.length; i++) {
+            var episode = all_episodes[i];
+            if (present_episodes.indexOf(episode["episode"]) === -1) {
+                var episode_tile = missing_episodes.constructEpisodeTile(show_id, episode);
+                tiles_to_insert[episode["number"]] = episode_tile;
+            }
+        }
+        // check if page changed before inserting tiles
+        if (current_hash === location.hash) {
+            missing_episodes.insertEpisodeTiles(tiles_to_insert);
         }
         else {
-            show_name = missing_episodes.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("title");
+            utils.debug("Missing Episodes Plugin: Page changed before episode tiles could be inserted");
         }
-        show_name = show_name.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, "-");
+    },
+
+    processSeasons: async (type, metadata_xml) => {
+        var site = "imdb";
+        utils.debug("Missing Episodes Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+        var imdb_id = await tmdb_api.getId(site, type, metadata_xml);
+        utils.debug("Missing Episodes Plugin: TMDB API returned the following IMDB ID (" + imdb_id + ")");
+        if (imdb_id) {
+            var show_id = imdb_id;
+        }
+        else {
+            utils.debug("Missing Episodes Plugin: IMDB ID not found, attempting searching via Trakt")
+            trakt_id = await trakt_api.getTraktId(type, metadata_xml);
+            if (trakt_id) {
+                var show_id = trakt_id;
+            }
+            else {
+                utils.debug("Missing Episodes Plugin: Trakt ID not found... Aborting.")
+                return
+            }
+        }
+
+        var directory_metadata = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0];
+        var show_metadata_id = directory_metadata.getAttribute("ratingKey");
+
+        utils.debug("Missing Episodes Plugin: Finding all present and all existing seasons");
 
         // store current page hash so plugin doesn't insert tiles if page changed
         var current_hash = location.hash;
-        missing_episodes.getPresentSeasons(show_metadata_id, function (present_seasons) {
-            trakt_api.getAllSeasons(show_name, function (all_seasons) {
-                var tiles_to_insert = {};
-                for (var i = 0; i < all_seasons.length; i++) {
-                    var season = all_seasons[i];
-                    if (present_seasons.indexOf(season["number"]) === -1) {
-                        if (season["number"] == 0) {
-                            // ignore specials
-                            continue;
-                        }
-                        var season_tile = missing_episodes.createSeasonTile(show_name, season);
-                        tiles_to_insert[season["number"]] = season_tile;
-                    }
-                }
+        var present_seasons = await missing_episodes.getPresentSeasons(show_metadata_id);
+        var retry = 0
+        while (present_seasons == null) {
+            retry++
+            if (retry < 10) {
+                utils.debug("Missing Episodes Plugin: Current seasons not returned yet...[" + retry + "]");
+            }
+            else {
+                utils.debug("Missing Episodes Plugin: Could not set current seasons... Aborting.");
+                return
+            }
+        }
+        var all_seasons = await trakt_api.getAllMissing(show_id, "seasons");
 
-                // check if page changed before inserting tiles
-                if (current_hash === location.hash) {
-                    missing_episodes.insertSeasonTiles(tiles_to_insert);
+        var tiles_to_insert = {};
+        for (var i = 0; i < all_seasons.length; i++) {
+            var season = all_seasons[i];
+            if (present_seasons.indexOf(season["number"]) === -1) {
+                if (season["number"] == 0) {
+                    // ignore specials
+                    continue;
                 }
-                else {
-                    utils.debug("missing_episodes plugin: Page changed before season tiles could be inserted");
-                }
-            });
-        });
+                var season_tile = missing_episodes.constructSeasonTile(show_id, season);
+                tiles_to_insert[season["number"]] = season_tile;
+            }
+        }
+
+        // check if page changed before inserting tiles
+        if (current_hash === location.hash) {
+            missing_episodes.insertSeasonTiles(tiles_to_insert);
+        }
+        else {
+            utils.debug("Missing Episodes Plugin: Page changed before season tiles could be inserted");
+        }
     },
 
-    getPresentEpisodes: function (season_metadata_id, callback) {
-        utils.debug("missing_episodes plugin: Fetching season episodes xml");
+    getPresentEpisodes: async (season_metadata_id) => {
+        utils.debug("Missing Episodes Plugin: Fetching season episodes xml");
         var episodes_metadata_xml_url = missing_episodes.server["uri"] + "/library/metadata/" + season_metadata_id + "/children?X-Plex-Token=" + missing_episodes.server["access_token"];
-        utils.getXML(episodes_metadata_xml_url, function (episodes_metadata_xml) {
-            var episodes_xml = episodes_metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video");
-            var episodes = [];
-            for (var i = 0; i < episodes_xml.length; i++) {
-                episodes.push(parseInt(episodes_xml[i].getAttribute("index")));
+        var episodes_metadata_xml = await utils.getXML(episodes_metadata_xml_url);
+        var retry = 0
+        while (episodes_metadata_xml == null) {
+            retry++
+            if (retry < 10) {
+                utils.debug("Missing Episodes Plugin: Episodes Metadata XML not returned yet...[" + retry + "]");
             }
-            callback(episodes);
-        });
+            else {
+                utils.debug("Missing Episodes Plugin: Could not set Episodes Metadata XML... Aborting.");
+                return
+            }
+        }
+        var episodes_xml = episodes_metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video");
+        var episodes = [];
+        for (var i = 0; i < episodes_xml.length; i++) {
+            episodes.push(parseInt(episodes_xml[i].getAttribute("index")));
+        }
+        return episodes;
     },
 
-    getPresentSeasons: function (show_metadata_id, callback) {
-        utils.debug("missing_episodes plugin: Fetching seasons xml");
+    getPresentSeasons: async (show_metadata_id) => {
+        utils.debug("Missing Episodes Plugin: Fetching seasons xml");
         var seasons_metadata_xml_url = missing_episodes.server["uri"] + "/library/metadata/" + show_metadata_id + "/children?X-Plex-Token=" + missing_episodes.server["access_token"];
-        utils.getXML(seasons_metadata_xml_url, function (seasons_metadata_xml) {
-            var seasons_xml = seasons_metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
-            var seasons = [];
-            for (var i = 0; i < seasons_xml.length; i++) {
-                var season_index = parseInt(seasons_xml[i].getAttribute("index"));
-                if (!isNaN(season_index)) {
-                    seasons.push(season_index);
-                }
+        var seasons_metadata_xml = await utils.getXML(seasons_metadata_xml_url);
+        var retry = 0
+        while (seasons_metadata_xml == null) {
+            retry++
+            if (retry < 10) {
+                utils.debug("Missing Episodes Plugin: Seasons Metadata XML not returned yet...[" + retry + "]");
             }
-            callback(seasons);
-        });
+            else {
+                utils.debug("Missing Episodes Plugin: Could not set Seasons Metadata XML... Aborting.");
+                return
+            }
+        }
+        var seasons_xml = seasons_metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
+        var seasons = [];
+        for (var i = 0; i < seasons_xml.length; i++) {
+            var season_index = parseInt(seasons_xml[i].getAttribute("index"));
+            if (!isNaN(season_index)) {
+                seasons.push(season_index);
+            }
+        }
+        return seasons;
     },
 
-    createEpisodeTile: function (show_name, episode) {
-        var orig_episode_tile = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].parentNode
-        var orig_poster_container = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1]
-        var orig_poster_tile = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].childNodes[0]
-        var orig_poster = document.querySelectorAll("[class*=MetadataPosterCard-image-]")[1]
-        var orig_poster_badge = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].childNodes[1]
-        var orig_poster_link = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].childNodes[2]
-        var orig_episode_link = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].parentNode.childNodes[1]
-        var orig_episode_number = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].parentNode.childNodes[2]
+    constructEpisodeTile: function (show_name, episode) {
+        var orig_episode_tile = document.querySelectorAll("[data-testid*=cellItem]")[0]
+        var orig_poster_container = orig_episode_tile.childNodes[0]
+        var orig_poster_tile = orig_poster_container.childNodes[0]
+        var orig_poster = orig_poster_container.childNodes[0].childNodes[0]
+        var orig_poster_badge = orig_poster_container.childNodes[1]
+        var orig_poster_link = orig_poster_container.childNodes[2]
+        var orig_episode_link = orig_episode_tile.childNodes[1]
+        var orig_episode_number = orig_episode_tile.childNodes[2]
 
         var episode_tile = document.createElement("div");
         var poster_container = document.createElement("div");
@@ -197,15 +257,15 @@ missing_episodes = {
         return episode_tile;
     },
 
-    createSeasonTile: function (show_name, season) {
-        var orig_season_tile = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].parentNode
-        var orig_poster_container = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1]
-        var orig_poster_tile = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].childNodes[0]
-        var orig_poster = document.querySelectorAll("[class*=MetadataPosterCard-image-]")[1]
-        var orig_poster_badge = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].childNodes[1]
-        var orig_poster_link = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].childNodes[2]
-        var orig_season_link = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].parentNode.childNodes[1]
-        var orig_season_episodes = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[1].parentNode.childNodes[2]
+    constructSeasonTile: function (show_name, season) {
+        var orig_season_tile = document.querySelectorAll("[data-testid*=cellItem]")[0]
+        var orig_poster_container = orig_season_tile.childNodes[0]
+        var orig_poster_tile = orig_poster_container.childNodes[0]
+        var orig_poster = orig_poster_container.childNodes[0].childNodes[0]
+        var orig_poster_badge = orig_poster_container.childNodes[1]
+        var orig_poster_link = orig_poster_container.childNodes[2]
+        var orig_season_link = orig_season_tile.childNodes[1]
+        var orig_season_episodes = orig_season_tile.childNodes[2]
 
         var season_tile = document.createElement("div");
         var poster_container = document.createElement("div");
@@ -275,38 +335,43 @@ missing_episodes = {
         var episode_tile_list = document.querySelectorAll("[class*=MetadataPosterListItem-card-]")[0].parentElement.parentElement;
         episode_tile_list.style.padding = "0 50px 20px";
         var episode_tile_list_elements = episode_tile_list.children;
+        var episodeCount = episode_tile_list_elements.length
+        if (episodeCount < 49) {
+            // insert already present episodes into episode_tiles array
+            for (var i = 0; i < episode_tile_list_elements.length; i++) {
+                var episode_num = episode_tile_list_elements[i].querySelectorAll("[class*=MetadataPosterCardTitle-isSecondary]")[0].innerText.match(/\d+/);
+                episode_tile_list_elements[i].style.position = "relative";
+                episode_tile_list_elements[i].style.float = "left";
+                episode_tile_list_elements[i].style.marginRight = "20px";
+                episode_tile_list_elements[i].style.marginBottom = "20px";
+                episode_tile_list_elements[i].style.transform = "";
+                episode_tile_list_elements[i].style.left = "0px";
+                episode_tile_list_elements[i].style.top = "0px";
 
-        // insert already present episodes into episode_tiles array
-        for (var i = 0; i < episode_tile_list_elements.length; i++) {
-            var episode_num = episode_tile_list_elements[i].querySelectorAll("[class*=MetadataPosterCardTitle-isSecondary]")[0].innerText.match(/\d+/);
-            episode_tile_list_elements[i].style.position = "relative";
-            episode_tile_list_elements[i].style.float = "left";
-            episode_tile_list_elements[i].style.marginRight = "20px";
-            episode_tile_list_elements[i].style.marginBottom = "20px";
-            episode_tile_list_elements[i].style.transform = "";
-            episode_tile_list_elements[i].style.left = "0px";
-            episode_tile_list_elements[i].style.top = "0px";
+                episode_tile_list_elements[i].removeAttribute("data-testid");
+                episode_tile_list_elements[i].setAttribute("class", "existing_episode");
+                episode_tiles[episode_num] = episode_tile_list_elements[i];
+            }
 
-            episode_tile_list_elements[i].removeAttribute("data-testid");
-            episode_tile_list_elements[i].setAttribute("class", "existing_episode");
-            episode_tiles[episode_num] = episode_tile_list_elements[i];
+            // remove episode tile list node first
+            var parent_node = episode_tile_list.parentNode;
+            parent_node.removeChild(episode_tile_list);
+
+            // iterate over all episode tiles, present and missing, to reinsert back into episode tile list in order
+            var j = 0;
+            for (var episode_number in episode_tiles) {
+                var episode_tile = episode_tiles[episode_number];
+
+                episode_tile_list.insertBefore(episode_tile, episode_tile_list_elements[j]);
+                j++;
+            }
+
+            // reinsert episode tile list node
+            parent_node.appendChild(episode_tile_list);
         }
-
-        // remove episode tile list node first
-        var parent_node = episode_tile_list.parentNode;
-        parent_node.removeChild(episode_tile_list);
-
-        // iterate over all episode tiles, present and missing, to reinsert back into episode tile list in order
-        var j = 0;
-        for (var episode_number in episode_tiles) {
-            var episode_tile = episode_tiles[episode_number];
-
-            episode_tile_list.insertBefore(episode_tile, episode_tile_list_elements[j]);
-            j++;
+        else {
+            utils.debug("Missing Episodes Plugin: Episode count too high. Currently not supported due to the way Plex dynamically generates the list.");
         }
-
-        // reinsert episode tile list node
-        parent_node.appendChild(episode_tile_list);
     },
 
     insertSeasonTiles: function (season_tiles) {
