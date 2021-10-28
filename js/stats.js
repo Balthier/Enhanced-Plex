@@ -85,7 +85,7 @@ function getServerAddresses(callback) {
 
 function getSections(uri, plex_token, callback) {
     var library_sections_url = uri + "/library/sections?X-Plex-Token=" + plex_token;
-    utils.getXML(library_sections_url, function (sections_xml) {
+    utils.getXMLOld(library_sections_url, function (sections_xml) {
         callback(sections_xml);
     });
 }
@@ -109,7 +109,7 @@ function processLibrarySections(sections_xml) {
 
 function getAllMovies(uri, plex_token, section_key, callback) {
     var library_section_url = uri + "/library/sections/" + section_key + "/all?X-Plex-Token=" + plex_token;
-    utils.getXML(library_section_url, function (section_xml) {
+    utils.getXMLOld(library_section_url, function (section_xml) {
         var movies_xml = section_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video");
         var movies = [];
         for (var i = 0; i < movies_xml.length; i++) {
@@ -131,7 +131,7 @@ function getAllMovies(uri, plex_token, section_key, callback) {
 
 function getAllShows(uri, plex_token, section_key, callback) {
     var library_section_url = uri + "/library/sections/" + section_key + "/all?X-Plex-Token=" + plex_token;
-    utils.getXML(library_section_url, function (section_xml) {
+    utils.getXMLOld(library_section_url, function (section_xml) {
         var shows_xml = section_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
         var shows = [];
         for (var i = 0; i < shows_xml.length; i++) {
@@ -150,7 +150,7 @@ function getAllShows(uri, plex_token, section_key, callback) {
 
 function getAllEpisodes(uri, plex_token, section, callback) {
     var library_section_episodes_url = uri + "/library/sections/" + section + "/all?type=4&X-Plex-Token=" + plex_token;
-    utils.getXML(library_section_episodes_url, function (section_xml) {
+    utils.getXMLOld(library_section_episodes_url, function (section_xml) {
         var episodes_xml = section_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video");
         var episodes = [];
         for (var i = 0; i < episodes_xml.length; i++) {
@@ -177,7 +177,7 @@ function getAllSongs(uri, plex_token, section, callback) {
         var paged_library_section_songs_url = library_section_songs_url + "&sort=titleSort:asc&X-Plex-Container-Size=" + container_size + "&X-Plex-Container-Start=" + container_start;
         var p = new promise.Promise();
 
-        utils.getXML(paged_library_section_songs_url, function (section_xml) {
+        utils.getXMLOld(paged_library_section_songs_url, function (section_xml) {
             var songs_xml = section_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Track");
 
             if (songs_xml.length === 0) {
@@ -207,7 +207,7 @@ function getAllSongs(uri, plex_token, section, callback) {
 
 function getAllAlbums(uri, plex_token, section, callback) {
     var library_section_albums_url = uri + "/library/sections/" + section + "/all?type=9&X-Plex-Token=" + plex_token;
-    utils.getXML(library_section_albums_url, function (section_xml) {
+    utils.getXMLOld(library_section_albums_url, function (section_xml) {
         var albums_xml = section_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
         var albums = [];
         for (var i = 0; i < albums_xml.length; i++) {
@@ -224,7 +224,7 @@ function getAllAlbums(uri, plex_token, section, callback) {
 
 function getSectionGenres(uri, plex_token, section_key, callback) {
     var library_section_genres_url = uri + "/library/sections/" + section_key + "/genre?X-Plex-Token=" + plex_token;
-    utils.getXML(library_section_genres_url, function (genres_xml) {
+    utils.getXMLOld(library_section_genres_url, function (genres_xml) {
         var genre_nodes = genres_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
 
         var genres = {};
@@ -240,7 +240,7 @@ function getSectionGenres(uri, plex_token, section_key, callback) {
 
 function getMoviesByGenre(uri, plex_token, section_key, genre_key, callback) {
     var filtered_movies_url = uri + "/library/sections/" + section_key + "/all?genre=" + genre_key + "&X-Plex-Token=" + plex_token;
-    utils.getXML(filtered_movies_url, function (movies_xml) {
+    utils.getXMLOld(filtered_movies_url, function (movies_xml) {
         var movies = movies_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video");
         callback(movies);
     });
@@ -248,7 +248,7 @@ function getMoviesByGenre(uri, plex_token, section_key, genre_key, callback) {
 
 function getShowsByGenre(uri, plex_token, section_key, genre_key, callback) {
     var filtered_shows_url = uri + "/library/sections/" + section_key + "/all?genre=" + genre_key + "&X-Plex-Token=" + plex_token;
-    utils.getXML(filtered_shows_url, function (shows_xml) {
+    utils.getXMLOld(filtered_shows_url, function (shows_xml) {
         var shows = shows_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
         callback(shows);
     });
@@ -256,7 +256,7 @@ function getShowsByGenre(uri, plex_token, section_key, genre_key, callback) {
 
 function getAlbumsByGenre(uri, plex_token, section_key, genre_key, callback) {
     var filtered_albums_url = uri + "/library/sections/" + section_key + "/all?genre=" + genre_key + "&X-Plex-Token=" + plex_token;
-    utils.getXML(filtered_albums_url, function (albums_xml) {
+    utils.getXMLOld(filtered_albums_url, function (albums_xml) {
         var albums = albums_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
         callback(albums);
     });
