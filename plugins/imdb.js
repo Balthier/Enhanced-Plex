@@ -2,89 +2,8 @@ imdb = {
     metadata_xml: null,
 
     init: function (metadata_xml, type) {
-        imdb.metadata_xml = metadata_xml;
-        imdb.getImdbId(type);
+        imdb.insertImdbLink(type, metadata_xml);
     },
-
-    getImdbId: async (type) => {
-        if (type == "movie") {
-            utils.debug("imdb plugin: Checking Plex Agent");
-            agent = imdb.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("guid");
-            imdbelement = imdb.metadata_xml.querySelectorAll('[id^="imdb"]')[0];
-            if (imdbelement) {
-                imdbid_check = imdbelement.parentNode.parentNode.tagName;
-            }
-            else {
-                imdbid_check = null;
-            }
-
-            if (imdbid_check == "MediaContainer") {
-                imdb_id = imdbelement.id.replace("imdb://", "");
-            }
-
-            if (imdb_id) {
-                utils.debug("imdb plugin: imdb id found - " + imdb_id);
-                url = "http://www.imdb.com/title/" + imdb_id;
-                imdb.insertImdbLink(url);
-            }
-            else {
-                utils.debug("imdb plugin: imdb id not found. Attempting search via TMDB");
-                tmdbelement = imdb.metadata_xml.querySelectorAll('[id^="tmdb"]')[0]
-                if (tmdbelement) {
-                    tmdbid_check = tmdbelement.parentNode.parentNode.tagName;
-                }
-                else {
-                    tmdbid_check = null;
-                }
-                if (tmdbid_check == "MediaContainer") {
-                    tmdb_id = tmdbelements[0].id
-                    utils.debug("imdb plugin: tmdb id found - " + tmdb_id);
-                    var api_url = "https://api.themoviedb.org/3/movie/" + tmdb_id + "/external_ids?api_key=" + themoviedb_api.api_key;
-                    response = await fetch(api_url);
-                    json = await response.json();
-                    var imdb_id = json.imdb_id;
-                    if (imdb_id) {
-                        utils.debug("imdb plugin: imdb id found - " + imdb_id);
-                        url = "http://www.imdb.com/title/" + imdb_id;
-                        imdb.insertImdbLink(url);
-                    }
-                    else {
-                        utils.debug("imdb plugin: imdb id not found. Aborting.");
-                    }
-                }
-                else {
-                    utils.debug("imdb plugin: imdb id not found via TMDB. Aborting.");
-                }
-            }
-        }
-        if (type == "show") {
-            utils.debug("imdb plugin: Grabbing IMDB ID from TMDB");
-            var agent = imdb.metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("guid");
-
-            // check if using the movie database metadata agent
-            if (/com\.plexapp\.agents\.themoviedb/.test(agent)) {
-                var tmdb_id = agent.match(/^com\.plexapp\.agents\.themoviedb:\/\/(.+)\?/)[1];
-                utils.debug("imdb plugin: tmdb id found - " + tmdb_id);
-                var api_url = "https://api.themoviedb.org/3/tv/" + tmdb_id + "/external_ids?api_key=" + themoviedb_api.api_key;
-                response = await fetch(api_url);
-                json = await response.json();
-                imdb_id = json.imdb_id;
-            }
-            else {
-                utils.debug("imdb plugin: Not using tmdb agent, aborting");
-            }
-
-            if (imdb_id) {
-                utils.debug("imdb plugin: imdb id found - " + imdb_id);
-                url = "http://www.imdb.com/title/" + imdb_id;
-                imdb.insertImdbLink(url);
-            }
-            else {
-                utils.debug("imdb plugin: imdb id not found");
-            }
-        }
-    },
-
     constructImdbLink: function (imdb_url) {
         var sister_containers = document.querySelectorAll("[class*=sprinkles_display_flex]")[2].children;
         var container_element_template = sister_containers[0]
@@ -93,9 +12,11 @@ imdb = {
         imdb_container_element.setAttribute("id", "imdb-container");
         imdb_container_element.setAttribute("class", container_element_template.getAttribute("class"));
 
-        // Set the class of the last element
-        var last_sister = sister_containers[sister_containers.length - 1];
-        last_sister.setAttribute("class", container_element_template.getAttribute("class"));
+        if (container_element_template) {
+            // Set the class of the last element
+            var last_sister = sister_containers[sister_containers.length - 1];
+            last_sister.setAttribute("class", container_element_template.getAttribute("class"));
+        }
 
         // construct link
         var imdb_element_link = document.createElement("a");
@@ -114,12 +35,22 @@ imdb = {
         return imdb_container_element;
     },
 
-    insertImdbLink: function (url) {
-        // create imdb link element
-        var imdb_container = imdb.constructImdbLink(url);
+    insertImdbLink: async (type, metadata_xml) => {
+        var site = "imdb"
+        utils.debug("IMDB Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+        imdb_id = await tmdb_api.getId(site, type, metadata_xml);
+        if (imdb_id) {
+            utils.debug("IMDB Plugin: TMDB API returned the following IMDB ID (" + imdb_id + ")");
+            url = "http://www.imdb.com/title/" + imdb_id;
+            // create imdb link element
+            var imdb_container = imdb.constructImdbLink(url);
 
-        // insert imdb link element to bottom of metadata container
-        utils.debug("imdb plugin: Inserting imdb container into page");
-        document.querySelectorAll("[class*=sprinkles_display_flex]")[2].appendChild(imdb_container);
+            // insert imdb link element to bottom of metadata container
+            utils.debug("IMDB Plugin: Inserting IMDB container into page");
+            document.querySelectorAll("[data-testid*=preplay-thirdTitle]")[0].children[0].appendChild(imdb_container);
+        }
+        else {
+            utils.debug("IMDB Plugin: TMDB API did not find the IMDB ID... Aborting.");
+        }
     }
 }
