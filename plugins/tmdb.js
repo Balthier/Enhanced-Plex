@@ -41,11 +41,11 @@ tmdb = {
         // insert themoviedb link element to bottom of metadata container
         var tmdb_container = tmdb.constructTmdbLink(tmdb_id);
         utils.debug("tmdb plugin: Inserting tmdb container into page");
-        document.querySelectorAll("[class*=sprinkles_display_flex]")[2].appendChild(tmdb_container);
+        document.querySelectorAll("[data-testid*=preplay-thirdTitle]")[0].children[0].appendChild(tmdb_container);
     },
 
     constructTmdbLink: function (tmdb_id) {
-        var sister_containers = document.querySelectorAll("[class*=sprinkles_display_flex]")[2].children;
+        var sister_containers = document.querySelectorAll("[data-testid*=preplay-thirdTitle]")[0].children[0].children;
         var container_element_template = sister_containers[0];
         var logo_url = utils.getResourcePath("tmdb/tmdb_logo.svg");
         var tmdb_container_element = document.createElement("span");
