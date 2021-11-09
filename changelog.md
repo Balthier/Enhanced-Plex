@@ -1,3 +1,7 @@
+## **v2.1.9**
+#### 2021-11-09
+- Bug: Fixed a display issue from a Plex Update. Now working with Plex Web 4.69.1
+
 ## **v2.1.8**
 #### 2021-10-17
 - Bug: Fixed a display issue from a Plex Update. Now working with Plex Web 4.67.1

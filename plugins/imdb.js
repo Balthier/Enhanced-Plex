@@ -86,7 +86,7 @@ imdb = {
     },
 
     constructImdbLink: function (imdb_url) {
-        var sister_containers = document.querySelectorAll("[class*=sprinkles_display_flex]")[2].children;
+        var sister_containers = document.querySelectorAll("[data-testid*=preplay-thirdTitle]")[0].children[0].children;
         var container_element_template = sister_containers[0]
         var logo_url = utils.getResourcePath("imdb/imdb_logo.png")
         var imdb_container_element = document.createElement("span");
@@ -120,6 +120,6 @@ imdb = {
 
         // insert imdb link element to bottom of metadata container
         utils.debug("imdb plugin: Inserting imdb container into page");
-        document.querySelectorAll("[class*=sprinkles_display_flex]")[2].appendChild(imdb_container);
+        document.querySelectorAll("[data-testid*=preplay-thirdTitle]")[0].children[0].appendChild(imdb_container);
     }
 }
