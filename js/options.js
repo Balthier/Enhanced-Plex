@@ -1,105 +1,51 @@
-function saveOptions() {
-    var imdb_movies = document.querySelector("input[name='imdb_movies']").checked;
-    var imdb_shows = document.querySelector("input[name='imdb_shows']").checked;
-    var tmdb_link = document.querySelector("input[name='tmdb_link']:checked").value;
-    var tvdb_link = document.querySelector("input[name='tvdb_link']:checked").value;
-    var trakt_movies = document.querySelector("input[name='trakt_movies']").checked;
-    var trakt_shows = document.querySelector("input[name='trakt_shows']").checked;
-    var missing_episodes = document.querySelector("input[name='missing_episodes']:checked").value;
-    var stats_link = document.querySelector("input[name='stats_link']:checked").value;
-    //var hide_watched = document.querySelector("input[name='hide_watched']:checked").value;
-    var debug = document.querySelector("input[name='debug']:checked").value;
-    var debug_unfiltered = document.querySelector("input[name='debug_unfiltered']:checked").value;
-
-    utils.storage_set("tmdb_link", tmdb_link);
-    utils.storage_set("tvdb_link", tvdb_link);
-    utils.storage_set("missing_episodes", missing_episodes);
-    utils.storage_set("stats_link", stats_link);
-    //utils.storage_set("hide_watched", hide_watched);
-    utils.storage_set("debug", debug);
-    utils.storage_set("debug_unfiltered", debug_unfiltered);
-
-    if (imdb_movies) {
-        utils.storage_set("imdb_movies", "on");
+function saveOption(name, toggle) {
+    option = "options_" + name
+    if (toggle === true) {
+        onOff = "true"
     }
     else {
-        utils.storage_set("imdb_movies", "off");
+        onOff = "false"
     }
-    if (imdb_shows) {
-        utils.storage_set("imdb_shows", "on");
-    }
-    else {
-        utils.storage_set("imdb_shows", "off");
-    }
-    if (trakt_movies) {
-        utils.storage_set("trakt_movies", "on");
-    }
-    else {
-        utils.storage_set("trakt_movies", "off");
-    }
-    if (trakt_shows) {
-        utils.storage_set("trakt_shows", "on");
-    }
-    else {
-        utils.storage_set("trakt_shows", "off");
-    }
+    utils.debug("Options: Setting " + option + " to " + onOff)
+    utils.cache_set(option, onOff, "sync")
 }
 
-function restoreOptions() {
-    utils.setDefaultOptions(function (settings) {
-        utils.storage_get_all(function (results) {
-            var tmdb_link_radio_button = document.getElementById("tmdb_" + results["tmdb_link"]);
-            var tvdb_link_radio_button = document.getElementById("tvdb_" + results["tvdb_link"]);
-            var missing_episodes_radio_button = document.getElementById("missing_episodes_" + results["missing_episodes"]);
-            var stats_link_radio_button = document.getElementById("stats_link_" + results["stats_link"]);
-            //var hide_watched_radio_button = document.getElementById("hide_watched_" + results["hide_watched"]);
-            var imdb_movies_checkbox = document.getElementById("imdb_movies");
-            var imdb_shows_checkbox = document.getElementById("imdb_shows");
-            var trakt_movies_checkbox = document.getElementById("trakt_movies");
-            var trakt_shows_checkbox = document.getElementById("trakt_shows");
-            var debug_radio_button = document.getElementById("debug_" + results["debug"]);
-            var debug_unfiltered_radio_button = document.getElementById("debug_unfiltered_" + results["debug_unfiltered"]);
-
-            tmdb_link_radio_button.checked = true;
-            tvdb_link_radio_button.checked = true;
-            missing_episodes_radio_button.checked = true;
-            stats_link_radio_button.checked = true;
-            //hide_watched_radio_button.checked = true;
-            debug_radio_button.checked = true;
-            debug_unfiltered_radio_button.checked = true;
-
-            if (results["imdb_movies"] === "on") {
-                imdb_movies_checkbox.checked = true;
+async function restoreOptions() {
+    var options = ["tmdb_link", "tvdb_link", "missing_episodes", "stats_link", "trakt_movies_link", "trakt_shows_link", "imdb_shows_link", "imdb_movies_link", "debug", "debug_unfiltered"]
+    for (i = 0; i < options.length; i++) {
+        option_name = options[i]
+        option = "options_" + option_name
+        utils.debug("Options: Retrieving cache for " + option)
+        cache_data = await utils.cache_get(option, "sync") || {}
+        if (Object.keys(cache_data).length) {
+            utils.debug("Options: Cache found.")
+            toggle = Object.values(cache_data)
+        }
+        else {
+            if (option_name == "debug" || option_name == "debug_unfiltered") {
+                utils.debug("Options: No cache found. Setting debug option to disabled by default")
+                utils.cache_set(option, "false", "sync");
+                toggle = "false";
             }
             else {
-                imdb_movies_checkbox.checked = false;
+                utils.debug("Options: No cache found. Setting option to enabled by default")
+                utils.cache_set(option, "true", "sync");
+                toggle = "true";
             }
+        }
+        if (toggle == "true") {
+            onOff = "on"
+        }
+        else {
+            onOff = "off"
+        }
 
-            if (results["imdb_shows"] === "on") {
-                imdb_shows_checkbox.checked = true;
-            }
-            else {
-                imdb_shows_checkbox.checked = false;
-            }
-
-            if (results["trakt_movies"] === "on") {
-                trakt_movies_checkbox.checked = true;
-            }
-            else {
-                trakt_movies_checkbox.checked = false;
-            }
-
-            if (results["trakt_shows"] === "on") {
-                trakt_shows_checkbox.checked = true;
-            }
-            else {
-                trakt_shows_checkbox.checked = false;
-            }
-            refreshDebugExtraOptions();
-        });
-        document.getElementById("debug_on").addEventListener("click", refreshDebugExtraOptions, false);
-        document.getElementById("debug_off").addEventListener("click", refreshDebugExtraOptions, false);
-    });
+        id = options[i] + "_" + onOff
+        utils.debug("Options: Setting the HTML element on " + id)
+        checkbox = document.getElementById(id)
+        checkbox.checked = toggle
+    }
+    refreshDebugExtraOptions()
 }
 
 function refreshDebugExtraOptions() {
@@ -116,26 +62,41 @@ function refreshDebugExtraOptions() {
     }
 }
 
-// add click listener on all inputs to automatically save changes
-var input_elements = document.getElementsByTagName('input');
-for (var i = 0; i < input_elements.length; i++) {
-    input_elements[i].addEventListener("click", saveOptions);
+utils.storage_get_all(async function (settings) {
+    utils.debug("Options: Restoring options.")
+    await restoreOptions();
 
-    var input_type = input_elements[i].getAttribute("type");
-    if (input_type === "url" || input_type === "number") {
-        input_elements[i].addEventListener("keyup", saveOptions);
+    // add click listener on all inputs to automatically save changes
+    var input_elements = document.getElementsByTagName('input');
+    for (var i = 0; i < input_elements.length; i++) {
+        input_elements[i].addEventListener("click", function () {
+            element_id = this.id
+            if (element_id.match(/on$/g)) {
+                toggle = true
+            }
+            else if (element_id.match(/off$/g)) {
+                toggle = false
+            }
+            element_name = this.name
+            saveOption(element_name, toggle)
+            refreshDebugExtraOptions()
+        })
     }
-}
 
-// add click listener to clear cache
-document.getElementById("clear-cache").addEventListener("click", function (e) {
-    this.innerHTML = "Cleared";
-    utils.purgeStaleCaches(true);
+    // add click listener to clear cache
+    cache_element = document.getElementById("clear-cache")
+    cache_element.addEventListener("click", function (e) {
+        this.innerHTML = "Cleared";
+        utils.cache_purge();
 
-    var button = this;
-    setTimeout(function () {
-        button.innerHTML = "Clear cache";
-    }, 1500);
-});
+        var button = this;
+        setTimeout(function () {
+            button.innerHTML = "Clear cache";
+        }, 1500);
+    });
 
-restoreOptions();
+    version_element = document.getElementById("ext_version")
+    extension_version = utils.getExtensionVersion()
+    version_element.innerHTML = "Version: <b>v" + extension_version + "</b>"
+
+})

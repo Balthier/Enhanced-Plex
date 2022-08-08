@@ -1,13 +1,14 @@
 ## **v3.0.0**
-#### 2021-10-21
+#### 2022-08-08
 - Bug: Fixed a display issue with the Missing Episodes plugin, when the amount of episodes exceeds the max Plex will initially generate
 - Enhancement: Restructured the extension to improve readability on Github
 - Enhancement: Created functionality for directly searching TMDB for various IDs
 - Enhancement: TVDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API
-- Enhancement: Trakt Plugin - Combined and optimised the code, and improved potential match capabilities by utilising the Trakt API
 - Enhancement: TMDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API
-- Enhancement: Missing Episodes Plugin - Combined and optimised the code, and improved potential match capabilities by utilising both the TMDB and Trakt APIs
 - Enhancement: IMDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API
+- Enhancement: Trakt Plugin - Combined and optimised the code, and improved potential match capabilities by utilising the Trakt API
+- Enhancement: Missing Episodes Plugin - Combined and optimised the code, and improved potential match capabilities by utilising both the TMDB and Trakt APIs
+- Enhancement: Stats Plugin: Rewrote and redesigned the plugin
 - Enhancement: Improved debugging content and effectiveness
 - Miscellaneous: Migrated to manifest v3
 

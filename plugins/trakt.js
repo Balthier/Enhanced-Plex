@@ -66,17 +66,9 @@ trakt = {
     },
 
     constructTraktLink: function (trakt_url) {
-        var sister_containers = document.querySelectorAll("[class*=sprinkles_display_flex]")[2].children;
-        var container_element_template = sister_containers[0]
         var logo_url = utils.getResourcePath("trakt/trakt_logo.png");
         var trakt_container_element = document.createElement("span");
         var trakt_link_element = document.createElement("a");
-
-        if (container_element_template) {
-            // Set the class of the last element
-            var last_sister = sister_containers[sister_containers.length - 1];
-            last_sister.setAttribute("class", container_element_template.getAttribute("class"));
-        }
 
         trakt_container_element.setAttribute("id", "trakt-container");
         trakt_link_element.setAttribute("id", "trakt-link");

@@ -79,8 +79,13 @@ trakt_api = {
                 utils.debug("Trakt API: No type selected. Aborting...");
                 return
             }
-            var data = await utils.getJSONWithCache(api_url, custom_headers);
-            return data;
+            var data = await utils.getJSON(api_url, custom_headers) || {};
+            if (Object.keys(data).length) {
+                return data;
+            }
+            else {
+                utils.debug("Trakt API: No data received.")
+            }
         }
         else {
             utils.debug("Trakt API: Could not set Trakt headers... Aborting.");

@@ -7,15 +7,8 @@ tvdb = {
 
     constructTvdbLink: function (tvdb_id) {
         var logo_url = utils.getResourcePath("tvdb/tvdb_logo.png");
-        var sister_containers = document.querySelectorAll("[class*=sprinkles_display_flex]")[2].children;
-        var container_element_template = sister_containers[0];
         var tvdb_container_element = document.createElement("span");
         tvdb_container_element.setAttribute("id", "tvdb-container");
-        tvdb_container_element.setAttribute("class", container_element_template.getAttribute("class"));
-
-        // Set the class of the last element
-        var last_sister = sister_containers[sister_containers.length - 1];
-        last_sister.setAttribute("class", container_element_template.getAttribute("class"));
 
         // construct link
         var tvdb_element_link = document.createElement("a");
@@ -43,7 +36,7 @@ tvdb = {
             utils.debug("TVDB Plugin: TMDB API returned the following TVDB ID (" + tvdb_id + ")");
             var tvdb_link = tvdb.constructTvdbLink(tvdb_id);
             utils.debug("TVDB Plugin: Inserting TVDB container into page");
-            document.querySelectorAll("[class*=sprinkles_display_flex]")[2].appendChild(tvdb_link);
+            document.querySelectorAll("[data-testid*=preplay-thirdTitle]")[0].children[0].appendChild(tvdb_link);
         }
         else {
             utils.debug("TVDB Plugin: TMDB API did not find the TVDB ID... Aborting.");

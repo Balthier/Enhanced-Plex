@@ -1,22 +1,25 @@
-var global_settings;
-
 utils = {
-    debug: function (output) {
-        if (global_settings["debug"] === "on") {
+    debug: async (output) => {
+        debug_cache = await chrome.storage.sync.get("options_debug") || {}
+        debug_unfiltered_cache = await chrome.storage.sync.get("options_debug_unfiltered") || {}
+        debug = debug_cache["options_debug"]
+        debug_unfiltered = debug_unfiltered_cache["options_debug_unfiltered"]
+        if (debug === "true") {
             if (typeof output === "string") {
-                if (global_settings["debug_unfiltered"] === "off") {
+                if (debug_unfiltered === "false") {
                     if (typeof global_plex_token != "undefined") {
                         output = output.replace(global_plex_token, "XXXXXXXXXXXXXXXXXXXX");
                     }
                     output = output.replace(/X-Plex-Token=[\w\d]{20}/, "X-Plex-Token=XXXXXXXXXXXXXXXXXXXX");
                     output = output.replace(/\d+\.\d+\.\d+\.\d+/, "XXX.XXX.X.XX");
                 }
-
-                console.log("EnhancedPLEX Debug: " + output);
+                date = new Date()
+                now = date.toLocaleTimeString();
+                console.log("[" + now + "] EnhancedPLEX Debug: " + output);
             }
             else {
                 // don't filter xml, use nodeType attribute to detect
-                if (global_settings["debug_unfiltered"] === "off" && !("nodeType" in output)) {
+                if (debug_unfiltered === "false" && !("nodeType" in output)) {
                     // clone object so we can filter out values
                     var output_ = {};
                     for (var key in output) {
@@ -47,12 +50,12 @@ utils = {
     },
 
     getOptionsURL: function () {
-        var options_url = chrome.runtime.getURL("resources/options/options.html");
+        var options_url = chrome.runtime.getURL("resources/extras/options.html");
         return options_url;
     },
 
     getStatsURL: function () {
-        var stats_url = chrome.runtime.getURL("resources/stats/stats.html");
+        var stats_url = chrome.runtime.getURL("resources/extras/stats.html");
         return stats_url;
     },
 
@@ -74,29 +77,6 @@ utils = {
         return overlay;
     },
 
-    background_storage_set: function (key, value) {
-        chrome.runtime.sendMessage({ "type": "set", "key": key, "value": value });
-    },
-
-    background_storage_get: function (key, callback) {
-        chrome.runtime.sendMessage({ "type": "get", "key": key }, function (results) {
-            callback(results);
-        });
-    },
-
-    storage_set: function (key, value) {
-        var hash = {};
-        hash[key] = value;
-        chrome.storage.sync.set(hash);
-    },
-
-    storage_get: function (key, callback) {
-        chrome.storage.sync.get(key, function (result) {
-            var value = result[key];
-            callback(value);
-        });
-    },
-
     storage_get_all: function (callback) {
         chrome.storage.sync.get(function (results) {
             global_settings = results;
@@ -104,73 +84,92 @@ utils = {
         });
     },
 
-    local_storage_set: function (key, value) {
-        var hash = {};
-        hash[key] = value;
-        chrome.storage.local.set(hash);
-    },
-
-    local_storage_get: function (key) {
-        result = chrome.storage.local.get(key);
-        if (result) {
-            var value = result[key];
-            return value;
+    cache_purge: async () => {
+        types = ["sync", "local"]
+        for (var i = 0; i < types.length; i++) {
+            type = types[i]
+            if (type === "sync") {
+                command = chrome.storage.sync
+            }
+            else if (type === "local") {
+                command = chrome.storage.local
+            }
+            else {
+                utils.debug("Utils[async]: WARNING! Unrecognised storage type: " + type);
+                return
+            }
+            command.get(null, function (data) {
+                for (var data_key in data) {
+                    if (data_key.match(/^cache\-time\-.+/g)) {
+                        if (data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^cache\-time\-stats.+/g)) {
+                            return
+                        }
+                        else {
+                            utils.debug("Utils [async]: Removing the following entries from " + type + " storage")
+                            command.remove(data_key)
+                            utils.debug(data_key)
+                            var key = data_key.replace("cache-time-", "");
+                            command.remove(key)
+                            utils.debug(key)
+                        }
+                    }
+                }
+            })
         }
     },
 
-    local_storage_remove: function (key) {
-        chrome.storage.local.remove(key);
-    },
-
-    cache_set: function (key, data) {
-        cache_keys = utils.local_storage_get("cache_keys")
-        if (!cache_keys) {
-            cache_keys = {};
+    cache_get: async (key, type) => {
+        if (type === "sync") {
+            command = chrome.storage.sync
         }
-        // store cached url keys with timestamps
-        cache_keys[key] = { "timestamp": new Date().getTime() };
-        utils.local_storage_set("cache_keys", cache_keys);
-
-        // store cached data with url key
-        utils.local_storage_set(key, data);
-    },
-
-    cache_get: function (key) {
-        var data = utils.local_storage_get(key)
-        if (data) {
-            utils.debug("Utils: Cache hit");
-            return data
+        else if (type === "local") {
+            command = chrome.storage.local
+        }
+        utils.debug("Utils [async]: Retrieving the following from cache: " + key);
+        var cache_key = "cache-time-" + key
+        var expire_data = await command.get(cache_key) || {};
+        if (Object.keys(expire_data).length) {
+            var timestamp = Object.values(expire_data)[0]
+            var time_now = new Date().getTime()
+            var time_diff = time_now - timestamp
+            if (time_diff > 604800000) {
+                utils.debug("Utils: Found stale data, removing " + key + " from " + type + " storage");
+                command.remove(cache_key);
+                command.remove(key);
+            }
+        }
+        response = await command.get(key) || {};
+        if (Object.keys(response).length) {
+            utils.debug("Utils [async]: Received the following response from " + type + " storage: ");
+            utils.debug(response);
+            return response;
         }
         else {
-            utils.debug("Utils: Cache miss");
+            utils.debug("Utils [async]: No cache found for: " + key + " in " + type + " storage")
             return
         }
     },
 
-    purgeStaleCaches: function (force) {
-        utils.local_storage_get("cache_keys", function (cache_keys) {
-            // check if there is any cached data yet
-            if (!cache_keys) {
-                utils.debug("Utils: No cached data, skipping cache purge");
-                return;
-            }
+    cache_set: async (key, value, type) => {
+        if (type === "sync") {
+            command = chrome.storage.sync
+        }
+        else if (type === "local") {
+            command = chrome.storage.local
+        }
+        utils.debug("Utils [async]: Committing the following to cache in " + type + " storage: " + key + " With the value of: ");
+        var object = {}
+        object[key] = value
+        utils.debug(object);
+        command.set(object);
+        var cache_key = "cache-time-" + key
+        var time_now = new Date().getTime()
+        utils.debug("Utils [async]: Setting cache timestamp in " + type + " storage: " + cache_key);
+        var cache_data = {}
+        cache_data[cache_key] = time_now
+        utils.debug(cache_data);
+        command.set(cache_data);
 
-            var time_now = new Date().getTime();
-
-            // iterate over cache keys and check if stale
-            for (var key in cache_keys) {
-                var timestamp = cache_keys[key]["timestamp"];
-
-                // 3 day cache
-                if (time_now - timestamp > 259200000 || force) {
-                    utils.debug("Utils: Found stale data, removing " + key);
-                    utils.local_storage_remove(key);
-
-                    delete cache_keys[key];
-                    utils.local_storage_set("cache_keys", cache_keys);
-                }
-            }
-        });
     },
 
     getResourcePath: function (resource) {
@@ -184,148 +183,59 @@ utils = {
         text = await response.text();
         return text;
     },
+
     getXML: async (url) => {
-        utils.debug("Utils: Fetching XML from " + url);
+        utils.debug("Utils [async]: Fetching XML from " + url);
         response = await fetch(url);
         text = await response.text();
         var parser = new DOMParser();
         var xml = parser.parseFromString(text, "application/xml");
-        utils.debug("Utils: Recieved XML response " + url);
+        utils.debug("Utils [async]: Recieved XML response " + url);
         utils.debug(xml);
         return xml;
     },
 
-    getXMLOld: function (url, callback) {
-        utils.debug("Fetching XML from " + url);
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-        xhr.onload = function (e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    utils.debug("Recieved XML response");
-                    utils.debug(xhr.responseXML);
-                    callback(xhr.responseXML);
-                }
-                else {
-                    callback(xhr.statusText);
-                }
-            }
-        };
-        xhr.onerror = function () {
-            callback(xhr.statusText);
-        };
-        xhr.send();
-    },
-
-    getXMLWithTimeout: function (url, timeout) {
-        utils.debug("Utils: Fetching XML from " + url);
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", url, true);
-        xhr.onload = function (e) {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    utils.debug("Utils: Recieved XML response from " + url);
-                    utils.debug(xhr.responseXML);
-                    return xhr.responseXML;
-                }
-                else {
-                    return xhr.statusText;
-                }
-            }
-        };
-        xhr.onerror = function () {
-            return xhr.statusText;
-        };
-        xhr.timeout = timeout;
-        xhr.ontimeout = function () {
-            return xhr.statusText;
-        };
-        xhr.send();
-    },
-
-    getJSONWithCache: async (url, custom_headers) => {
-        utils.debug("Utils: Checking for JSON Cache for " + url);
-        var cacheCheck = await utils.cache_get("cache-" + url);
-        if (cacheCheck) {
+    getXML_test: async (url) => {
+        utils.debug("Utils [async]: Checking for XML Cache for " + url);
+        key = "xml-cache-" + url
+        var cacheCheck = await utils.cache_get(key, "local") || {};
+        if (Object.keys(cacheCheck).length) {
             return cacheCheck;
         }
         else {
-            // cache missed or stale, grabbing new data
-            var data = await utils.getJSON(url, custom_headers);
-            if (data) {
-                utils.cache_set("cache-" + url, data);
-                return data;
-            }
+            utils.debug("Utils [async]: Fetching XML from " + url);
+            response = await fetch(url);
+            text = await response.text();
+            var parser = new DOMParser();
+            var xml = parser.parseFromString(text, "application/xml");
+            utils.debug("Utils [async]: Recieved XML response " + url);
+            utils.debug(xml);
+            utils.cache_set(key, xml, "local");
+            return xml;
         }
+
     },
 
     getJSON: async (url, custom_headers) => {
-        var data
-        utils.debug("Utils: Fetching JSON from " + url);
-        response = await fetch(url, {
-            method: 'GET',
-            headers: custom_headers
-        });
-        if (response.ok) {
+        utils.debug("Utils [async]: Checking for JSON Cache for " + url);
+        key = "json-cache-" + url
+        var cacheCheck = await utils.cache_get(key, "local") || {};
+        if (Object.keys(cacheCheck).length) {
+            utils.debug("Utils [async]: Cache found for " + url);
+            return cacheCheck[key];
+        }
+        else {
+            // cache missed or stale, grabbing new data
+            utils.debug("Utils [async]: Fetching JSON from " + url);
+            response = await fetch(url, {
+                method: 'GET',
+                headers: custom_headers
+            });
             json = await response.json();
             utils.debug("Utils: Recieved JSON response");
             utils.debug(json);
-            //data = JSON.parse(json);
+            utils.cache_set(key, json, "local");
+            return json;
         }
-        //return data
-        return json
-    },
-
-    setDefaultOptions: function (callback) {
-        utils.storage_get_all(function (settings) {
-            if (!("missing_episodes" in settings)) {
-                utils.storage_set("missing_episodes", "on");
-            }
-            if (!("trakt_movies" in settings)) {
-                utils.storage_set("trakt_movies", "on");
-            }
-
-            if (!("trakt_shows" in settings)) {
-                utils.storage_set("trakt_shows", "on");
-            }
-            if (!("imdb_movies" in settings)) {
-                utils.storage_set("imdb_movies", "on");
-            }
-
-            if (!("imdb_shows" in settings)) {
-                utils.storage_set("imdb_shows", "on");
-            }
-
-            if (!("tmdb_link" in settings)) {
-                utils.storage_set("tmdb_link", "on");
-            }
-
-            if (!("tvdb_link" in settings)) {
-                utils.storage_set("tvdb_link", "off");
-            }
-
-            if (!("stats_link" in settings)) {
-                utils.storage_set("stats_link", "on");
-            }
-            /*if (!("hide_watched" in settings)) {
-                utils.storage_set("hide_watched", "on");
-            }*/
-
-            if (!("last_version" in settings)) {
-                utils.storage_set("last_version", "");
-            }
-
-            if (!("debug" in settings)) {
-                utils.storage_set("debug", "off");
-            }
-
-            if (!("debug_unfiltered" in settings)) {
-                utils.storage_set("debug_unfiltered", "off");
-            }
-
-            if (callback) {
-                callback(settings);
-            }
-        });
     }
 }

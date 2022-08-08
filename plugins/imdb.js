@@ -5,18 +5,9 @@ imdb = {
         imdb.insertImdbLink(type, metadata_xml);
     },
     constructImdbLink: function (imdb_url) {
-        var sister_containers = document.querySelectorAll("[class*=sprinkles_display_flex]")[2].children;
-        var container_element_template = sister_containers[0]
         var logo_url = utils.getResourcePath("imdb/imdb_logo.png")
         var imdb_container_element = document.createElement("span");
         imdb_container_element.setAttribute("id", "imdb-container");
-        imdb_container_element.setAttribute("class", container_element_template.getAttribute("class"));
-
-        if (container_element_template) {
-            // Set the class of the last element
-            var last_sister = sister_containers[sister_containers.length - 1];
-            last_sister.setAttribute("class", container_element_template.getAttribute("class"));
-        }
 
         // construct link
         var imdb_element_link = document.createElement("a");
