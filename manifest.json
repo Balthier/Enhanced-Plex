@@ -1,37 +1,35 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Enhanced Plex",
   "description": "Adds several features to the Plex/Web client for Plex",
-  "version": "2.1.9",
-  "options_page": "options.html",
+  "version": "3.0.0",
+  "options_page": "resources/extras/options.html",
   "content_scripts": [
     {
       "matches": [
         "https://app.plex.tv/desktop*",
         "http://app.plex.tv/desktop*"
       ],
-      "run_at": "document_end",
+      "run_at": "document_idle",
       "css": [
         "css/enhancedplex.css"
       ],
       "js": [
-        "utils.js",
-        "apis/tmdb.js",
-        "apis/trakt.js",
+        "js/utils.js",
+        "apis/trakt_api.js",
+        "apis/tmdb_api.js",
         "plugins/imdb.js",
         "plugins/missing_episodes.js",
         "plugins/stats.js",
         "plugins/tmdb.js",
         "plugins/trakt.js",
         "plugins/tvdb.js",
-        "main.js"
+        "js/main.js"
       ]
     }
   ],
   "background": {
-    "scripts": [
-      "background.js"
-    ]
+    "service_worker": "js/service_worker.js"
   },
   "permissions": [
     "storage"
@@ -42,8 +40,13 @@
     "128": "resources/icon128.png"
   },
   "web_accessible_resources": [
-    "resources/*",
-    "options.html",
-    "stats.html"
+    {
+      "resources": [
+        "resources/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
   ]
 }

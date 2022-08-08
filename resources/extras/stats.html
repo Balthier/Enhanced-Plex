@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>EnhancedPLEX stats</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/stats.css">
+    <script src="/js/utils.js"></script>
+    <script src="/js/chart-v3.7.0.min.js"></script>
+    <script src="/js/stats.js"></script>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="#">Menu</a>
+                <ul>
+                    <li><a href="https://app.plex.tv/desktop/#!/" target="_blank">Plex</a></li>
+                    <li><a href="#">Stats (here)</a></li>
+                    <li><a href="/resources/extras/options.html">Options</a></li>
+                    <li><a href="/resources/extras/changelog.html">Changelog</a></li>
+                </ul>
+            </li>
+        </ul>
+        <span id="refresh-data-container" class="refresh-data">
+        </span>
+    </nav>
+    <div id="loading-container">
+        <div class="loading-text">
+            LOADING</br>
+            <i>Larger libraries will take time to process</i>
+        </div>
+    </div>
+    <div id="shows-container">
+        <div class="heading" id="shows-heading">TV Shows</div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">First Aired</div>
+            </div>
+            <div class="chart-container">
+                <canvas class="chart chart-center" id="ShowsByAiredYear"></canvas>
+            </div>
+        </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Genre</div>
+                <div class="chart-title-right">Resolution</div>
+            </div>
+            <div class="chart-container chart-left">
+                <canvas class="chart chart-left" id="ShowsByGenre"></canvas>
+            </div>
+            <div class="chart-container chart-right">
+                <canvas class="chart chart-right" id="EpisodesByResolution"></canvas>
+            </div>
+        </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Originally Added</div>
+            </div>
+            <div class="chart-container">
+                <canvas class="chart chart-center" id="ShowsByAddedAt"></canvas>
+            </div>
+        </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Audience Rating</div>
+                <div class="chart-title-right">Content Rating</div>
+            </div>
+            <div class="chart-container chart-left">
+                <canvas class="chart chart-left" id="ShowsByAudienceRating"></canvas>
+            </div>
+            <div class="chart-container chart-right">
+                <canvas class="chart chart-right" id="ShowsByContentRating"></canvas>
+            </div>
+        </div>
+    </div>
+    <div id="movies-container">
+        <div class="heading" id="shows-heading">Movies</div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Year</div>
+            </div>
+            <div class="chart-container">
+                <canvas class="chart chart-center" id="MoviesByReleaseYear"></canvas>
+            </div>
+        </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Genre</div>
+                <div class="chart-title-right">Resolution</div>
+            </div>
+            <div class="chart-container chart-left">
+                <canvas class="chart chart-left" id="MoviesByGenre"></canvas>
+            </div>
+            <div class="chart-container chart-right">
+                <canvas class="chart chart-right" id="MoviesByResolution"></canvas>
+            </div>
+        </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Originally Added</div>
+            </div>
+            <div class="chart-container">
+                <canvas class="chart chart-center" id="MoviesByAddedAt"></canvas>
+            </div>
+        </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Audience Rating</div>
+                <div class="chart-title-right">Content Rating</div>
+            </div>
+            <div class="chart-container chart-left">
+                <canvas class="chart chart-left" id="MoviesByAudienceRating"></canvas>
+            </div>
+            <div class="chart-container chart-right">
+                <canvas class="chart chart-right" id="MoviesByContentRating"></canvas>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

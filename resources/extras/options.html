@@ -1,0 +1,129 @@
+<html>
+
+<head>
+    <title>EnhancedPLEX options</title>
+    <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <link rel="stylesheet" type="text/css" href="/css/options.css">
+    <script src="/js/utils.js"></script>
+    <script src="/js/options.js"></script>
+</head>
+
+<body>
+    <nav>
+        <ul>
+            <li><a href="#">Menu</a>
+                <ul>
+                    <li><a href="https://app.plex.tv/desktop/#!/" target="_blank">Plex</a></li>
+                    <li><a href="/resources/extras/stats.html">Stats</a></li>
+                    <li><a href="#">Options (here)</a></li>
+                    <li><a href="/resources/extras/changelog.html">Changelog</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <div class="heading">Options</div>
+    <div class="field-row" id="container">
+        <div class="field-row" id="tmdb_link">
+            <div class="label">The Movie Database link:</div>
+            <div class="field">
+                <input type="radio" id="tmdb_link_on" name="tmdb_link" value="on" />
+                <label for="tmdb_link_on">ON</label>
+                <input type="radio" id="tmdb_link_off" name="tmdb_link" value="off" />
+                <label for="tmdb_link_off">OFF</label>
+            </div>
+        </div>
+        <div class="field-row" id="tvdb_link">
+            <div class="label">TheTVDB link:</div>
+            <div class="field">
+                <input type="radio" id="tvdb_link_on" name="tvdb_link" value="on" />
+                <label for="tvdb_link_on">ON</label>
+                <input type="radio" id="tvdb_link_off" name="tvdb_link" value="off" />
+                <label for="tvdb_link_off">OFF</label>
+            </div>
+        </div>
+        <div class="field-row" id="missing_eps">
+            <div class="label">Show missing seasons/episodes:</div>
+            <div class="field">
+                <input type="radio" id="missing_episodes_on" name="missing_episodes" value="on" />
+                <label for="missing_episodes_on">ON</label>
+                <input type="radio" id="missing_episodes_off" name="missing_episodes" value="off" />
+                <label for="missing_episodes_off">OFF</label>
+            </div>
+        </div>
+        <div class="field-row" id="stats_link">
+            <div class="label">Stats page link:</div>
+            <div class="field">
+                <input type="radio" id="stats_link_on" name="stats_link" value="on" />
+                <label for="stats_link_on">ON</label>
+                <input type="radio" id="stats_link_off" name="stats_link" value="off" />
+                <label for="stats_link_off">OFF</label>
+            </div>
+        </div>
+        <div class="field-row" id="trakt_movies_link">
+            <div class="label">Trakt Movies link:</div>
+            <div class="field">
+                <input type="radio" id="trakt_movies_link_on" name="trakt_movies_link" value="on" />
+                <label for="trakt_movies_link_on">ON</label>
+                <input type="radio" id="trakt_movies_link_off" name="trakt_movies_link" value="off" />
+                <label for="trakt_movies_link_off">OFF</label>
+            </div>
+        </div>
+        <div class="field-row" id="trakt_shows_link">
+            <div class="label">Trakt Shows link:</div>
+            <div class="field">
+                <input type="radio" id="trakt_shows_link_on" name="trakt_shows_link" value="on" />
+                <label for="trakt_shows_link_on">ON</label>
+                <input type="radio" id="trakt_shows_link_off" name="trakt_shows_link" value="off" />
+                <label for="trakt_shows_link_off">OFF</label>
+            </div>
+        </div>
+        <div class="field-row" id="imdb_movies_link">
+            <div class="label">IMDB Movies link:</div>
+            <div class="field">
+                <input type="radio" id="imdb_movies_link_on" name="imdb_movies_link" value="on" />
+                <label for="imdb_movies_link_on">ON</label>
+                <input type="radio" id="imdb_movies_link_off" name="imdb_movies_link" value="off" />
+                <label for="imdb_movies_link_off">OFF</label>
+            </div>
+        </div>
+        <div class="field-row" id="imdb_shows_link">
+            <div class="label">IMDB Shows link:</div>
+            <div class="field">
+                <input type="radio" id="imdb_shows_link_on" name="imdb_shows_link" value="on" />
+                <label for="imdb_shows_link_on">ON</label>
+                <input type="radio" id="imdb_shows_link_off" name="imdb_shows_link" value="off" />
+                <label for="imdb_shows_link_off">OFF</label>
+            </div>
+        </div>
+        <div class="field-row" id="debug">
+            <div class="label">Debug:</div>
+            <div class="field">
+                <input type="radio" id="debug_on" name="debug" value="on" />
+                <label for="debug_on">ON</label>
+                <input type="radio" id="debug_off" name="debug" value="off" />
+                <label for="debug_off">OFF</label>
+            </div>
+            <div class="label extra-options-label debug-extra">Show tokens and IP addresses:</div>
+            <div class="field extra-options debug-extra">
+                <input type="radio" id="debug_unfiltered_on" name="debug_unfiltered" value="on">
+                <label for="debug_unfiltered_on">YES</label>
+                <input type="radio" id="debug_unfiltered_off" name="debug_unfiltered" value="off">
+                <label for="debug_unfiltered_off">NO</label>
+            </div>
+        </div>
+        <div class="field-row" id="cache">
+            <div class="label">Clear cached extension data:</div>
+            <div class="field">
+                <button id="clear-cache">Clear cache</button>
+            </div>
+        </div>
+        <ul class="thanks">
+            <li>This product uses the <a href="http://trakt.tv" target="blank">trakt.tv</a> API</li>
+            <li>This product uses the <a href="http://www.themoviedb.org" target="blank">TMDb</a> API</li>
+            <li>Known Issues <a href="https://github.com/Balthier/Enhanced-Plex/issues" target="blank">HERE</a></li>
+            <li>Don't forget to give us a review <a href="https://chrome.google.com/webstore/detail/enhanced-plex/kjmpdmgijjacblfohigcnpkeaehalmai/reviews" target="blank">HERE</a>!</li>
+            <li id="ext_version">Version: <b>v3.0.0</b></li>
+        </ul>
+</body>
+
+</html>
