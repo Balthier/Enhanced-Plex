@@ -3,6 +3,11 @@ Enhanced Plex
 
 [Chrome Store](https://chrome.google.com/webstore/detail/enhanced-plex/kjmpdmgijjacblfohigcnpkeaehalmai)
 
+## NOTE
+Working is still ongoing, however slower that I would like. I'm currently mainly working on version 3, which will significantly improve the series matching for sites like IMDB/Trak.tv/etc. amoung other things.
+
+Please report any bugs to the Issues tab, and I'll make sure they are prioritize where possible
+
 Features
 --------------
 - Adds link to view the themoviedb page for movies
