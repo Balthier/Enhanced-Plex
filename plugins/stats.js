@@ -25,15 +25,5 @@ stats = {
 
         container.appendChild(stats_link);
         nav_bar_right.insertBefore(container, nav_bar_right.firstChild);
-
-        // event handler for firefox to open stats page
-        var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-        if (is_firefox) {
-            try {
-                stats_link.addEventListener("click", utils.openStatsPage, false);
-            }
-            catch (e) {
-            }
-        }
     }
 }
