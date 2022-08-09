@@ -6,7 +6,9 @@ Enhanced Plex
 ## NOTE
 Working is still ongoing, however slower that I would like. I'm currently mainly working on version 3, which will significantly improve the series matching for sites like IMDB/Trak.tv/etc. amoung other things.
 
-Please report any bugs to the Issues tab, and I'll make sure they are prioritize where possible
+Please report any bugs to the Issues tab, and I'll make sure they are prioritized where possible
+
+UPDATE: v3.0.0 is currently under review, and should be live in the coming weeks
 
 Features
 --------------
