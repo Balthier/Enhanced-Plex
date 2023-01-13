@@ -1,3 +1,9 @@
+## **v3.0.1**
+#### 2023-01-13
+- Bug: Fixed a display issue with the Missing Episodes toggle button
+- Bug: Fixed a display issue with the plugin icons in Plex for Web 4.95.2
+- Bug: Fixed a configuration issue where the wrong url for the Options page was used during initial installation
+
 ## **v3.0.0**
 #### 2022-08-08
 - Bug: Fixed a display issue with the Missing Episodes plugin, when the amount of episodes exceeds the max Plex will initially generate
