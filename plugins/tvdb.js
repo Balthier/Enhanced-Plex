@@ -1,14 +1,22 @@
 tvdb = {
     metadata_xml: null,
 
-    init: function (metadata_xml) {
-        tvdb.insertTvdbLink(metadata_xml);
+    init: function (metadata_xml, parent_element) {
+        tvdb.insertTvdbLink(metadata_xml, parent_element);
     },
 
-    constructTvdbLink: function (tvdb_id) {
+    constructTvdbLink: function (tvdb_id, parent_element) {
         var logo_url = utils.getResourcePath("tvdb/tvdb_logo.png");
         var tvdb_container_element = document.createElement("span");
         tvdb_container_element.setAttribute("id", "tvdb-container");
+        template_check = parent_element.children[0].children[0].children[0]
+        if (template_check) {
+            tvdb_container_element.classList = template_check.classList
+        }
+        else {
+            tvdb_container_element.classList = parent_element.children[0].classList
+        }
+        tvdb_container_element.style.backgroundColor = "transparent";
 
         // construct link
         var tvdb_element_link = document.createElement("a");
@@ -26,7 +34,7 @@ tvdb = {
         return tvdb_container_element;
     },
 
-    insertTvdbLink: async (metadata_xml) => {
+    insertTvdbLink: async (metadata_xml, parent_element) => {
         // insert tvdb link element to bottom of metadata container
         var type = "show";
         var site = "tvdb"
@@ -34,9 +42,9 @@ tvdb = {
         var tvdb_id = await tmdb_api.getId(site, type, metadata_xml);
         if (tvdb_id) {
             utils.debug("TVDB Plugin: TMDB API returned the following TVDB ID (" + tvdb_id + ")");
-            var tvdb_link = tvdb.constructTvdbLink(tvdb_id);
+            var tvdb_link = tvdb.constructTvdbLink(tvdb_id, parent_element);
             utils.debug("TVDB Plugin: Inserting TVDB container into page");
-            document.querySelectorAll("[data-testid*=preplay-thirdTitle]")[0].children[0].appendChild(tvdb_link);
+            document.getElementById("Enhanced-Plex-Banner").appendChild(tvdb_link);
         }
         else {
             utils.debug("TVDB Plugin: TMDB API did not find the TVDB ID... Aborting.");

@@ -2,23 +2,23 @@ trakt = {
     metadata_xml: null,
     server: null,
 
-    init: function (metadata_xml, type, server) {
+    init: function (metadata_xml, type, server, parent_element) {
         trakt.server = server;
 
         if ((type === "show") || (type === "movie")) {
             utils.debug("Trakt Plugin: Processing Show/Movie...");
-            trakt.processTarget(type, metadata_xml);
+            trakt.processTarget(type, metadata_xml, parent_element);
         }
         else if (type === "episode") {
             utils.debug("Trakt Plugin: Processing Episode...");
-            trakt.processEpisode();
+            trakt.processEpisode(parent_element);
         }
         else {
             utils.debug("Trakt Plugin: Unknown Type... (Type: " + type + ")");
         }
     },
 
-    processTarget: async (type, metadata_xml) => {
+    processTarget: async (type, metadata_xml, parent_element) => {
         var site = "imdb";
         utils.debug("Trakt Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
         var imdb_id = await tmdb_api.getId(site, type, metadata_xml);
@@ -62,13 +62,25 @@ trakt = {
             }
         }
         utils.debug("Trakt Plugin: Building link using - " + url);
-        trakt.insertTraktLink(url);
+        trakt.insertTraktLink(url, parent_element);
     },
 
-    constructTraktLink: function (trakt_url) {
+    constructTraktLink: function (trakt_url, parent_element) {
         var logo_url = utils.getResourcePath("trakt/trakt_logo.png");
         var trakt_container_element = document.createElement("span");
         var trakt_link_element = document.createElement("a");
+        template_check = parent_element.children[0].children[0].children[0]
+        utils.debug(template_check);
+        utils.debug(parent_element);
+        if (template_check) {
+            trakt_container_element.classList = template_check.classList
+            utils.debug("Trakt Plugin: Depth 3");
+        }
+        else {
+            trakt_container_element.classList = parent_element.children[0].classList
+            utils.debug("Trakt Plugin: Depth 2");
+        }
+        trakt_container_element.style.backgroundColor = "transparent";
 
         trakt_container_element.setAttribute("id", "trakt-container");
         trakt_link_element.setAttribute("id", "trakt-link");
@@ -86,13 +98,13 @@ trakt = {
         return trakt_container_element;
     },
 
-    insertTraktLink: function (url) {
+    insertTraktLink: function (url, parent_element) {
         // create trakt link element
-        var trakt_container = trakt.constructTraktLink(url);
+        var trakt_container = trakt.constructTraktLink(url, parent_element);
 
         // insert trakt link element to bottom of metadata container
         utils.debug("Trakt Plugin: Inserting trakt container into page");
         //document.querySelectorAll("[class*=sprinkles_display_flex]")[2].appendChild(trakt_container);
-        document.querySelectorAll("[data-testid*=preplay-thirdTitle]")[0].children[0].appendChild(trakt_container);
+        document.getElementById("Enhanced-Plex-Banner").appendChild(trakt_container);
     }
 }
