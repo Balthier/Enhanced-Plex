@@ -8,67 +8,7 @@ var MainPageLoaded = "button";
 var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
 var TVMoviePageLoaded = "PrePlayDetailsContainer-posterContainer-";
 var StatsButtonParent = "NavBar-right";
-
-/*function checkIfUpdated() {
-    var last_version = settings["options_last_version"];
-    var version = utils.getExtensionVersion();
-
-    if (last_version != version && show_update_text) {
-        showUpdatePopup();
-        settings["options_last_version"] = version;
-        utils.cache_set("last_version", version);
-    }
-}
-
-function showUpdatePopup() {
-    var options_url = utils.getOptionsURL();
-    var stats_url = utils.getStatsURL();
-    var formatted_update_text = update_text.replace("%OPTIONSURL%", options_url).replace("%STATSPAGEURL%", stats_url);
-    showPopup("New update! - " + formatted_update_text);
-}
-
-function closePopup() {
-    var popup_container = document.getElementById("update-box");
-    popup_container.parentNode.removeChild(popup_container);
-
-    var overlay = document.getElementById("overlay");
-    overlay.style.display = "none";
-    overlay.removeEventListener("click", closePopup, false);
-}
-
-function showPopup(messsage) {
-    var overlay = utils.insertOverlay();
-    overlay.style.display = "block";
-
-    var popup_container = document.createElement("div");
-    popup_container.setAttribute("class", "update-box");
-    popup_container.setAttribute("id", "update-box")
-
-    var logo = document.createElement("img");
-    logo.setAttribute("src", utils.getResourcePath("icon_transparent.png"));
-
-    var message = document.createElement("p");
-    message.innerHTML = messsage;
-
-    popup_container.appendChild(logo);
-    popup_container.appendChild(message);
-    overlay.appendChild(popup_container);
-
-    var is_firefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
-    if (is_firefox) {
-        try {
-            document.getElementById("options-page-link").addEventListener("click", utils.openOptionsPage, false);
-        }
-        catch (e) {
-        }
-        try {
-            document.getElementById("stats-page-link").addEventListener("click", utils.openStatsPage, false);
-        }
-        catch (e) {
-        }
-    }
-    overlay.addEventListener("click", closePopup, false);
-}*/
+var plexParentBanner = "preplay-thirdTitle";
 
 function runOnReady() {
     utils.debug("Main: runOnReady called. Starting watch");
@@ -132,6 +72,13 @@ function removeLoadingIcon() {
     if (loading_icon) {
         loading_icon.parentNode.removeChild(loading_icon);
     }
+}
+
+function insertBannerTemplate() {
+    var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
+    var banner_element = document.createElement("span");
+    banner_element.setAttribute("id", "Enhanced-Plex-Banner");
+    plex_parent.appendChild(banner_element);
 }
 
 async function getServerAddresses(requests_url, plex_token) {
@@ -273,6 +220,7 @@ async function main() {
 
         // check if on movie/tv show details page
         else if (TVMoviePageDetection.test(page_url)) {
+            insertBannerTemplate();
             utils.debug("Main [async]: We are on a Movie/TV show details page");
             var page_identifier = page_url.match(/\/server\/(.[^\/]+)(.*)%2Flibrary%2Fmetadata%2F(\d+)/);
             var machine_identifier = page_identifier[1];
@@ -293,6 +241,7 @@ async function main() {
             const timer = ms => new Promise(res => setTimeout(res, ms))
             await timer(100);
             if (Object.keys(metadata_xml).length) {
+                var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
                 if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory").length > 0) {
                     // we're on a tv show page
                     utils.debug("Main [async]: We are on a TV show index page");
@@ -304,7 +253,7 @@ async function main() {
                         // insert imdb link
                         if (settings["options_imdb_shows_link"] === "true") {
                             utils.debug("Main [async]: imdb_shows is enabled");
-                            imdb.init(metadata_xml, "show");
+                            imdb.init(metadata_xml, "show", plex_parent);
                         }
                         else {
                             utils.debug("Main [async]: imdb_shows is disabled");
@@ -313,7 +262,7 @@ async function main() {
                         // create trakt link
                         if (settings["options_trakt_shows_link"] === "true") {
                             utils.debug("Main [async]: trakt_shows is enabled");
-                            trakt.init(metadata_xml, "show", server);
+                            trakt.init(metadata_xml, "show", server, plex_parent);
                         }
                         else {
                             utils.debug("Main [async]: trakt_shows is disabled");
@@ -322,7 +271,7 @@ async function main() {
                         // create tvdb link
                         if (settings["options_tvdb_link"] === "true") {
                             utils.debug("Main [async]: TVDB plugin is enabled");
-                            tvdb.init(metadata_xml);
+                            tvdb.init(metadata_xml, plex_parent);
                         }
                         else {
                             utils.debug("Main [async]: TVDB plugin is disabled");
@@ -358,7 +307,7 @@ async function main() {
                     // insert imdb link
                     if (settings["options_imdb_movies_link"] === "true") {
                         utils.debug("Main [async]: imdb_movies is enabled");
-                        imdb.init(metadata_xml, "movie");
+                        imdb.init(metadata_xml, "movie", plex_parent);
                     }
                     else {
                         utils.debug("Main [async]: imdb_movies is disabled");
@@ -367,7 +316,7 @@ async function main() {
                     // insert tmdb link
                     if (settings["options_tmdb_link"] === "true") {
                         utils.debug("Main [async]: TMDB plugin is enabled");
-                        tmdb.init(metadata_xml);
+                        tmdb.init(metadata_xml, plex_parent);
                     }
                     else {
                         utils.debug("Main [async]: TMDB plugin is disabled");
@@ -376,7 +325,7 @@ async function main() {
                     // create trakt link
                     if (settings["options_trakt_movies_link"] === "true") {
                         utils.debug("Main [async]: trakt_movies is enabled");
-                        trakt.init(metadata_xml, "movie", server);
+                        trakt.init(metadata_xml, "movie", server, plex_parent);
                     }
                     else {
                         utils.debug("Main [async]: trakt_movies is disabled");
@@ -388,7 +337,7 @@ async function main() {
                     // create trakt link
                     if (settings["options_trakt_shows_link"] === "true") {
                         utils.debug("Main [async]: trakt_shows is enabled");
-                        trakt.init(metadata_xml, "episode", server);
+                        trakt.init(metadata_xml, "episode", server, plex_parent);
                     }
                     else {
                         utils.debug("Main [async]: trakt_shows is disabled");

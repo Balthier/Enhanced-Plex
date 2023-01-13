@@ -415,8 +415,8 @@ missing_episodes = {
     },
 
     insertSwitch: function () {
-        button_template = document.body.querySelectorAll("[class*=ActionButton-iconActionButton-]")[1];
-        action_bar = document.querySelectorAll("[id*=plex-icon-toolbar-more]")[1].parentNode.parentNode;
+        button_template = document.body.querySelectorAll("[data-testid*=preplay-togglePlayedState]")[0];
+        action_bar = document.querySelectorAll("[data-testid*=preplay-play]")[0].parentNode;
         var switch_container = document.createElement("button");
 
         switch_container.style.cssText = button_template.style.cssText
@@ -431,7 +431,7 @@ missing_episodes = {
 
         switch_container.appendChild(glyph);
         // insert switch before secondary actions dropdown
-        action_bar.insertBefore(switch_container, document.querySelectorAll("[id*=plex-icon-toolbar-more]")[1].parentNode);
+        action_bar.insertBefore(switch_container, document.querySelectorAll("[data-testid*=preplay-more]")[0]);
     },
 
     switchState: function () {
