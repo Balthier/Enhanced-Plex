@@ -6,7 +6,7 @@ stats = {
             return;
         }
         utils.debug("Adding Stats Link");
-        var rightnavbars = document.body.querySelectorAll("[class*=NavBar-right]");
+        var rightnavbars = document.body.querySelectorAll("[class*=NavBarActivityButton-container]");
         var nav_bar_right = rightnavbars[0];
 
         var stats_link = document.createElement("a");
