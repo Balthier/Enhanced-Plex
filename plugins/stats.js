@@ -24,6 +24,6 @@ stats = {
         container.setAttribute("class", styles);
 
         container.appendChild(stats_link);
-        nav_bar_right.insertBefore(container, nav_bar_right.firstChild);
+        nav_bar_right.parentElement.prepend(container);
     }
 }
