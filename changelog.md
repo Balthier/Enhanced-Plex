@@ -1,3 +1,7 @@
+## **v3.0.3**
+#### 2023-03-11
+- Bug: Fixed a display conflict with Plex for Web (4.102.1)
+
 ## **v3.0.2**
 #### 2023-03-07
 - Bug: Fixed an compatibility issue with the latest version of Plex for Web (4.102.1)
