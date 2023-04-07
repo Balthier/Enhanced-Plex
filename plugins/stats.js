@@ -1,11 +1,11 @@
 stats = {
     init: function () {
-        utils.debug("Stats plugin: Starting...");
+        utils.debug("Stats plugin (init): Starting...");
         if (document.getElementById("stats-page-link")) {
-            utils.debug("Stats plugin: Link already exists. Passing");
+            utils.debug("Stats plugin (init): Link already exists. Passing");
             return;
         }
-        utils.debug("Adding Stats Link");
+        utils.debug("Stats plugin (init): Adding Stats Link");
         var rightnavbars = document.body.querySelectorAll("[class*=NavBarActivityButton-container]");
         var nav_bar_right = rightnavbars[0];
 

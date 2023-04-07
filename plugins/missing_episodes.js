@@ -5,80 +5,91 @@ missing_episodes = {
     init: function (metadata_xml, server, type) {
         missing_episodes.server = server;;
         missing_episodes.insertSwitch();
-        if (type === "episodes") {
+        if (type === "season") {
             missing_episodes.processEpisodes(type, metadata_xml);
         }
-        else if (type === "seasons") {
+        else if (type === "show") {
             missing_episodes.processSeasons(type, metadata_xml);
         }
     },
 
     processEpisodes: async (type, metadata_xml) => {
         var site = "imdb";
-        utils.debug("Missing Episodes Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+        utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
         var imdb_id = await tmdb_api.getId(site, type, metadata_xml);
-        utils.debug("Missing Episodes Plugin: TMDB API returned the following IMDB ID (" + imdb_id + ")");
         if (imdb_id) {
+            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: TMDB API returned the following IMDB ID (" + imdb_id + ")");
             var show_id = imdb_id;
         }
         else {
-            utils.debug("Missing Episodes Plugin: IMDB ID not found, falling back to show name");
-            var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("year");
-            var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("title");
-            utils.debug("Missing Episodes Plugin: Got title - " + title);
-            var show_id = title.replace(/[^a-zA-Z0-9-_ ]/g, '').replace(/\s+/g, "-") + "-" + year;
+            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: IMDB ID not found, falling back to show name");
+            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Attempting searching via Trakt API");
+            trakt_id = await trakt_api.getTraktId(type, metadata_xml);
+            if (trakt_id) {
+                var show_id = trakt_id;
+            }
+            else {
+                utils.debug("Missing Episodes [async] (processSeasons) Plugin: Trakt ID not found... Aborting.")
+                return
+            }
         }
 
         var directory_metadata = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0];
         var season_metadata_id = directory_metadata.getAttribute("ratingKey");
         var season_num = directory_metadata.getAttribute("index");
 
-        utils.debug("Missing Episodes Plugin: Finding all existing episodes");
+        utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Finding all existing episodes");
 
         // store current page hash so plugin doesn't insert tiles if page changed
         var current_hash = location.hash;
 
         var present_episodes = await missing_episodes.getPresentEpisodes(season_metadata_id);
-        utils.debug("Missing Episodes Plugin: Existing episodes populated, finding missing episodes")
-        var all_episodes = await trakt_api.getAllMissing(show_id, "episodes", season_num);
+        utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Existing episodes populated: ")
+        utils.debug(present_episodes);
+        var all_episodes = await trakt_api.getAllMissing(show_id, type, season_num);
         if (Object.keys(all_episodes).length) {
-            utils.debug("Missing Episodes Plugin: Processing missing episodes")
+            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: " + present_episodes.length + "/" + Object.keys(all_episodes[0].episodes).length + " currently present")
+            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Processing missing episodes")
             var tiles_to_insert = {};
-            for (var i = 0; i < all_episodes.length; i++) {
-                var episode = all_episodes[i];
-                if (present_episodes.indexOf(episode["episode"]) === -1) {
-                    var episode_tile = missing_episodes.constructEpisodeTile(show_id, episode);
-                    tiles_to_insert[episode["number"]] = episode_tile;
+            for (var i = 0; i < Object.keys(all_episodes[0].episodes).length; i++) {
+                var episode = all_episodes[0].episodes;
+                if (present_episodes.indexOf(episode[i].number) === -1) {
+                    utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Episode " + i + " is missing. Inserting in the list")
+                    var episode_tile = missing_episodes.constructEpisodeTile(show_id, episode[i]);
+                    tiles_to_insert[episode[i]["number"]] = episode_tile;
+                }
+                else {
+                    utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Episode " + i + " is already present. Skipping.")
                 }
             }
             // check if page changed before inserting tiles
             if (current_hash === location.hash) {
 
-                utils.debug("Missing Episodes Plugin: Inserting episode tiles")
+                utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Inserting episode tiles")
                 missing_episodes.insertEpisodeTiles(tiles_to_insert);
             }
             else {
-                utils.debug("Missing Episodes Plugin: Page changed before episode tiles could be inserted");
+                utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Page changed before episode tiles could be inserted");
             }
         }
     },
 
     processSeasons: async (type, metadata_xml) => {
         var site = "imdb";
-        utils.debug("Missing Episodes Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+        utils.debug("Missing Episodes [async] (processSeasons) Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
         var imdb_id = await tmdb_api.getId(site, type, metadata_xml);
-        utils.debug("Missing Episodes Plugin: TMDB API returned the following IMDB ID (" + imdb_id + ")");
         if (imdb_id) {
+            utils.debug("Missing Episodes [async] (processSeasons) Plugin: TMDB API returned the following IMDB ID (" + imdb_id + ")");
             var show_id = imdb_id;
         }
         else {
-            utils.debug("Missing Episodes Plugin: IMDB ID not found, attempting searching via Trakt")
+            utils.debug("Missing Episodes [async] (processSeasons) Plugin: IMDB ID not found, attempting searching via Trakt")
             trakt_id = await trakt_api.getTraktId(type, metadata_xml);
             if (trakt_id) {
                 var show_id = trakt_id;
             }
             else {
-                utils.debug("Missing Episodes Plugin: Trakt ID not found... Aborting.")
+                utils.debug("Missing Episodes [async] (processSeasons) Plugin: Trakt ID not found... Aborting.")
                 return
             }
         }
@@ -86,7 +97,7 @@ missing_episodes = {
         var directory_metadata = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0];
         var show_metadata_id = directory_metadata.getAttribute("ratingKey");
 
-        utils.debug("Missing Episodes Plugin: Finding all present seasons");
+        utils.debug("Missing Episodes [async] (processSeasons) Plugin: Finding all present seasons");
 
         // store current page hash so plugin doesn't insert tiles if page changed
         var current_hash = location.hash;
@@ -95,18 +106,18 @@ missing_episodes = {
         while (present_seasons == null) {
             retry++
             if (retry < 10) {
-                utils.debug("Missing Episodes Plugin: Current seasons not returned yet...[" + retry + "]");
+                utils.debug("Missing Episodes [async] (processSeasons) Plugin: Current seasons not returned yet...[" + retry + "]");
             }
             else {
-                utils.debug("Missing Episodes Plugin: Could not set current seasons... Aborting.");
+                utils.debug("Missing Episodes [async] (processSeasons) Plugin: Could not set current seasons... Aborting.");
                 return
             }
         }
 
-        utils.debug("Missing Episodes Plugin: Existing seasons populated, finding missing seasons")
-        var all_seasons = await trakt_api.getAllMissing(show_id, "seasons");
+        utils.debug("Missing Episodes [async] (processSeasons) Plugin: Existing seasons populated, finding missing seasons")
+        var all_seasons = await trakt_api.getAllMissing(show_id, "season");
 
-        utils.debug("Missing Episodes Plugin: Processing missing seasons")
+        utils.debug("Missing Episodes [async] (processSeasons) Plugin: Processing missing seasons")
         var tiles_to_insert = {};
         for (var i = 0; i < all_seasons.length; i++) {
             var season = all_seasons[i];
@@ -125,12 +136,12 @@ missing_episodes = {
             missing_episodes.insertSeasonTiles(tiles_to_insert);
         }
         else {
-            utils.debug("Missing Episodes Plugin: Page changed before season tiles could be inserted");
+            utils.debug("Missing Episodes [async] (processSeasons) Plugin: Page changed before season tiles could be inserted");
         }
     },
 
     getPresentEpisodes: async (season_metadata_id) => {
-        utils.debug("Missing Episodes Plugin: Fetching season episodes xml");
+        utils.debug("Missing Episodes [async] (getPresentEpisodes) Plugin: Fetching season episodes xml");
         var episodes_metadata_xml_url = missing_episodes.server["uri"] + "/library/metadata/" + season_metadata_id + "/children?X-Plex-Token=" + missing_episodes.server["access_token"];
 
         var episodes_metadata_xml = await utils.getXML(episodes_metadata_xml_url);
@@ -149,17 +160,17 @@ missing_episodes = {
     },
 
     getPresentSeasons: async (show_metadata_id) => {
-        utils.debug("Missing Episodes Plugin: Fetching seasons xml");
+        utils.debug("Missing Episodes [async] (getPresentSeasons) Plugin: Fetching seasons xml");
         var seasons_metadata_xml_url = missing_episodes.server["uri"] + "/library/metadata/" + show_metadata_id + "/children?X-Plex-Token=" + missing_episodes.server["access_token"];
         var seasons_metadata_xml = await utils.getXML(seasons_metadata_xml_url);
         var retry = 0
         while (seasons_metadata_xml == null) {
             retry++
             if (retry < 10) {
-                utils.debug("Missing Episodes Plugin: Seasons Metadata XML not returned yet...[" + retry + "]");
+                utils.debug("Missing Episodes [async] (getPresentSeasons) Plugin: Seasons Metadata XML not returned yet...[" + retry + "]");
             }
             else {
-                utils.debug("Missing Episodes Plugin: Could not set Seasons Metadata XML... Aborting.");
+                utils.debug("Missing Episodes [async] (getPresentSeasons) Plugin: Could not set Seasons Metadata XML... Aborting.");
                 return
             }
         }
@@ -353,7 +364,7 @@ missing_episodes = {
             parent_node.appendChild(episode_tile_list);
         }
         else {
-            utils.debug("Missing Episodes Plugin: Episode count too high. Currently not supported due to the way Plex dynamically generates the list.");
+            utils.debug("Missing Episodes (insertEpisodeTiles) Plugin: Episode count too high. Currently not supported due to the way Plex dynamically generates the list.");
         }
     },
 
