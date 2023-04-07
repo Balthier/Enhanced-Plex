@@ -38,16 +38,16 @@ tvdb = {
         // insert tvdb link element to bottom of metadata container
         var type = "show";
         var site = "tvdb"
-        utils.debug("TVDB Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+        utils.debug("TVDB Plugin [async] (insertTvdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
         var tvdb_id = await tmdb_api.getId(site, type, metadata_xml);
         if (tvdb_id) {
-            utils.debug("TVDB Plugin: TMDB API returned the following TVDB ID (" + tvdb_id + ")");
+            utils.debug("TVDB Plugin [async] (insertTvdbLink): TMDB API returned the following TVDB ID (" + tvdb_id + ")");
             var tvdb_link = tvdb.constructTvdbLink(tvdb_id, parent_element);
-            utils.debug("TVDB Plugin: Inserting TVDB container into page");
+            utils.debug("TVDB Plugin [async] (insertTvdbLink): Inserting TVDB container into page");
             document.getElementById("Enhanced-Plex-Banner").appendChild(tvdb_link);
         }
         else {
-            utils.debug("TVDB Plugin: TMDB API did not find the TVDB ID... Aborting.");
+            utils.debug("TVDB Plugin [async] (insertTvdbLink): TMDB API did not find the TVDB ID... Aborting.");
         }
     }
 }

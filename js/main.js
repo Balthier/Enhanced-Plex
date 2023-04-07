@@ -6,21 +6,24 @@ var LibraryPageDetection = new RegExp(/\/desktop(.*)\/media\/(.*)com.plexapp.plu
 var TVMoviePageDetection = new RegExp(/\/desktop(.*)\/server\/(.*)details(.*)$/);
 var MainPageLoaded = "button";
 var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
-var TVMoviePageLoaded = "PrePlayDetailsContainer-posterContainer-";
+var TVPageLoaded = "PrePlayListTitle-titleContainer";
+var MoviePageLoaded = "metadata-title";
 var StatsButtonParent = "NavBar-right";
-var plexParentBanner = "preplay-thirdTitle";
+var plexParentBanner = "metadata-starRatings";
+var UnmatchedDetection = new RegExp(/^local\:\/\//);
 
 function runOnReady() {
-    utils.debug("Main: runOnReady called. Starting watch");
+    utils.debug("Main (runOnReady): runOnReady called. Starting watch");
     var page_url = document.URL;
     var interval = window.setInterval(function () {
         if (document.URL != page_url) {
+            utils.debug("Main (runOnReady): Document URL is not the same as Page URL. Clearing Interval..")
             window.clearInterval(interval);
         }
         if (MainPageDetection.test(document.URL)) {
-            utils.debug("Main: Main page detected. Checking if ready...");
+            utils.debug("Main (runOnReady): Main page detected. Checking if ready...");
             if (document.getElementsByTagName(MainPageLoaded).length > 0) {
-                utils.debug("Main: Instance of " + MainPageLoaded + " detected. Page is ready");
+                utils.debug("Main (runOnReady): Instance of " + MainPageLoaded + " detected. Page is ready");
                 window.clearInterval(interval);
                 main();
             }
@@ -28,31 +31,33 @@ function runOnReady() {
         // page is ready when certain elements exist.
         // check if on library section
         else if (LibraryPageDetection.test(document.URL)) {
+            utils.debug("Main (runOnReady): Library page detected. Checking if ready...");
             if (document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0) {
-                utils.debug("Main: Instance of " + LibraryPageLoaded + "detected. Page is ready");
+                utils.debug("Main (runOnReady): Instance of " + LibraryPageLoaded + " detected. Page is ready");
                 window.clearInterval(interval);
                 main();
             }
         }
         // check if on movie/tv show details page
         else if (TVMoviePageDetection.test(document.URL)) {
-            if (document.body.querySelectorAll("[class*=" + CSS.escape(TVMoviePageLoaded) + "]").length > 0) {
-                utils.debug("Main: Instance of " + TVMoviePageLoaded + "detected. Page is ready");
+            utils.debug("Main (runOnReady): TV/Movie page detected. Checking if ready...");
+            if ((document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0) || (document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0)) {
+                utils.debug("Main (runOnReady): Instance of " + TVPageLoaded + " or " + MoviePageLoaded + "detected. Page is ready");
                 window.clearInterval(interval);
                 main();
             }
         }
         else {
-            utils.debug("Main: runOnReady not on recognized page");
+            utils.debug("Main (runOnReady): runOnReady not on recognized page");
             window.clearInterval(interval);
         }
-    }, 0);
+    }, 1000);
 }
 
 function getPlexToken() {
     if (localStorage["myPlexAccessToken"]) {
         var plex_token = localStorage["myPlexAccessToken"];
-        utils.debug("Main: plex_token fetched from localStorage - " + localStorage["myPlexAccessToken"]);
+        utils.debug("Main (getPlexToken): plex_token fetched from localStorage - " + localStorage["myPlexAccessToken"]);
         return plex_token;
     }
 }
@@ -78,13 +83,14 @@ function insertBannerTemplate() {
     var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
     var banner_element = document.createElement("span");
     banner_element.setAttribute("id", "Enhanced-Plex-Banner");
-    plex_parent.appendChild(banner_element);
+    banner_element.classList = plex_parent.parentNode.classList;
+    plex_parent.parentNode.parentNode.appendChild(banner_element);
 }
 
 async function getServerAddresses(requests_url, plex_token) {
     cache_data = await utils.cache_get("options_server_addresses", "sync") || {}
     if (Object.keys(cache_data).length) {
-        server_addresses = cache_data["options_server_addresses"]
+        server_addresses = cache_data
     }
     else {
         var xml_lookup_tag_name = "Device";
@@ -106,7 +112,7 @@ async function getServerAddresses(requests_url, plex_token) {
                         uri = connections[j].getAttribute("uri");
                         test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
                         if (Object.keys(test).length) {
-                            utils.debug("Main: Connection success... Adding to list.. (" + uri + ")");
+                            utils.debug("Main [async] (getServerAddresses): Connection success... Adding to list.. (" + uri + ")");
                             server_addresses[machine_identifier] = {
                                 "name": name,
                                 "machine_identifier": machine_identifier,
@@ -115,7 +121,7 @@ async function getServerAddresses(requests_url, plex_token) {
                             }
                         }
                         else {
-                            utils.debug("Main [async]: Could not get a response from the connection... Aborting.");
+                            utils.debug("Main [async] (getServerAddresses): Could not get a response from the connection... Aborting.");
                         }
                     }
                 }
@@ -124,7 +130,7 @@ async function getServerAddresses(requests_url, plex_token) {
             utils.cache_set("options_server_addresses", server_addresses, "sync")
         }
     }
-    utils.debug("Main [async]: Server Addresses collected..");
+    utils.debug("Main [async] (getServerAddresses): Server Addresses collected..");
     utils.debug(server_addresses);
     return server_addresses;
 }
@@ -146,14 +152,14 @@ function processLibrarySections(sections_xml) {
         }
     }
 
-    utils.debug("Main: Parsed library sections");
+    utils.debug("Main (processLibrarySections): Parsed library sections");
     utils.debug(dir_metadata);
     return dir_metadata;
 }
 
 async function main() {
     settings = await chrome.storage.sync.get()
-    utils.debug("Main [async]: Running main()");
+    utils.debug("Main [async] (main): Running main()");
 
     // show popup if updated
     //checkIfUpdated();
@@ -165,13 +171,13 @@ async function main() {
     var observer = new MutationObserver(function (mutations) {
         observer.disconnect();
 
-        utils.debug("Main [async]: User switched");
+        utils.debug("Main [async] (main): User switched");
         runOnReady();
     });
 
     // use plex.tv for API requests if we have plex token
     var requests_url = "https://plex.tv/pms";
-    utils.debug("Main [async]: Requests_url set as " + requests_url);
+    utils.debug("Main [async] (main): Requests_url set as " + requests_url);
 
     var server_addresses = await getServerAddresses(requests_url, plex_token) || {};
     const timer = ms => new Promise(res => setTimeout(res, ms))
@@ -180,27 +186,27 @@ async function main() {
 
         // insert stats page link
         if (settings["options_stats_link"] === "true") {
-            utils.debug("Main [async]: Stats plugin is enabled");
+            utils.debug("Main [async] (main): Stats plugin is enabled");
             stats.init();
         }
         else {
-            utils.debug("Main [async]: Stats plugin is disabled");
+            utils.debug("Main [async] (main): Stats plugin is disabled");
         }
 
         // check if on dashboard page
         if (MainPageDetection.test(page_url)) {
-            utils.debug("Main [async]: Detected we are on dashboard page");
+            utils.debug("Main [async] (main): Detected we are on dashboard page");
             // only purge caches when viewing main page
         }
 
         // check if on library section
         else if (LibraryPageDetection.test(page_url)) {
-            utils.debug("Main [async]: We are in library section");
+            utils.debug("Main [async] (main): We are in library section");
             var page_identifier = page_url.match(/\/media\/(.[^\/]+)(.*)source\=(\d+)/);
             var machine_identifier = page_identifier[1];
             var section_num = page_identifier[3];
-            utils.debug("Main [async]: Machine identifier - " + machine_identifier);
-            utils.debug("Main [async]: Library section - " + section_num);
+            utils.debug("Main [async] (main): Machine identifier - " + machine_identifier);
+            utils.debug("Main [async] (main): Library section - " + section_num);
 
             // get library sections xml
             var library_sections_url = requests_url + "/system/library/sections?X-Plex-Token=" + plex_token;
@@ -221,16 +227,16 @@ async function main() {
         // check if on movie/tv show details page
         else if (TVMoviePageDetection.test(page_url)) {
             insertBannerTemplate();
-            utils.debug("Main [async]: We are on a Movie/TV show details page");
+            utils.debug("Main [async] (main): We are on a Movie/TV show details page");
             var page_identifier = page_url.match(/\/server\/(.[^\/]+)(.*)%2Flibrary%2Fmetadata%2F(\d+)/);
             var machine_identifier = page_identifier[1];
             var parent_item_id = page_identifier[3];
-            utils.debug("Main [async]: Metadata id - " + parent_item_id);
+            utils.debug("Main [async] (main): Metadata id - " + parent_item_id);
 
             var server = server_addresses[machine_identifier];
 
             // construct metadata xml link
-            utils.debug("Main [async]: Fetching metadata for id - " + parent_item_id);
+            utils.debug("Main [async] (main): Fetching metadata for id - " + parent_item_id);
 
             var metadata_xml_url = server["uri"] + "/library/metadata/" + parent_item_id + "?X-Plex-Token=" + server["access_token"];
 
@@ -243,115 +249,158 @@ async function main() {
             if (Object.keys(metadata_xml).length) {
                 var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
                 if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory").length > 0) {
+                    guid = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("guid")
+                    if (UnmatchedDetection.test(guid)) {
+                        utils.debug("Main [async] (main): TV Show does not appear to be Matched. Skipping");
+                        return
+                    }
                     // we're on a tv show page
-                    utils.debug("Main [async]: We are on a TV show index page");
+                    utils.debug("Main [async] (main): We are on a TV show index page");
 
                     if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("type") === "show") {
                         // we're on the root show page
-                        utils.debug("Main [async]: We are on root show page");
+                        utils.debug("Main [async] (main): We are on root show page");
 
                         // insert imdb link
                         if (settings["options_imdb_shows_link"] === "true") {
-                            utils.debug("Main [async]: imdb_shows is enabled");
+                            utils.debug("Main [async] (main): imdb_shows is enabled");
                             imdb.init(metadata_xml, "show", plex_parent);
                         }
                         else {
-                            utils.debug("Main [async]: imdb_shows is disabled");
+                            utils.debug("Main [async] (main): imdb_shows is disabled");
                         }
 
                         // create trakt link
                         if (settings["options_trakt_shows_link"] === "true") {
-                            utils.debug("Main [async]: trakt_shows is enabled");
+                            utils.debug("Main [async] (main): trakt_shows is enabled");
                             trakt.init(metadata_xml, "show", server, plex_parent);
                         }
                         else {
-                            utils.debug("Main [async]: trakt_shows is disabled");
+                            utils.debug("Main [async] (main): trakt_shows is disabled");
                         }
 
                         // create tvdb link
                         if (settings["options_tvdb_link"] === "true") {
-                            utils.debug("Main [async]: TVDB plugin is enabled");
+                            utils.debug("Main [async] (main): TVDB plugin is enabled");
                             tvdb.init(metadata_xml, plex_parent);
                         }
                         else {
-                            utils.debug("Main [async]: TVDB plugin is disabled");
+                            utils.debug("Main [async] (main): TVDB plugin is disabled");
                         }
 
                         // insert missing seasons
                         if (settings["options_missing_episodes"] === "true") {
-                            utils.debug("Main [async]: Missing Episodes plugin is enabled");
-                            missing_episodes.init(metadata_xml, server, "seasons");
+                            utils.debug("Main [async] (main): Missing Episodes plugin is enabled");
+                            missing_episodes.init(metadata_xml, server, "show");
                         }
                         else {
-                            utils.debug("Main [async]: Missing Episodes plugin is disabled");
+                            utils.debug("Main [async] (main): Missing Episodes plugin is disabled");
                         }
                     }
                     else if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("type") === "season") {
                         // we're on the season page
-                        utils.debug("Main [async]: We are on a season page");
+                        utils.debug("Main [async] (main): We are on a season page");
+
+                        // insert imdb link
+                        if (settings["options_imdb_shows_link"] === "true") {
+                            utils.debug("Main [async] (main): imdb_shows is enabled");
+                            imdb.init(metadata_xml, "season", plex_parent);
+                        }
+                        else {
+                            utils.debug("Main [async] (main): imdb_shows is disabled");
+                        }
+
+                        // create trakt link
+                        if (settings["options_trakt_shows_link"] === "true") {
+                            utils.debug("Main [async] (main): trakt_shows is enabled");
+                            trakt.init(metadata_xml, "season", server, plex_parent);
+                        }
+                        else {
+                            utils.debug("Main [async] (main): trakt_shows is disabled");
+                        }
+
+                        // create tvdb link
+                        if (settings["options_tvdb_link"] === "true") {
+                            utils.debug("Main [async] (main): TVDB plugin is enabled");
+                            tvdb.init(metadata_xml, plex_parent);
+                        }
+                        else {
+                            utils.debug("Main [async] (main): TVDB plugin is disabled");
+                        }
 
                         // insert missing episodes
                         if (settings["options_missing_episodes"] === "true") {
-                            utils.debug("Main [async]: Missing Episodes plugin is enabled");
-                            missing_episodes.init(metadata_xml, server, "episodes");
+                            utils.debug("Main [async] (main): Missing Episodes plugin is enabled");
+                            missing_episodes.init(metadata_xml, server, "season");
                         }
                         else {
-                            utils.debug("Main [async]: Missing Episodes plugin is disabled");
+                            utils.debug("Main [async] (main): Missing Episodes plugin is disabled");
                         }
                     }
                 }
                 else if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("type") === "movie") {
+                    guid = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("guid")
+                    if (UnmatchedDetection.test(guid)) {
+                        utils.debug("Main [async] (main): Movie does not appear to be Matched. Skipping");
+                        return
+                    }
                     // we're on a movie page
-                    utils.debug("Main [async]: We are on a movie page");
+                    utils.debug("Main [async] (main): We are on a movie page");
 
                     // insert imdb link
                     if (settings["options_imdb_movies_link"] === "true") {
-                        utils.debug("Main [async]: imdb_movies is enabled");
+                        utils.debug("Main [async] (main): imdb_movies is enabled");
                         imdb.init(metadata_xml, "movie", plex_parent);
                     }
                     else {
-                        utils.debug("Main [async]: imdb_movies is disabled");
+                        utils.debug("Main [async] (main): imdb_movies is disabled");
                     }
 
                     // insert tmdb link
                     if (settings["options_tmdb_link"] === "true") {
-                        utils.debug("Main [async]: TMDB plugin is enabled");
+                        utils.debug("Main [async] (main): TMDB plugin is enabled");
                         tmdb.init(metadata_xml, plex_parent);
                     }
                     else {
-                        utils.debug("Main [async]: TMDB plugin is disabled");
+                        utils.debug("Main [async] (main): TMDB plugin is disabled");
                     }
 
                     // create trakt link
                     if (settings["options_trakt_movies_link"] === "true") {
-                        utils.debug("Main [async]: trakt_movies is enabled");
+                        utils.debug("Main [async] (main): trakt_movies is enabled");
                         trakt.init(metadata_xml, "movie", server, plex_parent);
                     }
                     else {
-                        utils.debug("Main [async]: trakt_movies is disabled");
+                        utils.debug("Main [async] (main): trakt_movies is disabled");
                     }
                 }
                 else if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("type") === "episode") {
+                    guid = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("guid")
+                    if (UnmatchedDetection.test(guid)) {
+                        utils.debug("Main [async] (main): Episode does not appear to be Matched. Skipping");
+                        return
+                    }
                     // we're on an episode page
+                    utils.debug("Main [async] (main): We are on an episode page");
 
                     // create trakt link
                     if (settings["options_trakt_shows_link"] === "true") {
-                        utils.debug("Main [async]: trakt_shows is enabled");
+                        utils.debug("Main [async] (main): trakt_shows is enabled");
                         trakt.init(metadata_xml, "episode", server, plex_parent);
                     }
                     else {
-                        utils.debug("Main [async]: trakt_shows is disabled");
+                        utils.debug("Main [async] (main): trakt_shows is disabled");
                     }
                 }
             }
             else {
-                utils.debug("Main [async]: Could not set Metadata XML... Aborting.");
+                utils.debug("Main [async] (main): Could not set Metadata XML... Aborting.");
                 return
             }
         }
     }
     else {
-        utils.debug("Main [async]: Could not retrieve server addresses... Aborting.");
+        utils.debug("Main [async] (main): Could not retrieve server addresses... Aborting.");
         return
     }
 }
@@ -360,7 +409,7 @@ async function main() {
 // page load as expected. To fix this we run the script every time the window
 // url hash changes.
 window.onhashchange = function () {
-    utils.debug("Main: Page change detected");
+    utils.debug("Main (window.onhashchange): Page change detected");
     runOnReady();
 }
 runOnReady();

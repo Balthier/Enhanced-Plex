@@ -14,18 +14,18 @@ function sortObj(obj) {
 
 async function generateShowData(uri, plex_token, section_keys, show_categories, show_categories_cached) {
 	if (Array.isArray(show_categories_cached) && show_categories_cached.length) {
-		utils.debug("Stats [async]: Retreiving show data from cache for cached show categories")
+		utils.debug("Stats [async] (generateShowData): Retreiving show data from cache for cached show categories")
 		for (var k = 0; k < show_categories_cached.length; k++) {
 			var chartId = show_categories_cached[k]
 			var key = "stats_" + chartId
 			result = await utils.cache_get(key, "sync")
-			count = result[key]
-			utils.debug("Stats [async]: Generating chart for " + chartId)
+			count = result
+			utils.debug("Stats [async] (generateShowData): Generating chart for " + chartId)
 			generateChart(count, chartId)
 		}
 	}
 	if (Array.isArray(show_categories) && show_categories.length) {
-		utils.debug("Stats [async]: Generating show data for non-cached show categories")
+		utils.debug("Stats [async] (generateShowData): Generating show data for non-cached show categories")
 		var shows = [];
 		var episodes = [];
 		var show_genres = [];
@@ -93,7 +93,7 @@ async function generateShowData(uri, plex_token, section_keys, show_categories, 
 			else if (chartId === "EpisodesByResolution") {
 				var count = episodes.reduce((acc, o) => (acc[o.ep_resolution] = (acc[o.ep_resolution] || 0) + 1, acc), {});
 			}
-			utils.debug("Stats [async]: Generating chart for " + chartId)
+			utils.debug("Stats [async] (generateShowData): Generating chart for " + chartId)
 			generateChart(count, chartId)
 			var key = "stats_" + chartId;
 			utils.cache_set(key, count, "sync");
@@ -103,18 +103,18 @@ async function generateShowData(uri, plex_token, section_keys, show_categories, 
 
 async function generateMovieData(uri, plex_token, section_keys, movie_categories, movie_categories_cached) {
 	if (Array.isArray(movie_categories_cached) && movie_categories_cached.length) {
-		utils.debug("Stats [async]: Retreiving movie data from cache for cached movie categories")
+		utils.debug("Stats [async] (generateMovieData): Retreiving movie data from cache for cached movie categories")
 		for (var k = 0; k < movie_categories_cached.length; k++) {
 			var chartId = movie_categories_cached[k]
 			var key = "stats_" + chartId
 			result = await utils.cache_get(key, "sync")
-			count = result[key]
-			utils.debug("Stats [async]: Generating chart for " + chartId)
+			count = result
+			utils.debug("Stats [async] (generateMovieData): Generating chart for " + chartId)
 			generateChart(count, chartId)
 		}
 	}
 	if (Array.isArray(movie_categories) && movie_categories.length) {
-		utils.debug("Stats [async]: Generating movie data for non-cached movie categories")
+		utils.debug("Stats [async] (generateMovieData): Generating movie data for non-cached movie categories")
 		var movies = [];
 		for (var j = 0; j < section_keys.length; j++) {
 			var section_key = section_keys[j];
@@ -169,7 +169,7 @@ async function generateMovieData(uri, plex_token, section_keys, movie_categories
 			else if (chartId === "MoviesByContentRating") {
 				var count = movies.reduce((acc, o) => (acc[o.contentRating] = (acc[o.contentRating] || 0) + 1, acc), {});
 			}
-			utils.debug("Stats [async]: Generating chart for " + chartId)
+			utils.debug("Stats [async] (generateMovieData): Generating chart for " + chartId)
 			generateChart(count, chartId)
 			var key = "stats_" + chartId;
 			utils.cache_set(key, count, "sync");
@@ -275,11 +275,11 @@ function setLoading(value) {
 	}
 }
 async function getServerAddresses() {
-	utils.debug("Stats [async]: Retrieving Server addresses");
+	utils.debug("Stats [async] (getServerAddresses): Retrieving Server addresses");
 	var response = await utils.cache_get("options_server_addresses", "sync");
 	const timer = ms => new Promise(res => setTimeout(res, ms))
 	await timer(100);
-	utils.debug("Stats [async]: Received the following server addresses: ");
+	utils.debug("Stats [async] (getServerAddresses): Received the following server addresses: ");
 	utils.debug(response);
 	return response;
 }
@@ -288,19 +288,19 @@ async function updateData() {
 	const timer = ms => new Promise(res => setTimeout(res, ms))
 	await timer(100);
 	setLoading(true);
-	utils.debug("Stats [async]: Retrieving items from cache");
+	utils.debug("Stats [async] (updateData): Retrieving items from cache");
 	var pms_servers = await getServerAddresses();
 
 	// check to make sure user has opened plex/web first so we can receive server addresses
 	if (!pms_servers) {
 		return;
 	}
-	servers = pms_servers.options_server_addresses;
-	utils.debug("Stats [async]: Server addresses fetched:");
+	servers = pms_servers;
+	utils.debug("Stats [async] (updateData): Server addresses fetched:");
 	utils.debug(servers);
-	utils.debug("Stats [async]: Selecting first Server");
+	utils.debug("Stats [async] (updateData): Selecting first Server");
 	uri = Object.values(servers)[0].uri
-	utils.debug("Stats [async]: Grabbing Access Token");
+	utils.debug("Stats [async] (updateData): Grabbing Access Token");
 	plex_token = Object.values(servers)[0].access_token
 	await getData(uri, plex_token, true)
 	setLoading(false);
@@ -328,7 +328,7 @@ async function getData(uri, plex_token, update_flag) {
 		var library_xml_full = await utils.getXML(library_url);
 		library_xml = library_xml_full.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")
 		if (library_xml === null) {
-			utils.debug("Stats [async]: library_xml invalid. Exiting.")
+			utils.debug("Stats [async] (getData): library_xml invalid. Exiting.")
 			return
 		}
 		for (let h = 0; h < library_xml.length; h++) {
@@ -346,39 +346,39 @@ async function getData(uri, plex_token, update_flag) {
 		for (var m = 0; m < show_total; m++) {
 			var chartId = show_categories_all[m]
 			var key = "stats_" + chartId;
-			utils.debug("Stats [async]: Checking cache for: " + key)
+			utils.debug("Stats [async] (getData): Checking cache for: " + key)
 			var cache_check = await utils.cache_get(key, "sync") || {};
 			await timer(100);
 
 			if (Object.keys(cache_check).length) {
-				utils.debug("Stats [async]: Cache found for: " + key)
+				utils.debug("Stats [async] (getData): Cache found for: " + key)
 				show_categories_cached.push(chartId)
 				var loc = show_categories.indexOf(chartId)
 				show_categories.splice(loc, 1);
 			}
 		}
 
-		utils.debug("Stats [async]: No cache found for Show Categories: ")
+		utils.debug("Stats [async] (getData): No cache found for Show Categories: ")
 		utils.debug(show_categories)
-		utils.debug("Stats [async]: Cache found for Show Categories: ")
+		utils.debug("Stats [async] (getData): Cache found for Show Categories: ")
 		utils.debug(show_categories_cached)
 
 		var movie_total = movie_categories_all.length
 		for (var m = 0; m < movie_total; m++) {
 			var chartId = movie_categories_all[m]
 			var key = "stats_" + chartId;
-			utils.debug("Stats [async]: Checking cache for: " + key)
+			utils.debug("Stats [async] (getData): Checking cache for: " + key)
 			var cache_check = await utils.cache_get(key, "sync") || {};
 			if (Object.keys(cache_check).length) {
-				utils.debug("Stats [async]: Cache found for: " + key)
+				utils.debug("Stats [async] (getData): Cache found for: " + key)
 				movie_categories_cached.push(chartId)
 				var loc = movie_categories.indexOf(chartId)
 				movie_categories.splice(loc, 1);
 			}
 		}
-		utils.debug("Stats [async]: No cache found for Movie Categories: ")
+		utils.debug("Stats [async] (getData): No cache found for Movie Categories: ")
 		utils.debug(movie_categories)
-		utils.debug("Stats [async]: Cache found for Movie Categories: ")
+		utils.debug("Stats [async] (getData): Cache found for Movie Categories: ")
 		utils.debug(movie_categories_cached)
 	}
 	else {
@@ -394,7 +394,7 @@ async function getData(uri, plex_token, update_flag) {
 	last_updated_check = {}
 	var last_updated_check = await utils.cache_get("stats_lastupdated", "sync") || {};
 	if (Object.keys(last_updated_check).length) {
-		var last_updated = last_updated_check.stats_lastupdated
+		var last_updated = last_updated_check
 	}
 	else {
 		var last_updated = (new Date()).toLocaleString()
@@ -410,19 +410,19 @@ utils.storage_get_all(async function (settings) {
 	const timer = ms => new Promise(res => setTimeout(res, ms))
 	await timer(100);
 	setLoading(true);
-	utils.debug("Stats [async]: Retrieving items from cache");
+	utils.debug("Stats [async] (utils.storage_get_all): Retrieving items from cache");
 	var pms_servers = await getServerAddresses();
 
 	// check to make sure user has opened plex/web first so we can receive server addresses
 	if (!pms_servers) {
 		return;
 	}
-	servers = pms_servers.options_server_addresses;
-	utils.debug("Stats [async]: Server addresses fetched:");
+	servers = pms_servers;
+	utils.debug("Stats [async] (utils.storage_get_all): Server addresses fetched:");
 	utils.debug(servers);
-	utils.debug("Stats [async]: Selecting first Server");
+	utils.debug("Stats [async] (utils.storage_get_all): Selecting first Server");
 	uri = Object.values(servers)[0].uri
-	utils.debug("Stats [async]: Grabbing Access Token");
+	utils.debug("Stats [async] (utils.storage_get_all): Grabbing Access Token");
 	plex_token = Object.values(servers)[0].access_token
 	await getData(uri, plex_token, false);
 	setLoading(false);

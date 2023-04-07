@@ -38,12 +38,12 @@ tmdb = {
     insertTmdbLink: async (metadata_xml, parent_element) => {
         var type = "movie";
         var site = "tmdb"
-        utils.debug("TMDB Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+        utils.debug("TMDB Plugin [async] (insertTmdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
         var tmdb_id = await tmdb_api.getId(site, type, metadata_xml);
-        utils.debug("TMDB Plugin: TMDB API returned the following TMDB ID (" + tmdb_id + ")");
+        utils.debug("TMDB Plugin [async] (insertTmdbLink): TMDB API returned the following TMDB ID (" + tmdb_id + ")");
         // insert themoviedb link element to bottom of metadata container
         var tmdb_container = tmdb.constructTmdbLink(tmdb_id, parent_element);
-        utils.debug("TMDB plugin: Inserting tmdb container into page");
+        utils.debug("TMDB plugin [async] (insertTmdbLink): Inserting tmdb container into page");
         document.getElementById("Enhanced-Plex-Banner").appendChild(tmdb_container);
     }
 }
