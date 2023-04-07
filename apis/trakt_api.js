@@ -1,15 +1,15 @@
 trakt_api = {
     setTraktHeaders: async () => {
-        utils.debug("Trakt API: Retrieving Trakt API Key...");
+        utils.debug("Trakt API [async] (setTraktHeaders): Retrieving Trakt API Key...");
         var trakt_key = await utils.getApiKey("trakt")
         var retry = 0
         while (trakt_key == null) {
             retry++
             if (retry < 10) {
-                utils.debug("Trakt API: Trakt API Key not returned yet...[" + retry + "]");
+                utils.debug("Trakt API [async] (setTraktHeaders): Trakt API Key not returned yet...[" + retry + "]");
             }
             else {
-                utils.debug("Trakt API: Could not set Trakt API Key... Aborting.");
+                utils.debug("Trakt API [async] (setTraktHeaders): Could not set Trakt API Key... Aborting.");
                 return
             }
         }
@@ -22,39 +22,65 @@ trakt_api = {
     },
 
     getTraktId: async (type, metadata_xml) => {
+        utils.debug("Trakt API [async] (getTraktId): Setting custom Trakt headers");
         var custom_headers = await trakt_api.setTraktHeaders();
         if (custom_headers) {
-            if ((type === "show") || (type == "seasons")) {
-                var category = "show";
-                var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("year");
-                var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("title");
+            utils.debug("Trakt API [async] (getTraktId): Fetching title and year");
+            if ((type === "show") || (type == "season")) {
+                var metadata_root = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0]
             }
-            else if (type == "episodes") {
+            else {
+                var metadata_root = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0]
+            }
+            if (type === "show") {
                 var category = "show";
-                var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("parentYear");
-                var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("parentTitle");
+
+                var year = metadata_root.getAttribute("year");
+                var title = metadata_root.getAttribute("title");
+            }
+            else if (type == "season") {
+                category = "show";
+                var year = metadata_root.getAttribute("parentYear");
+                var title = metadata_root.getAttribute("parentTitle");
+            }
+            else if (type == "episode") {
+                var category = "show";
+                var year = metadata_root.getAttribute("grandparentYear") || metadata_root.getAttribute("year");
+                var title = metadata_root.getAttribute("grandparentTitle");
             }
             else if (type === "movie") {
                 var category = "movie";
-                var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("year");
-                var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("title");
+                var year = metadata_root.getAttribute("year");
+                var title = metadata_root.getAttribute("title");
             }
+            cache_title = title.replace(" ", "_")
+            trakt_name = cache_title + "_trakt_id"
+            utils.debug("Trakt API [async] (getTraktId): Checking cache for: " + cache_title)
+            cache_data = await utils.cache_get(trakt_name, "local") || ""
+            if (cache_data.toString().length) {
+                trakt_id = cache_data
+                utils.debug("Trakt API [async] (getTraktId): Trakt ID found in cached data: " + trakt_id);
+                return trakt_id;
+            }
+
             var api_url = "https://api.trakt.tv/search?type=" + category + "&year=" + year + "&query=" + encodeURIComponent(title);
+            utils.debug("Trakt API [async] (getTraktId): Searching Trakt API using endpoint: " + api_url);
             response = await fetch(api_url, {
                 method: 'GET',
                 headers: custom_headers
             });
             json = await response.json();
             try {
-                utils.debug("Trakt API: Received Trakt ID (" + trakt_id + ")");
                 trakt_id = json[0].show.ids.trakt
+                utils.debug("Trakt API [async] (getTraktId): Received Trakt ID (" + trakt_id + ")");
+                utils.cache_set(trakt_name, trakt_id, "local");
             }
             catch {
-                utils.debug("Trakt API: Unable to find Trakt ID");
+                utils.debug("Trakt API [async] (getTraktId): Unable to find Trakt ID");
                 return
             }
             if (trakt_id) {
-                utils.debug("Trakt API: Returning Trakt ID to calling function - " + trakt_id);
+                utils.debug("Trakt API [async] (getTraktId): Returning Trakt ID to calling function - " + trakt_id);
                 return trakt_id;
             }
             else {
@@ -62,21 +88,21 @@ trakt_api = {
             }
         }
         else {
-            utils.debug("Trakt API: Could not set Trakt headers... Aborting.");
+            utils.debug("Trakt API [async] (getTraktId): Could not set Trakt headers... Aborting.");
         }
     },
 
     getAllMissing: async (show_name, type, season_num) => {
         var custom_headers = await trakt_api.setTraktHeaders();
         if (custom_headers) {
-            if (type == "episodes") {
+            if (type == "episode") {
                 var api_url = "https://api.trakt.tv/shows/" + encodeURIComponent(show_name) + "/seasons/" + season_num;
             }
-            else if (type == "seasons") {
+            else if (type == "season") {
                 var api_url = "https://api.trakt.tv/shows/" + encodeURIComponent(show_name) + "/seasons?extended=episodes";
             }
             else {
-                utils.debug("Trakt API: No type selected. Aborting...");
+                utils.debug("Trakt API [async] (getAllMissing): No type selected. Aborting...");
                 return
             }
             var data = await utils.getJSON(api_url, custom_headers) || {};
@@ -84,11 +110,11 @@ trakt_api = {
                 return data;
             }
             else {
-                utils.debug("Trakt API: No data received.")
+                utils.debug("Trakt API [async] (getAllMissing): No data received.")
             }
         }
         else {
-            utils.debug("Trakt API: Could not set Trakt headers... Aborting.");
+            utils.debug("Trakt API [async] (getAllMissing): Could not set Trakt headers... Aborting.");
         }
     },
 }

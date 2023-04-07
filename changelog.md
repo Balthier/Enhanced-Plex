@@ -1,3 +1,13 @@
+## **v3.0.4**
+#### 2023-04-07
+- Bug: Fixed a display conflict with Plex for Web (4.104.2)
+- Enhancement: Improved the usage of cached data
+- Enhancement: Expanded the trakt plugin to show links on Season and Episode pages
+- Enhancement: Expanded the TVDB plugin to show links on Season pages
+- Enhancement: Expanded the debugging vebosity
+- Enhancement: Added checks to prevent trying to match against unmatched items
+- Enhancement: Improved the "Clear Cache" functionality
+
 ## **v3.0.3**
 #### 2023-03-11
 - Bug: Fixed a display conflict with Plex for Web (4.102.1)
@@ -34,8 +44,8 @@
 #### 2021-10-17
 - Bug: Fixed a display issue from a Plex Update. Now working with Plex Web 4.67.1
 - Bug: Fixed a display issue with the Missing Seasons
-- Miscellaneous: Added Link to for reporting issues in the Options
-- Miscellaneous: Added Link to for adding a review in the Options
+- Miscellaneous: Added Link for reporting issues in the Options
+- Miscellaneous: Added Link for adding a review in the Options
 - Miscellaneous: Removed references and API calls for Trakt Ratings. Plex natively supports ratings
 - Miscellaneous: Brought TMDB in line with other plugins
 

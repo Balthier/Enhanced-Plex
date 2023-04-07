@@ -15,20 +15,20 @@ async function restoreOptions() {
     for (i = 0; i < options.length; i++) {
         option_name = options[i]
         option = "options_" + option_name
-        utils.debug("Options: Retrieving cache for " + option)
+        utils.debug("Options [async] (restoreOptions): Retrieving cache for " + option)
         cache_data = await utils.cache_get(option, "sync") || {}
         if (Object.keys(cache_data).length) {
-            utils.debug("Options: Cache found.")
-            toggle = Object.values(cache_data)
+            utils.debug("Options [async] (restoreOptions): Cache found.")
+            toggle = cache_data
         }
         else {
             if (option_name == "debug" || option_name == "debug_unfiltered") {
-                utils.debug("Options: No cache found. Setting debug option to disabled by default")
+                utils.debug("Options [async] (restoreOptions): No cache found. Setting debug option to disabled by default")
                 utils.cache_set(option, "false", "sync");
                 toggle = "false";
             }
             else {
-                utils.debug("Options: No cache found. Setting option to enabled by default")
+                utils.debug("Options [async] (restoreOptions): No cache found. Setting option to enabled by default")
                 utils.cache_set(option, "true", "sync");
                 toggle = "true";
             }
@@ -41,7 +41,7 @@ async function restoreOptions() {
         }
 
         id = options[i] + "_" + onOff
-        utils.debug("Options: Setting the HTML element on " + id)
+        utils.debug("Options [async] (restoreOptions): Setting the HTML element on " + id)
         checkbox = document.getElementById(id)
         checkbox.checked = toggle
     }
@@ -63,7 +63,7 @@ function refreshDebugExtraOptions() {
 }
 
 utils.storage_get_all(async function (settings) {
-    utils.debug("Options: Restoring options.")
+    utils.debug("Options [async] (utils.storage_get_all): Restoring options.")
     await restoreOptions();
 
     // add click listener on all inputs to automatically save changes

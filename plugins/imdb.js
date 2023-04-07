@@ -35,20 +35,20 @@ imdb = {
 
     insertImdbLink: async (type, metadata_xml, parent_element) => {
         var site = "imdb"
-        utils.debug("IMDB Plugin: Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+        utils.debug("IMDB Plugin [async] (insertImdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
         imdb_id = await tmdb_api.getId(site, type, metadata_xml);
         if (imdb_id) {
-            utils.debug("IMDB Plugin: TMDB API returned the following IMDB ID (" + imdb_id + ")");
+            utils.debug("IMDB Plugin [async] (insertImdbLink): TMDB API returned the following IMDB ID (" + imdb_id + ")");
             url = "http://www.imdb.com/title/" + imdb_id;
             // create imdb link element
             var imdb_container = imdb.constructImdbLink(url, parent_element);
 
             // insert imdb link element to bottom of metadata container
-            utils.debug("IMDB Plugin: Inserting IMDB container into page");
+            utils.debug("IMDB Plugin [async] (insertImdbLink): Inserting IMDB container into page");
             document.getElementById("Enhanced-Plex-Banner").appendChild(imdb_container);
         }
         else {
-            utils.debug("IMDB Plugin: TMDB API did not find the IMDB ID... Aborting.");
+            utils.debug("IMDB Plugin [async] (insertImdbLink): TMDB API did not find the IMDB ID... Aborting.");
         }
     }
 }
