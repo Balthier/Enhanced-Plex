@@ -1,3 +1,10 @@
+## **v3.0.5**
+#### 2023-04-13
+- Bug: Fixed an issue where the missing episodes plugin would populate episodes from the wrong season
+- Enhancement: Expanded debugging verbosity for the missing episodes plugin
+- Enhancement: Included the Specials season in the missing episodes plugin
+- Miscellaneous: Updated the changelog page
+
 ## **v3.0.4**
 #### 2023-04-07
 - Bug: Fixed a display conflict with Plex for Web (4.104.2)
