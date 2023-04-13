@@ -48,11 +48,11 @@ missing_episodes = {
         utils.debug(present_episodes);
         var all_episodes = await trakt_api.getAllMissing(show_id, type, season_num);
         if (Object.keys(all_episodes).length) {
-            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: " + present_episodes.length + "/" + Object.keys(all_episodes[0].episodes).length + " currently present")
+            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Season " + season_num + " - " + + present_episodes.length + "/" + Object.keys(all_episodes[season_num].episodes).length + " currently present")
             utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Processing missing episodes")
             var tiles_to_insert = {};
-            for (var i = 0; i < Object.keys(all_episodes[0].episodes).length; i++) {
-                var episode = all_episodes[0].episodes;
+            for (var i = 0; i < Object.keys(all_episodes[season_num].episodes).length; i++) {
+                var episode = all_episodes[season_num].episodes;
                 if (present_episodes.indexOf(episode[i].number) === -1) {
                     utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Episode " + i + " is missing. Inserting in the list")
                     var episode_tile = missing_episodes.constructEpisodeTile(show_id, episode[i]);
