@@ -27,7 +27,7 @@ else {
     var MainPageLoaded = "button";
     var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
     var TVPageLoaded = "PrePlayListTitle-titleContainer";
-    var MoviePageLoaded = "metadata-title";
+    var MoviePageLoaded = "preplay-mainTitle";
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-button"
     var plexParentBanner = "preplay-thirdTitle";
@@ -35,6 +35,7 @@ else {
 }
 
 var UnmatchedDetection = new RegExp(/^local\:\/\//);
+var PlexBannerID = "Enhanced-Plex-Banner"
 
 function minReqs() {
     utils.debug("Main (minReqs): Checking minimum requirements");
@@ -169,7 +170,7 @@ function insertBannerTemplate() {
         utils.debug("Main [async] (insertBannerTemplate): Banner not present. Constructing.");
         var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
         var banner_element = document.createElement("span");
-        banner_element.setAttribute("id", "Enhanced-Plex-Banner");
+        banner_element.setAttribute("id", PlexBannerID);
 
         if (plexforweb) {
             var info_box = document.createElement("div");
