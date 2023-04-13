@@ -2,13 +2,15 @@
   "manifest_version": 3,
   "name": "Enhanced Plex",
   "description": "Adds several features to the Plex/Web client for Plex",
-  "version": "3.0.5",
+  "version": "3.0.99",
   "options_page": "resources/extras/options.html",
   "content_scripts": [
     {
       "matches": [
-        "https://app.plex.tv/desktop*",
-        "http://app.plex.tv/desktop*"
+        "*://app.plex.tv/desktop*",
+        "http://127.0.0.1:32400/web*",
+        "http://localhost:32400/web*",
+        "http://192.168.0.100:32400/web*"
       ],
       "run_at": "document_idle",
       "css": [
