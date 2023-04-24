@@ -14,7 +14,11 @@ utils = {
                     output = output.replace(/\d+\.\d+\.\d+\.\d+/, "XXX.XXX.X.XX");
                 }
                 date = new Date()
-                now = date.toLocaleTimeString();
+                hours = ("0" + date.getHours()).slice(-2)
+                minutes = ("0" + date.getMinutes()).slice(-2)
+                seconds = ("0" + date.getSeconds()).slice(-2)
+                milliseconds = ("0" + date.getMilliseconds()).slice(-2)
+                now = hours + ":" + minutes + ":" + seconds + "." + milliseconds
                 console.log("[" + now + "] EnhancedPLEX Debug: " + output);
             }
             else {
