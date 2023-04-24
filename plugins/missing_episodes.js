@@ -38,7 +38,7 @@ missing_episodes = {
         var season_metadata_id = directory_metadata.getAttribute("ratingKey");
         var season_num = directory_metadata.getAttribute("index");
 
-        utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Finding all existing episodes");
+        utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Finding all existing episodes for Season " + season_num);
 
         // store current page hash so plugin doesn't insert tiles if page changed
         var current_hash = location.hash;
@@ -46,20 +46,28 @@ missing_episodes = {
         var present_episodes = await missing_episodes.getPresentEpisodes(season_metadata_id);
         utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Existing episodes populated: ")
         utils.debug(present_episodes);
-        var all_episodes = await trakt_api.getAllMissing(show_id, type, season_num);
+        var all_episodes = await trakt_api.getAllMissing(show_id, type, season_num) || {};
+        if ((Object.keys(all_episodes).length == "1") && (season_num == "1")) {
+            season_num = "0"
+            season_disp = "1"
+        }
+        else {
+            season_disp = season_num
+        }
         if (Object.keys(all_episodes).length) {
-            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Season " + season_num + " - " + + present_episodes.length + "/" + Object.keys(all_episodes[season_num].episodes).length + " currently present")
+            utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Season " + season_disp + " - " + + present_episodes.length + "/" + Object.keys(all_episodes[season_num].episodes).length + " currently present")
             utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Processing missing episodes")
             var tiles_to_insert = {};
             for (var i = 0; i < Object.keys(all_episodes[season_num].episodes).length; i++) {
                 var episode = all_episodes[season_num].episodes;
+                j = i + 1
                 if (present_episodes.indexOf(episode[i].number) === -1) {
-                    utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Episode " + i + " is missing. Inserting in the list")
+                    utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Episode " + j + " is missing. Inserting in the list")
                     var episode_tile = missing_episodes.constructEpisodeTile(show_id, episode[i]);
                     tiles_to_insert[episode[i]["number"]] = episode_tile;
                 }
                 else {
-                    utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Episode " + i + " is already present. Skipping.")
+                    utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Episode " + j + " is already present. Skipping.")
                 }
             }
             // check if page changed before inserting tiles
@@ -122,6 +130,9 @@ missing_episodes = {
         var tiles_to_insert = {};
         for (var i = 0; i < all_seasons.length; i++) {
             var season = all_seasons[i];
+            if (all_seasons.length == "1") {
+                i = i + 1
+            }
             if (present_seasons.indexOf(season["number"]) === -1) {
                 utils.debug("Missing Episodes [async] (processSeasons) Plugin: Season " + i + " is missing. Inserting in the list")
                 var season_tile = missing_episodes.constructSeasonTile(show_id, season);
