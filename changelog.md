@@ -1,3 +1,8 @@
+## **v3.0.6**
+#### 2023-04-21
+- Bug: Fixed an issue where the missing episodes plugin would fail to properly process seasons/episodes
+- Enhancement: Added further detail to debug logging
+
 ## **v3.0.5**
 #### 2023-04-13
 - Bug: Fixed an issue where the missing episodes plugin would populate episodes from the wrong season
