@@ -1,10 +1,15 @@
 .label {
-    width: 450px;
+    width: 41%;
     text-align: right;
+}
+
+.field {
+    width: 20%;
 }
 
 .field,
 .label {
+    font-size: 0.7em;
     float: left;
     padding: 4px;
     margin: 4px;
@@ -13,6 +18,35 @@
 .field-row {
     clear: both;
     padding-top: 12px;
+}
+
+#container {
+    width: 50%;
+    margin: 0 auto;
+}
+
+.column-left {
+    float: left;
+    width: 47%;
+}
+
+.column-right {
+    float: right;
+    width: 47%;
+}
+
+.column-normal {
+    float: none;
+    clear: both;
+    width: 47%;
+}
+
+.text-center {
+    text-align: center;
+}
+
+h3 {
+    margin: 0.1em 0;
 }
 
 .extra-options {
@@ -56,14 +90,8 @@ input[type="number"] {
     width: 100px;
 }
 
-#rotten-tomatoes-audience-div {
-    padding-top: 17px;
-    /*dirty hack to fix alignment*/
-    margin-right: 50px;
-}
-
-#debug {
-    padding-top: 40px;
+.debug {
+    margin: 0.5em 0;
 }
 
 #clear-cache {
@@ -85,7 +113,7 @@ input[type="number"] {
 .thanks {
     font-size: 20px;
     position: absolute;
-    right: 0;
+    right: 1em;
     bottom: 0;
 }
 
@@ -95,4 +123,8 @@ input[type="number"] {
 
 .thanks a {
     color: #E69533;
+}
+
+.thanks .field {
+    width: 31%;
 }

@@ -21,6 +21,31 @@ trakt_api = {
         return custom_headers
     },
 
+    getInfo: async (show_name, type) => {
+        var custom_headers = await trakt_api.setTraktHeaders();
+        if (custom_headers) {
+            if ((type === "show") || (type == "season") || (type == "episode")) {
+                var api_url = "https://api.trakt.tv/shows/" + encodeURIComponent(show_name) + "/?extended=full"
+            }
+            else if (type === "movie") {
+                var api_url = "https://api.trakt.tv/movies/" + encodeURIComponent(show_name) + "/?extended=full"
+            }
+            else {
+                utils.debug("Trakt API [async] (getShowInfo): No type received.")
+            }
+            var data = await utils.getJSON(api_url, custom_headers) || {};
+            if (Object.keys(data).length) {
+                return data;
+            }
+            else {
+                utils.debug("Trakt API [async] (getShowInfo): No data received.")
+            }
+        }
+        else {
+            utils.debug("Trakt API [async] (getShowInfo): Could not set Trakt headers... Aborting.");
+        }
+    },
+
     getTraktId: async (type, metadata_xml) => {
         utils.debug("Trakt API [async] (getTraktId): Setting custom Trakt headers");
         var custom_headers = await trakt_api.setTraktHeaders();

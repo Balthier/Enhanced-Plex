@@ -47,9 +47,10 @@ missing_episodes = {
         utils.debug("Missing Episodes [async] (processEpisodes) Plugin: Existing episodes populated: ")
         utils.debug(present_episodes);
         var all_episodes = await trakt_api.getAllMissing(show_id, type, season_num) || {};
-        if ((Object.keys(all_episodes).length == "1") && (season_num == "1")) {
-            season_num = "0"
-            season_disp = "1"
+        var season_check = all_episodes[0].episodes[0].season
+        if (season_check == 1) {
+            season_disp = season_num
+            season_num = season_num - 1
         }
         else {
             season_disp = season_num
@@ -133,13 +134,19 @@ missing_episodes = {
             if (all_seasons.length == "1") {
                 i = i + 1
             }
+            if (all_seasons[0].number == "1") {
+                j = i + 1
+            }
+            else {
+                j = i
+            }
             if (present_seasons.indexOf(season["number"]) === -1) {
-                utils.debug("Missing Episodes [async] (processSeasons) Plugin: Season " + i + " is missing. Inserting in the list")
+                utils.debug("Missing Episodes [async] (processSeasons) Plugin: Season " + j + " is missing. Inserting in the list")
                 var season_tile = missing_episodes.constructSeasonTile(show_id, season);
                 tiles_to_insert[season["number"]] = season_tile;
             }
             else {
-                utils.debug("Missing Episodes [async] (processSeasons) Plugin: Season " + i + " is already present. Skipping.")
+                utils.debug("Missing Episodes [async] (processSeasons) Plugin: Season " + j + " is already present. Skipping.")
             }
         }
 

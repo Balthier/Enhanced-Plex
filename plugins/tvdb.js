@@ -1,22 +1,16 @@
 tvdb = {
     metadata_xml: null,
 
-    init: function (metadata_xml, parent_element) {
-        tvdb.insertTvdbLink(metadata_xml, parent_element);
+    init: function (metadata_xml) {
+        tvdb.insertTvdbLink(metadata_xml);
     },
 
-    constructTvdbLink: function (tvdb_id, parent_element) {
+    constructTvdbLink: function (tvdb_id) {
         var logo_url = utils.getResourcePath("tvdb/tvdb_logo.png");
         var tvdb_container_element = document.createElement("span");
         tvdb_container_element.setAttribute("id", "tvdb-container");
-        template_check = parent_element.children[0].children[0].children[0]
-        if (template_check) {
-            tvdb_container_element.classList = template_check.classList
-        }
-        else {
-            tvdb_container_element.classList = parent_element.children[0].classList
-        }
         tvdb_container_element.style.backgroundColor = "transparent";
+        tvdb_container_element.classList.add("ep_container")
 
         // construct link
         var tvdb_element_link = document.createElement("a");
@@ -34,20 +28,25 @@ tvdb = {
         return tvdb_container_element;
     },
 
-    insertTvdbLink: async (metadata_xml, parent_element) => {
-        // insert tvdb link element to bottom of metadata container
-        var type = "show";
-        var site = "tvdb"
-        utils.debug("TVDB Plugin [async] (insertTvdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
-        var tvdb_id = await tmdb_api.getId(site, type, metadata_xml);
-        if (tvdb_id) {
-            utils.debug("TVDB Plugin [async] (insertTvdbLink): TMDB API returned the following TVDB ID (" + tvdb_id + ")");
-            var tvdb_link = tvdb.constructTvdbLink(tvdb_id, parent_element);
-            utils.debug("TVDB Plugin [async] (insertTvdbLink): Inserting TVDB container into page");
-            document.getElementById("Enhanced-Plex-Banner").appendChild(tvdb_link);
+    insertTvdbLink: async (metadata_xml) => {
+        tvdb_exists = document.getElementById("tvdb-container");
+        if (tvdb_exists) {
+            utils.debug("TVDB Plugin [async] (insertTvdbLink): TVDB already present on page. Skipping.");
         }
         else {
-            utils.debug("TVDB Plugin [async] (insertTvdbLink): TMDB API did not find the TVDB ID... Aborting.");
+            var type = "show";
+            var site = "tvdb"
+            utils.debug("TVDB Plugin [async] (insertTvdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
+            var tvdb_id = await tmdb_api.getId(site, type, metadata_xml);
+            if (tvdb_id) {
+                utils.debug("TVDB Plugin [async] (insertTvdbLink): TMDB API returned the following TVDB ID (" + tvdb_id + ")");
+                var tvdb_link = tvdb.constructTvdbLink(tvdb_id);
+                utils.debug("TVDB Plugin [async] (insertTvdbLink): Inserting TVDB container into page");
+                document.getElementById("ep_links").appendChild(tvdb_link);
+            }
+            else {
+                utils.debug("TVDB Plugin [async] (insertTvdbLink): TMDB API did not find the TVDB ID... Aborting.");
+            }
         }
     }
 }
