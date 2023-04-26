@@ -168,9 +168,6 @@
     width: 524px;
     height: 500px;
     text-align: justify;
-    margin-left: -262px;
-    /*half width*/
-    margin-top: -250px;
     /*half height*/
     z-index: 5001;
 }
@@ -184,6 +181,21 @@
     margin-top: 50px;
     text-align: center;
     font-weight: bold;
+}
+
+#error-details {
+    display: none;
+    clear: both;
+    position: absolute;
+    top: 4em;
+    right: 4em;
+    background-color: dimgray;
+    padding: 1em;
+    border-style: double;
+}
+
+#error-container img {
+    height: 24px;
 }
 
 #loading-extension {

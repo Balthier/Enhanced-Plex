@@ -17,7 +17,8 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container"
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersion = "41042"
+    var MinPfWVersion = "41052"
+    var MinPfWVersionDisp = "4.105.2"
 }
 else {
     // Local Plex
@@ -32,6 +33,7 @@ else {
     var StatsButtonContainer = "NavBarActivityButton-button"
     var plexParentBanner = "preplay-thirdTitle";
     var MinPfWVersion = "41001"
+    var MinPfWVersionDisp = "4.100.1"
 }
 
 var UnmatchedDetection = new RegExp(/^local\:\/\//);
@@ -41,40 +43,94 @@ function minReqs() {
     utils.debug("Main (minReqs): Checking minimum requirements");
     var versionRegex = new RegExp(/plex-\d\.\d{3}\.\d/);
     var PfWRaw = document.head.getElementsByTagName('link')[0].href;
-    var PfWVersion = (PfWRaw.match(versionRegex))[0].replace("plex-", "").replace(/\./g, "");
+    var PfWVersionDisp = (PfWRaw.match(versionRegex))[0].replace("plex-", "")
+    var PfWVersion = PfWVersionDisp.replace(/\./g, "");
     if (PfWVersion < MinPfWVersion) {
-        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersion + " which is below the minimum required version: " + MinPfWVersion)
-        versionerror = true;
+        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp)
+        versionerror = "Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp;
+        level = "error"
+    }
+    else if (PfWVersion > MinPfWVersion) {
+        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp)
+        versionerror = "Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp + " - Please report any issues via the Known Issues link on the Options page";
+        level = "warn"
     }
     else {
-        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersion + " which is meets the minimum required version: " + MinPfWVersion)
+        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is meets the minimum required version: " + MinPfWVersionDisp)
         versionerror = false;
     }
-    return versionerror
+    if (versionerror) {
+        return [versionerror, level]
+    }
+    else {
+        return versionerror
+    }
 }
 
-function insertErrorBar() {
-    if (document.getElementById("Error-link")) {
+function insertErrorBar(level, details) {
+    if (document.getElementById("error-details")) {
         utils.debug("Main (insertErrorBar): Error already present. Skipping.");
         return;
     }
     var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
     var nav_bar_right = rightnavbars[0];
 
-    var stats_link = document.createElement("div");
-    stats_link.setAttribute("id", "Error-link");
-    stats_link.setAttribute("title", "EnhancedPLEX Error");
-    stats_link.innerText = "EnhancedPlex Error: Min Requirements not met."
+    var error_link = document.createElement("a");
+    error_link.setAttribute("id", "error-toggle");
+    error_link.setAttribute("href", "#")
+
+    var error_img = document.createElement("img");
+    error_link.appendChild(error_img)
+
+    var error_details = document.createElement("div");
+    error_details.setAttribute("id", "error-details");
+    error_details.setAttribute("title", "EnhancedPLEX Error");
+
+    if (level == "warn") {
+        var img_loc = utils.getResourcePath("info-icon.png")
+        error_img.setAttribute("src", img_loc)
+        error_details.innerText = "EnhancedPlex Warning: " + details
+    }
+    else if (level == "error") {
+        var img_loc = utils.getResourcePath("error-icon.png")
+        error_img.setAttribute("src", img_loc)
+        error_details.innerText = "EnhancedPlex Error: " + details
+    }
+    else {
+        utils.debug("Main (insertErrorBar): Unknown error level specified: " + level)
+        return
+    }
 
     var container = document.createElement("div");
-    container.setAttribute("id", "stats-page-container");
-    container.appendChild(stats_link);
-
+    container.setAttribute("id", "error-container");
+    container.appendChild(error_link)
+    container.appendChild(error_details);
     nav_bar_right.parentElement.prepend(container);
+
+    document.getElementById("error-toggle").addEventListener("click", function () {
+        toggleErrorDetails()
+    })
+}
+
+function toggleErrorDetails() {
+    error_element = document.getElementById("error-details")
+    current_display = window.getComputedStyle(error_element).display
+    if ((current_display == "none") || (!current_display)) {
+        utils.debug("Main (toggleErrorDetails): Details currently hidden. Displaying...")
+        error_element.style.display = "block"
+    }
+    else {
+        utils.debug("Main (toggleErrorDetails): Details currently set to: " + current_display + " - Hiding...")
+        error_element.style.display = "none"
+    }
 }
 
 function runOnReady() {
-    versionerror = minReqs();
+    versiondata = minReqs();
+    if (versiondata) {
+        versionerror = versiondata[0]
+        level = versiondata[1]
+    }
     utils.debug("Main (runOnReady): runOnReady called. Starting watch");
     var page_url = document.URL;
     var interval = window.setInterval(function () {
@@ -92,9 +148,11 @@ function runOnReady() {
             utils.debug("Main (runOnReady): Main page detected. Checking if ready...");
             if (document.getElementsByTagName(MainPageLoaded).length > 0) {
                 if (versionerror) {
-                    insertErrorBar();
-                    window.clearInterval(interval);
-                    return
+                    insertErrorBar(level, versionerror);
+                    if (level == "error") {
+                        window.clearInterval(interval);
+                        return
+                    }
                 }
                 utils.debug("Main (runOnReady): Instance of " + MainPageLoaded + " detected. Page is ready");
                 window.clearInterval(interval);
@@ -107,7 +165,7 @@ function runOnReady() {
             utils.debug("Main (runOnReady): Library page detected. Checking if ready...");
             if (document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0) {
                 if (versionerror) {
-                    insertErrorBar();
+                    insertErrorBar(level, versionerror);
                     window.clearInterval(interval);
                     return
                 }
@@ -121,7 +179,7 @@ function runOnReady() {
             utils.debug("Main (runOnReady): TV/Movie page detected. Checking if ready...");
             if ((document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0) || (document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0)) {
                 if (versionerror) {
-                    insertErrorBar();
+                    insertErrorBar(level, versionerror);
                     window.clearInterval(interval);
                     return
                 }
