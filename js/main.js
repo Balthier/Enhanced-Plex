@@ -80,11 +80,35 @@ function removeLoadingIcon() {
 }
 
 function insertBannerTemplate() {
-    var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
-    var banner_element = document.createElement("span");
-    banner_element.setAttribute("id", "Enhanced-Plex-Banner");
-    banner_element.classList = plex_parent.parentNode.classList;
-    plex_parent.parentNode.parentNode.appendChild(banner_element);
+    var existing_banner = document.getElementById("Enhanced-Plex-Banner");
+    if (existing_banner) {
+        utils.debug("Main [async] (insertBannerTemplate): Banner already exists on page. Skipping.");
+    }
+    else {
+        utils.debug("Main [async] (insertBannerTemplate): Banner not present. Constructing.");
+        var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
+        var banner_element = document.createElement("span");
+        banner_element.setAttribute("id", "Enhanced-Plex-Banner");
+
+        var info_box = document.createElement("div");
+        info_box.setAttribute("id", "ep_infobox");
+        info_box.classList.add("ep_box")
+        banner_element.appendChild(info_box);
+
+        var heading = document.createElement("h1")
+        heading.innerText = "Additional Information";
+        heading.classList.add("ep_h1");
+        info_box.appendChild(heading);
+
+        var links_box = document.createElement("div");
+        links_box.setAttribute("id", "ep_links");
+        links_box.classList.add("ep_box")
+        links_box.innerHTML = "<b>Links: </b> <br>"
+        banner_element.appendChild(links_box);
+
+        utils.debug("Main [async] (insertBannerTemplate): Inserting Banner");
+        plex_parent.parentNode.parentNode.appendChild(banner_element);
+    }
 }
 
 async function getServerAddresses(requests_url, plex_token) {
@@ -247,7 +271,6 @@ async function main() {
             const timer = ms => new Promise(res => setTimeout(res, ms))
             await timer(100);
             if (Object.keys(metadata_xml).length) {
-                var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
                 if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory").length > 0) {
                     guid = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("guid")
                     if (UnmatchedDetection.test(guid)) {
@@ -264,7 +287,7 @@ async function main() {
                         // insert imdb link
                         if (settings["options_imdb_shows_link"] === "true") {
                             utils.debug("Main [async] (main): imdb_shows is enabled");
-                            imdb.init(metadata_xml, "show", plex_parent);
+                            imdb.init(metadata_xml, "show");
                         }
                         else {
                             utils.debug("Main [async] (main): imdb_shows is disabled");
@@ -273,7 +296,7 @@ async function main() {
                         // create trakt link
                         if (settings["options_trakt_shows_link"] === "true") {
                             utils.debug("Main [async] (main): trakt_shows is enabled");
-                            trakt.init(metadata_xml, "show", server, plex_parent);
+                            trakt.init(metadata_xml, "show", server);
                         }
                         else {
                             utils.debug("Main [async] (main): trakt_shows is disabled");
@@ -282,7 +305,7 @@ async function main() {
                         // create tvdb link
                         if (settings["options_tvdb_link"] === "true") {
                             utils.debug("Main [async] (main): TVDB plugin is enabled");
-                            tvdb.init(metadata_xml, plex_parent);
+                            tvdb.init(metadata_xml);
                         }
                         else {
                             utils.debug("Main [async] (main): TVDB plugin is disabled");
@@ -304,7 +327,7 @@ async function main() {
                         // insert imdb link
                         if (settings["options_imdb_shows_link"] === "true") {
                             utils.debug("Main [async] (main): imdb_shows is enabled");
-                            imdb.init(metadata_xml, "season", plex_parent);
+                            imdb.init(metadata_xml, "season");
                         }
                         else {
                             utils.debug("Main [async] (main): imdb_shows is disabled");
@@ -313,7 +336,7 @@ async function main() {
                         // create trakt link
                         if (settings["options_trakt_shows_link"] === "true") {
                             utils.debug("Main [async] (main): trakt_shows is enabled");
-                            trakt.init(metadata_xml, "season", server, plex_parent);
+                            trakt.init(metadata_xml, "season", server);
                         }
                         else {
                             utils.debug("Main [async] (main): trakt_shows is disabled");
@@ -322,7 +345,7 @@ async function main() {
                         // create tvdb link
                         if (settings["options_tvdb_link"] === "true") {
                             utils.debug("Main [async] (main): TVDB plugin is enabled");
-                            tvdb.init(metadata_xml, plex_parent);
+                            tvdb.init(metadata_xml);
                         }
                         else {
                             utils.debug("Main [async] (main): TVDB plugin is disabled");
@@ -350,7 +373,7 @@ async function main() {
                     // insert imdb link
                     if (settings["options_imdb_movies_link"] === "true") {
                         utils.debug("Main [async] (main): imdb_movies is enabled");
-                        imdb.init(metadata_xml, "movie", plex_parent);
+                        imdb.init(metadata_xml, "movie");
                     }
                     else {
                         utils.debug("Main [async] (main): imdb_movies is disabled");
@@ -359,7 +382,7 @@ async function main() {
                     // insert tmdb link
                     if (settings["options_tmdb_link"] === "true") {
                         utils.debug("Main [async] (main): TMDB plugin is enabled");
-                        tmdb.init(metadata_xml, plex_parent);
+                        tmdb.init(metadata_xml);
                     }
                     else {
                         utils.debug("Main [async] (main): TMDB plugin is disabled");
@@ -368,7 +391,7 @@ async function main() {
                     // create trakt link
                     if (settings["options_trakt_movies_link"] === "true") {
                         utils.debug("Main [async] (main): trakt_movies is enabled");
-                        trakt.init(metadata_xml, "movie", server, plex_parent);
+                        trakt.init(metadata_xml, "movie", server);
                     }
                     else {
                         utils.debug("Main [async] (main): trakt_movies is disabled");
@@ -386,7 +409,7 @@ async function main() {
                     // create trakt link
                     if (settings["options_trakt_shows_link"] === "true") {
                         utils.debug("Main [async] (main): trakt_shows is enabled");
-                        trakt.init(metadata_xml, "episode", server, plex_parent);
+                        trakt.init(metadata_xml, "episode", server);
                     }
                     else {
                         utils.debug("Main [async] (main): trakt_shows is disabled");

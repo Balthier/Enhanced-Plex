@@ -49,7 +49,7 @@ async function restoreOptions() {
 }
 
 function refreshDebugExtraOptions() {
-    var debug_extra_options = document.querySelectorAll(".debug-extra");
+    var debug_extra_options = document.querySelectorAll("#debug-extra");
     if (document.getElementById("debug_on").checked) {
         for (var i = 0; i < debug_extra_options.length; i++) {
             debug_extra_options[i].style.display = "block";
