@@ -48,6 +48,8 @@ utils = {
         }
     },
 
+    timer: ms => new Promise(res => setTimeout(res, ms)),
+
     getExtensionVersion: function () {
         var version = chrome.runtime.getManifest()["version"];
         return version;
@@ -175,14 +177,14 @@ utils = {
         }
         key = key.replace(/[^A-Za-z0-9_]/g, "_")
         utils.debug("Utils [async] (cache_set): Committing the following to cache in " + type + " storage: " + key + " With the value of: ");
-        var object = {}
+        let object = {}
         object[key] = value
         utils.debug(object);
         command.set(object);
-        var cache_key = "cache-time-" + key
-        var time_now = new Date().getTime()
+        let cache_key = "cache-time-" + key
+        let time_now = new Date().getTime()
         utils.debug("Utils [async] (cache_set): Setting cache timestamp in " + type + " storage: " + cache_key);
-        var cache_data = {}
+        let cache_data = {}
         cache_data[cache_key] = time_now
         utils.debug(cache_data);
         command.set(cache_data);
@@ -234,11 +236,13 @@ utils = {
 
     },
 
-    getJSON: async (url, custom_headers) => {
+    getJSON: async (api_url, api_custom_headers) => {
+        let url = api_url
+        let custom_headers = api_custom_headers
         utils.debug("Utils [async] (getJSON): Checking for JSON Cache for " + url);
-        key = "json-cache-" + url
-        searchkey = key.replace(/[^A-Za-z0-9_]/g, "_")
-        var cacheCheck = await utils.cache_get(searchkey, "local") || {};
+        let key = "json-cache-" + url
+        let searchkey = key.replace(/[^A-Za-z0-9_]/g, "_")
+        let cacheCheck = await utils.cache_get(searchkey, "local") || {};
         if (Object.keys(cacheCheck).length) {
             utils.debug("Utils [async] (getJSON): Cache found for " + url);
             return cacheCheck;
@@ -246,11 +250,11 @@ utils = {
         else {
             // cache missed or stale, grabbing new data
             utils.debug("Utils [async] (getJSON): Fetching JSON from " + url);
-            response = await fetch(url, {
+            let response = await fetch(url, {
                 method: 'GET',
                 headers: custom_headers
             });
-            json = await response.json();
+            let json = await response.json();
             utils.debug("Utils (getJSON): Recieved JSON response");
             utils.debug(json);
             utils.cache_set(key, json, "local");
