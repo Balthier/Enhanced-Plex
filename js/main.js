@@ -52,6 +52,7 @@ function minReqs() {
     }
     return versionerror
 }
+
 function insertErrorBar() {
     if (document.getElementById("Error-link")) {
         utils.debug("Main (insertErrorBar): Error already present. Skipping.");
@@ -168,33 +169,34 @@ function insertBannerTemplate() {
     }
     else {
         utils.debug("Main [async] (insertBannerTemplate): Banner not present. Constructing.");
-        var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
+        var insert_target = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
         var banner_element = document.createElement("span");
         banner_element.setAttribute("id", PlexBannerID);
+        var info_box = document.createElement("div");
+        info_box.setAttribute("id", "ep_infobox");
+        info_box.classList.add("ep_box")
+        banner_element.appendChild(info_box);
+
+        var heading = document.createElement("h1")
+        heading.innerText = "Additional Information";
+        heading.classList.add("ep_h1");
+        info_box.appendChild(heading);
+
+        var links_box = document.createElement("div");
+        links_box.setAttribute("id", "ep_links");
+        links_box.classList.add("ep_box")
+        links_box.innerHTML = "<b>Links: </b> <br>"
+        banner_element.appendChild(links_box);
+
+        utils.debug("Main [async] (insertBannerTemplate): Inserting Banner");
 
         if (plexforweb) {
-            var info_box = document.createElement("div");
-            info_box.setAttribute("id", "ep_infobox");
-            info_box.classList.add("ep_box")
-            banner_element.appendChild(info_box);
-
-            var heading = document.createElement("h1")
-            heading.innerText = "Additional Information";
-            heading.classList.add("ep_h1");
-            info_box.appendChild(heading);
-
-            var links_box = document.createElement("div");
-            links_box.setAttribute("id", "ep_links");
-            links_box.classList.add("ep_box")
-            links_box.innerHTML = "<b>Links: </b> <br>"
-            banner_element.appendChild(links_box);
-
-            utils.debug("Main [async] (insertBannerTemplate): Inserting Banner");
-            plex_parent.parentNode.parentNode.appendChild(banner_element);
+            var plex_parent = insert_target.parentNode.parentNode
+            plex_parent.appendChild(banner_element);
 
         }
         else {
-            plex_parent.appendChild(banner_element);
+            insert_target.after(banner_element);
         }
     }
 }

@@ -4,7 +4,7 @@
 }
 
 .field {
-    width: 20%;
+    width: 30%;
 }
 
 .field,
@@ -126,5 +126,5 @@ input[type="number"] {
 }
 
 .thanks .field {
-    width: 31%;
+    width: 35%;
 }
