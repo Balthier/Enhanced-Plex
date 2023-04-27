@@ -203,20 +203,24 @@ function getPlexToken() {
     }
 }
 
-function insertLoadingIcon() {
-    var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
-    var nav_bar_right = rightnavbars[0];
-    var img = document.createElement("img");
-    img.setAttribute("src", utils.getResourcePath("loading_extension.gif"));
-    img.setAttribute("id", "loading-extension");
+function toggleLoadingIcon(option) {
+    if (option == "on") {
+        var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
+        var nav_bar_right = rightnavbars[0];
+        var img = document.createElement("img");
+        img.setAttribute("src", utils.getResourcePath("loading_stats.gif"));
+        img.setAttribute("id", "loading-extension");
+        img.setAttribute("height", "30px")
 
-    nav_bar_right.insertBefore(img, nav_bar_right.firstChild);
-}
-
-function removeLoadingIcon() {
-    var loading_icon = document.getElementById("loading-extension");
-    if (loading_icon) {
-        loading_icon.parentNode.removeChild(loading_icon);
+        utils.debug("Main (toggleLoadingIcon): Inserting Loading icon");
+        nav_bar_right.insertBefore(img, nav_bar_right.firstChild);
+    }
+    else if (option == "off") {
+        var loading_icon = document.getElementById("loading-extension");
+        if (loading_icon) {
+            utils.debug("Main (toggleLoadingIcon): Removing Loading icon");
+            loading_icon.parentNode.removeChild(loading_icon);
+        }
     }
 }
 
@@ -359,7 +363,9 @@ async function main() {
         // insert stats page link
         if (settings["options_stats_link"] === "true") {
             utils.debug("Main [async] (main): Stats plugin is enabled");
+            toggleLoadingIcon("on")
             stats.init();
+            toggleLoadingIcon("off")
         }
         else {
             utils.debug("Main [async] (main): Stats plugin is disabled");
