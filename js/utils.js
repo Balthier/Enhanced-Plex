@@ -1,9 +1,9 @@
 utils = {
     debug: async (output) => {
-        debug_cache = await chrome.storage.sync.get("options_debug") || {}
-        debug_unfiltered_cache = await chrome.storage.sync.get("options_debug_unfiltered") || {}
-        debug = debug_cache["options_debug"]
-        debug_unfiltered = debug_unfiltered_cache["options_debug_unfiltered"]
+        debug_cache = await chrome.storage.sync.get("options_debug") || {};
+        debug_unfiltered_cache = await chrome.storage.sync.get("options_debug_unfiltered") || {};
+        debug = debug_cache["options_debug"];
+        debug_unfiltered = debug_unfiltered_cache["options_debug_unfiltered"];
         if (debug === "true") {
             if (typeof output === "string") {
                 if (debug_unfiltered === "false") {
@@ -13,12 +13,12 @@ utils = {
                     output = output.replace(/X-Plex-Token=[\w\d]{20}/, "X-Plex-Token=XXXXXXXXXXXXXXXXXXXX");
                     output = output.replace(/\d+\.\d+\.\d+\.\d+/, "XXX.XXX.X.XX");
                 }
-                date = new Date()
-                hours = ("0" + date.getHours()).slice(-2)
-                minutes = ("0" + date.getMinutes()).slice(-2)
-                seconds = ("0" + date.getSeconds()).slice(-2)
-                milliseconds = ("0" + date.getMilliseconds()).slice(-2)
-                now = hours + ":" + minutes + ":" + seconds + "." + milliseconds
+                date = new Date();
+                hours = ("0" + date.getHours()).slice(-2);
+                minutes = ("0" + date.getMinutes()).slice(-2);
+                seconds = ("0" + date.getSeconds()).slice(-2);
+                milliseconds = ("0" + date.getMilliseconds()).slice(-2);
+                now = hours + ":" + minutes + ":" + seconds + "." + milliseconds;
                 console.log("[" + now + "] EnhancedPLEX Debug: " + output);
             }
             else {
@@ -73,18 +73,18 @@ utils = {
     },
 
     cache_purge: async () => {
-        types = ["sync", "local"]
-        var i = 0
+        types = ["sync", "local"];
+        var i = 0;
         types.forEach(function (type) {
             if (type === "sync") {
-                command = chrome.storage.sync
+                command = chrome.storage.sync;
             }
             else if (type === "local") {
-                command = chrome.storage.local
+                command = chrome.storage.local;
             }
             else {
                 utils.debug("Utils [async] (cache_purge): WARNING! Unrecognised storage type: " + type);
-                return
+                return;
             }
             command.get(null, function (data) {
                 utils.debug("Utils [async] (cache_purge): Checking " + type + " storage...");
@@ -93,43 +93,43 @@ utils = {
                         if (data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^cache\-time\-stats.+/g)) {
                         }
                         else {
-                            utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage")
-                            command.remove(data_key)
-                            utils.debug(data_key)
+                            utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
+                            command.remove(data_key);
+                            utils.debug(data_key);
                             var key = data_key.replace("cache-time-", "");
-                            command.remove(key)
-                            utils.debug(key)
+                            command.remove(key);
+                            utils.debug(key);
                         }
                     }
                     else {
                         if (data_key.match(/^options.+/g) || data_key.match(/^stats.+/g)) {
                         }
                         else {
-                            utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage")
-                            command.remove(data_key)
-                            utils.debug(data_key)
+                            utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
+                            command.remove(data_key);
+                            utils.debug(data_key);
                         }
                     }
                 }
-            })
-        })
+            });
+        });
     },
 
     cache_get: async (key, type) => {
         if (type === "sync") {
-            command = chrome.storage.sync
+            command = chrome.storage.sync;
         }
         else if (type === "local") {
-            command = chrome.storage.local
+            command = chrome.storage.local;
         }
-        key = key.replace(/[^A-Za-z0-9_]/g, "_")
+        key = key.replace(/[^A-Za-z0-9_]/g, "_");
         utils.debug("Utils [async] (cache_get): Retrieving the following from cache: " + key);
-        var cache_key = "cache-time-" + key
+        var cache_key = "cache-time-" + key;
         var expire_data = await command.get(cache_key) || {};
         if (Object.keys(expire_data).length) {
-            var timestamp = Object.values(expire_data)[0]
-            var time_now = new Date().getTime()
-            var time_diff = time_now - timestamp
+            var timestamp = Object.values(expire_data)[0];
+            var time_now = new Date().getTime();
+            var time_diff = time_now - timestamp;
             if (time_diff > 604800000) {
                 utils.debug("Utils [async] (cache_get): Found stale data, removing " + key + " from " + type + " storage");
                 command.remove(cache_key);
@@ -145,29 +145,29 @@ utils = {
             return response[key];
         }
         else {
-            utils.debug("Utils [async] (cache_get): No cache found for: " + key + " in " + type + " storage")
-            return
+            utils.debug("Utils [async] (cache_get): No cache found for: " + key + " in " + type + " storage");
+            return;
         }
     },
 
     cache_set: async (key, value, type) => {
         if (type === "sync") {
-            command = chrome.storage.sync
+            command = chrome.storage.sync;
         }
         else if (type === "local") {
-            command = chrome.storage.local
+            command = chrome.storage.local;
         }
-        key = key.replace(/[^A-Za-z0-9_]/g, "_")
+        key = key.replace(/[^A-Za-z0-9_]/g, "_");
         utils.debug("Utils [async] (cache_set): Committing the following to cache in " + type + " storage: " + key + " With the value of: ");
-        let object = {}
-        object[key] = value
+        let object = {};
+        object[key] = value;
         utils.debug(object);
         command.set(object);
-        let cache_key = "cache-time-" + key
-        let time_now = new Date().getTime()
+        let cache_key = "cache-time-" + key;
+        let time_now = new Date().getTime();
         utils.debug("Utils [async] (cache_set): Setting cache timestamp in " + type + " storage: " + cache_key);
-        let cache_data = {}
-        cache_data[cache_key] = time_now
+        let cache_data = {};
+        cache_data[cache_key] = time_now;
         utils.debug(cache_data);
         command.set(cache_data);
 
@@ -199,7 +199,7 @@ utils = {
 
     getXML_test: async (url) => {
         utils.debug("Utils [async] (getXML_test): Checking for XML Cache for " + url);
-        key = "xml-cache-" + url
+        key = "xml-cache-" + url;
         var cacheCheck = await utils.cache_get(key, "local") || {};
         if (Object.keys(cacheCheck).length) {
             return cacheCheck;
@@ -219,11 +219,11 @@ utils = {
     },
 
     getJSON: async (api_url, api_custom_headers) => {
-        let url = api_url
-        let custom_headers = api_custom_headers
+        let url = api_url;
+        let custom_headers = api_custom_headers;
         utils.debug("Utils [async] (getJSON): Checking for JSON Cache for " + url);
-        let key = "json-cache-" + url
-        let searchkey = key.replace(/[^A-Za-z0-9_]/g, "_")
+        let key = "json-cache-" + url;
+        let searchkey = key.replace(/[^A-Za-z0-9_]/g, "_");
         let cacheCheck = await utils.cache_get(searchkey, "local") || {};
         if (Object.keys(cacheCheck).length) {
             utils.debug("Utils [async] (getJSON): Cache found for " + url);
@@ -243,4 +243,4 @@ utils = {
             return json;
         }
     }
-}
+};

@@ -5,11 +5,11 @@ imdb = {
         imdb.insertImdbLink(type, metadata_xml);
     },
     constructImdbLink: function (imdb_url) {
-        var logo_url = utils.getResourcePath("imdb/imdb_logo.png")
+        var logo_url = utils.getResourcePath("imdb/imdb_logo.png");
         var imdb_container_element = document.createElement("span");
         imdb_container_element.setAttribute("id", "imdb-container");
         imdb_container_element.style.backgroundColor = "transparent";
-        imdb_container_element.classList.add("ep_container")
+        imdb_container_element.classList.add("ep_container");
         // construct link
         var imdb_element_link = document.createElement("a");
         imdb_element_link.setAttribute("id", "imdb-link");
@@ -33,7 +33,7 @@ imdb = {
             utils.debug("IMDB Plugin [async] (insertImdbLink): IMDB already present on page. Skipping.");
         }
         else {
-            var site = "imdb"
+            var site = "imdb";
             utils.debug("IMDB Plugin [async] (insertImdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
             imdb_id = await tmdb_api.getId(site, type, metadata_xml);
             if (imdb_id) {
@@ -51,4 +51,4 @@ imdb = {
             }
         }
     }
-}
+};

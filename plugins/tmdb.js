@@ -9,7 +9,7 @@ tmdb = {
         var logo_url = utils.getResourcePath("tmdb/tmdb_logo.svg");
         var tmdb_container_element = document.createElement("span");
         tmdb_container_element.setAttribute("id", "tmdb-container");
-        tmdb_container_element.classList.add("ep_container")
+        tmdb_container_element.classList.add("ep_container");
 
         // construct link
         var tmdb_element_link = document.createElement("a");
@@ -36,7 +36,7 @@ tmdb = {
         }
         else {
             var type = "movie";
-            var site = "tmdb"
+            var site = "tmdb";
             utils.debug("TMDB Plugin [async] (insertTmdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
             var tmdb_id = await tmdb_api.getId(site, type, metadata_xml);
             utils.debug("TMDB Plugin [async] (insertTmdbLink): TMDB API returned the following TMDB ID (" + tmdb_id + ")");
@@ -46,4 +46,4 @@ tmdb = {
             document.getElementById("ep_links").appendChild(tmdb_container);
         }
     }
-}
+};

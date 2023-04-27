@@ -21,10 +21,10 @@ stats = {
         stats_link.appendChild(stats_glyph);
         var container = document.createElement("div");
         container.setAttribute("id", "stats-page-container");
-        var styles = document.querySelectorAll('[aria-label^="Settings"]')[0].getAttribute("Class")
+        var styles = document.querySelectorAll('[aria-label^="Settings"]')[0].getAttribute("Class");
         container.setAttribute("class", styles);
 
         container.appendChild(stats_link);
         nav_bar_right.parentElement.prepend(container);
     }
-}
+};
