@@ -65,24 +65,6 @@ utils = {
         return stats_url;
     },
 
-    insertOverlay: function () {
-        // don't run if overlay exists on page
-        utils.debug("Utils (insertOverlay): Checking if overlay already exists before creating");
-        var existing_overlay = document.getElementById("overlay");
-        if (existing_overlay) {
-            utils.debug("Utils (insertOverlay): Overlay already exists. Passing");
-            return existing_overlay;
-        }
-
-        var overlay = document.createElement("div");
-        overlay.setAttribute("id", "overlay");
-
-        document.body.appendChild(overlay);
-        utils.debug("Utils (insertOverlay): Inserted overlay");
-
-        return overlay;
-    },
-
     storage_get_all: function (callback) {
         chrome.storage.sync.get(function (results) {
             global_settings = results;

@@ -4,6 +4,7 @@
 - Bug: Fixed an issue where links would sometimes be inserted multiple times
 - Enhancement: Added a lot more information on the main pages
 - Enhancement: Restructured the options page to add better clarity
+- Enhancement: Added support for locally hosted Plex (Plex Web 4.100.1)
 - Miscellaneous: Removed some code that was no longer being used
 
 ## **v3.0.6**
