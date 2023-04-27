@@ -7,7 +7,7 @@
     border-style: double;
     border-color: #28292A;
     margin-left: -0.6em;
-    padding: 0.6em;
+    padding: 1em;
     border-width: medium;
 }
 
@@ -20,7 +20,7 @@
 }
 
 .ep_h1 {
-    font-size: 1.7em;
+    font-size: 1.5em;
     line-height: 1.7em;
     margin: -0.3em 0 0 0;
     padding: 0;
@@ -31,7 +31,7 @@
 }
 
 .ep_box {
-    margin: 0.5em 0;
+    margin: 0;
 }
 
 .missing_episode,
