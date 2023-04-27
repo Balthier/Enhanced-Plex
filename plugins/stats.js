@@ -6,7 +6,7 @@ stats = {
             return;
         }
         utils.debug("Stats plugin (init): Adding Stats Link");
-        var rightnavbars = document.body.querySelectorAll("[class*=NavBarActivityButton-container]");
+        var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
         var nav_bar_right = rightnavbars[0];
 
         var stats_link = document.createElement("a");
@@ -19,7 +19,8 @@ stats = {
         stats_glyph.setAttribute("class", "glyphicon charts");
 
         stats_link.appendChild(stats_glyph);
-        var container = document.createElement("button");
+        var container = document.createElement("div");
+        container.setAttribute("id", "stats-page-container");
         var styles = document.querySelectorAll('[aria-label^="Settings"]')[0].getAttribute("Class")
         container.setAttribute("class", styles);
 

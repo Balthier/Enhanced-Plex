@@ -1,105 +1,6 @@
-#overlay {
-    display: none;
-    opacity: 0.9;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background-color: black;
-    width: 100%;
-    height: 100%;
-    z-index: 5000;
-}
-
-#watched-overlay {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    background-Color: rgba(0, 0, 0, 0.6);
-    width: 100%;
-    height: 100%;
-    z-Index: 2 !important;
-    border-Radius: 2.5px;
-}
-
-#watched-overlay:active {
-    z-index: 0 !important;
-}
-
 #missing-switch {
     cursor: pointer;
     cursor: hand;
-}
-
-#watched-switch {
-    -webkit-text-size-adjust: 100%;
-    fill: currentColor;
-    -webkit-font-smoothing: antialiased;
-    box-sizing: border-box;
-    -webkit-appearance: button;
-    line-height: inherit;
-    -webkit-tap-highlight-color: transparent;
-    background: none;
-    border: 0;
-    margin: 0;
-    outline: none;
-    text-decoration: none;
-    touch-action: manipulation;
-    border-radius: 4px;
-    color: #fafafa;
-    display: inline-block;
-    font-family: Open Sans Bold, Helvetica Neue, Helvetica, Arial, sans-serif;
-    text-align: center;
-    text-transform: uppercase;
-    transition: background-color .2s, color .2s;
-    user-select: none;
-    vertical-align: middle;
-    max-width: 100%;
-    overflow: hidden !important;
-    text-overflow: ellipsis;
-    white-space: nowrap !important;
-    background-color: rgba(0, 0, 0, .3);
-    min-width: 40px;
-    padding: 0;
-    font-size: 13px;
-    height: 30px;
-    margin-right: 10px;
-    cursor: pointer;
-}
-
-#watched-switch:hover {
-    -webkit-text-size-adjust: 100%;
-    fill: currentColor;
-    -webkit-font-smoothing: antialiased;
-    box-sizing: border-box;
-    -webkit-appearance: button;
-    line-height: inherit;
-    -webkit-tap-highlight-color: transparent;
-    background: none;
-    border: 0;
-    margin: 0;
-    outline: none;
-    text-decoration: none;
-    touch-action: manipulation;
-    border-radius: 4px;
-    display: inline-block;
-    font-family: Open Sans Bold, Helvetica Neue, Helvetica, Arial, sans-serif;
-    text-align: center;
-    text-transform: uppercase;
-    transition: background-color .2s, color .2s;
-    user-select: none;
-    vertical-align: middle;
-    max-width: 100%;
-    overflow: hidden !important;
-    text-overflow: ellipsis;
-    white-space: nowrap !important;
-    min-width: 40px;
-    padding: 0;
-    font-size: 13px;
-    height: 30px;
-    color: #fff;
-    background-color: hsla(0, 0%, 100%, .3);
-    margin-right: 10px;
-    cursor: pointer;
 }
 
 #Enhanced-Plex-Banner {
@@ -108,6 +9,10 @@
     margin-left: -0.6em;
     padding: 0.6em;
     border-width: medium;
+}
+
+#stats-page-link {
+    font-size: 1.5em;
 }
 
 .ep_container {
@@ -141,49 +46,19 @@
     will-change: unset;
 }
 
-.overlay-missing-episode-text {
-    margin-top: 40px;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 100px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    color: white;
-}
-
-.overlay-missing-season-text {
-    margin-top: 70px;
-    text-align: center;
-    vertical-align: middle;
-    line-height: 25px;
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-weight: bold;
-    color: white;
-}
-
-.update-box {
+#error-details {
+    display: none;
+    clear: both;
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 524px;
-    height: 500px;
-    text-align: justify;
-    margin-left: -262px;
-    /*half width*/
-    margin-top: -250px;
-    /*half height*/
-    z-index: 5001;
+    top: 4em;
+    right: 4em;
+    background-color: dimgray;
+    padding: 1em;
+    border-style: double;
 }
 
-.update-box img {
-    display: block;
-    margin: 0 auto;
-}
-
-.update-box p {
-    margin-top: 50px;
-    text-align: center;
-    font-weight: bold;
+#error-container img {
+    height: 24px;
 }
 
 #loading-extension {

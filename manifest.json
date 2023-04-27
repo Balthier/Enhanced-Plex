@@ -7,8 +7,9 @@
   "content_scripts": [
     {
       "matches": [
-        "https://app.plex.tv/desktop*",
-        "http://app.plex.tv/desktop*"
+        "*://app.plex.tv/desktop*",
+        "http://127.0.0.1:32400/web*",
+        "http://localhost:32400/web*"
       ],
       "run_at": "document_idle",
       "css": [

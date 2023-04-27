@@ -1,21 +1,145 @@
 var show_update_text = false;
 var update_text = "EnhancedPLEX. Made from the ashes of Transmogrify"
+
 // Hopefully these will make it easier to update in future Plex for Web updates.
-var MainPageDetection = new RegExp(/https:\/\/app\.plex\.tv\/desktop\/?\#\!\/?$/);
-var LibraryPageDetection = new RegExp(/\/desktop(.*)\/media\/(.*)com.plexapp.plugins.library(.*)$/);
-var TVMoviePageDetection = new RegExp(/\/desktop(.*)\/server\/(.*)details(.*)$/);
-var MainPageLoaded = "button";
-var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
-var TVPageLoaded = "PrePlayListTitle-titleContainer";
-var MoviePageLoaded = "metadata-title";
-var StatsButtonParent = "NavBar-right";
-var plexParentBanner = "metadata-starRatings";
+var PlexForWebURL = new RegExp(/https:\/\/app\.plex\.tv\/desktop\/?\#\!\/?/);
+var plexforweb = PlexForWebURL.test(document.URL)
+
+if (plexforweb) {
+    // Plex for Web
+    var MainPageDetection = new RegExp(/(.*)\/desktop\/?\#\!\/?$/);
+    var LibraryPageDetection = new RegExp(/(.*)com.plexapp.plugins.library(.*)$/);
+    var TVMoviePageDetection = new RegExp(/(.*)\/server\/(.*)details(.*)$/);
+    var MainPageLoaded = "button";
+    var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
+    var TVPageLoaded = "PrePlayListTitle-titleContainer";
+    var MoviePageLoaded = "metadata-title";
+    var StatsButtonParent = "NavBar-right";
+    var StatsButtonContainer = "NavBarActivityButton-container"
+    var plexParentBanner = "metadata-starRatings";
+    var MinPfWVersion = "41052"
+    var MinPfWVersionDisp = "4.105.2"
+}
+else {
+    // Local Plex
+    var MainPageDetection = new RegExp(/(.*)\/web\/index.html\#\!\/$/);
+    var LibraryPageDetection = new RegExp(/(.*)com.plexapp.plugins.library(.*)$/);
+    var TVMoviePageDetection = new RegExp(/(.*)\/server\/(.*)details(.*)$/);
+    var MainPageLoaded = "button";
+    var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
+    var TVPageLoaded = "PrePlayListTitle-titleContainer";
+    var MoviePageLoaded = "preplay-mainTitle";
+    var StatsButtonParent = "NavBar-right";
+    var StatsButtonContainer = "NavBarActivityButton-button"
+    var plexParentBanner = "preplay-thirdTitle";
+    var MinPfWVersion = "41001"
+    var MinPfWVersionDisp = "4.100.1"
+}
+
 var UnmatchedDetection = new RegExp(/^local\:\/\//);
+var PlexBannerID = "Enhanced-Plex-Banner"
+
+function minReqs() {
+    utils.debug("Main (minReqs): Checking minimum requirements");
+    var versionRegex = new RegExp(/plex-\d\.\d{3}\.\d/);
+    var PfWRaw = document.head.getElementsByTagName('link')[0].href;
+    var PfWVersionDisp = (PfWRaw.match(versionRegex))[0].replace("plex-", "")
+    var PfWVersion = PfWVersionDisp.replace(/\./g, "");
+    if (PfWVersion < MinPfWVersion) {
+        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp)
+        versionerror = "Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp;
+        level = "error"
+    }
+    else if (PfWVersion > MinPfWVersion) {
+        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp)
+        versionerror = "Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp + " - Please report any issues via the Known Issues link on the Options page";
+        level = "warn"
+    }
+    else {
+        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is meets the minimum required version: " + MinPfWVersionDisp)
+        versionerror = false;
+    }
+    if (versionerror) {
+        return [versionerror, level]
+    }
+    else {
+        return versionerror
+    }
+}
+
+function insertErrorBar(level, details) {
+    if (document.getElementById("error-details")) {
+        utils.debug("Main (insertErrorBar): Error already present. Skipping.");
+        return;
+    }
+    var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
+    var nav_bar_right = rightnavbars[0];
+
+    var error_link = document.createElement("a");
+    error_link.setAttribute("id", "error-toggle");
+    error_link.setAttribute("href", "#")
+
+    var error_img = document.createElement("img");
+    error_link.appendChild(error_img)
+
+    var error_details = document.createElement("div");
+    error_details.setAttribute("id", "error-details");
+    error_details.setAttribute("title", "EnhancedPLEX Error");
+
+    if (level == "warn") {
+        var img_loc = utils.getResourcePath("info-icon.png")
+        error_img.setAttribute("src", img_loc)
+        error_details.innerText = "EnhancedPlex Warning: " + details
+    }
+    else if (level == "error") {
+        var img_loc = utils.getResourcePath("error-icon.png")
+        error_img.setAttribute("src", img_loc)
+        error_details.innerText = "EnhancedPlex Error: " + details
+    }
+    else {
+        utils.debug("Main (insertErrorBar): Unknown error level specified: " + level)
+        return
+    }
+
+    var container = document.createElement("div");
+    container.setAttribute("id", "error-container");
+    container.appendChild(error_link)
+    container.appendChild(error_details);
+    nav_bar_right.parentElement.prepend(container);
+
+    document.getElementById("error-toggle").addEventListener("click", function () {
+        toggleErrorDetails()
+    })
+}
+
+function toggleErrorDetails() {
+    error_element = document.getElementById("error-details")
+    current_display = window.getComputedStyle(error_element).display
+    if ((current_display == "none") || (!current_display)) {
+        utils.debug("Main (toggleErrorDetails): Details currently hidden. Displaying...")
+        error_element.style.display = "block"
+    }
+    else {
+        utils.debug("Main (toggleErrorDetails): Details currently set to: " + current_display + " - Hiding...")
+        error_element.style.display = "none"
+    }
+}
 
 function runOnReady() {
+    versiondata = minReqs();
+    if (versiondata) {
+        versionerror = versiondata[0]
+        level = versiondata[1]
+    }
     utils.debug("Main (runOnReady): runOnReady called. Starting watch");
     var page_url = document.URL;
     var interval = window.setInterval(function () {
+        if (plexforweb) {
+            utils.debug("Main (runOnReady): Plex for Web URL detected")
+        }
+        else {
+            utils.debug("Main (runOnReady): Local Plex URL detected")
+        }
         if (document.URL != page_url) {
             utils.debug("Main (runOnReady): Document URL is not the same as Page URL. Clearing Interval..")
             window.clearInterval(interval);
@@ -23,6 +147,13 @@ function runOnReady() {
         if (MainPageDetection.test(document.URL)) {
             utils.debug("Main (runOnReady): Main page detected. Checking if ready...");
             if (document.getElementsByTagName(MainPageLoaded).length > 0) {
+                if (versionerror) {
+                    insertErrorBar(level, versionerror);
+                    if (level == "error") {
+                        window.clearInterval(interval);
+                        return
+                    }
+                }
                 utils.debug("Main (runOnReady): Instance of " + MainPageLoaded + " detected. Page is ready");
                 window.clearInterval(interval);
                 main();
@@ -33,6 +164,11 @@ function runOnReady() {
         else if (LibraryPageDetection.test(document.URL)) {
             utils.debug("Main (runOnReady): Library page detected. Checking if ready...");
             if (document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0) {
+                if (versionerror) {
+                    insertErrorBar(level, versionerror);
+                    window.clearInterval(interval);
+                    return
+                }
                 utils.debug("Main (runOnReady): Instance of " + LibraryPageLoaded + " detected. Page is ready");
                 window.clearInterval(interval);
                 main();
@@ -42,6 +178,11 @@ function runOnReady() {
         else if (TVMoviePageDetection.test(document.URL)) {
             utils.debug("Main (runOnReady): TV/Movie page detected. Checking if ready...");
             if ((document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0) || (document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0)) {
+                if (versionerror) {
+                    insertErrorBar(level, versionerror);
+                    window.clearInterval(interval);
+                    return
+                }
                 utils.debug("Main (runOnReady): Instance of " + TVPageLoaded + " or " + MoviePageLoaded + "detected. Page is ready");
                 window.clearInterval(interval);
                 main();
@@ -62,20 +203,24 @@ function getPlexToken() {
     }
 }
 
-function insertLoadingIcon() {
-    var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonParent) + "]");
-    var nav_bar_right = rightnavbars[0];
-    var img = document.createElement("img");
-    img.setAttribute("src", utils.getResourcePath("loading_extension.gif"));
-    img.setAttribute("id", "loading-extension");
+function toggleLoadingIcon(option) {
+    if (option == "on") {
+        var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
+        var nav_bar_right = rightnavbars[0];
+        var img = document.createElement("img");
+        img.setAttribute("src", utils.getResourcePath("loading_stats.gif"));
+        img.setAttribute("id", "loading-extension");
+        img.setAttribute("height", "30px")
 
-    nav_bar_right.insertBefore(img, nav_bar_right.firstChild);
-}
-
-function removeLoadingIcon() {
-    var loading_icon = document.getElementById("loading-extension");
-    if (loading_icon) {
-        loading_icon.parentNode.removeChild(loading_icon);
+        utils.debug("Main (toggleLoadingIcon): Inserting Loading icon");
+        nav_bar_right.insertBefore(img, nav_bar_right.firstChild);
+    }
+    else if (option == "off") {
+        var loading_icon = document.getElementById("loading-extension");
+        if (loading_icon) {
+            utils.debug("Main (toggleLoadingIcon): Removing Loading icon");
+            loading_icon.parentNode.removeChild(loading_icon);
+        }
     }
 }
 
@@ -86,10 +231,9 @@ function insertBannerTemplate() {
     }
     else {
         utils.debug("Main [async] (insertBannerTemplate): Banner not present. Constructing.");
-        var plex_parent = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
+        var insert_target = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
         var banner_element = document.createElement("span");
-        banner_element.setAttribute("id", "Enhanced-Plex-Banner");
-
+        banner_element.setAttribute("id", PlexBannerID);
         var info_box = document.createElement("div");
         info_box.setAttribute("id", "ep_infobox");
         info_box.classList.add("ep_box")
@@ -107,7 +251,15 @@ function insertBannerTemplate() {
         banner_element.appendChild(links_box);
 
         utils.debug("Main [async] (insertBannerTemplate): Inserting Banner");
-        plex_parent.parentNode.parentNode.appendChild(banner_element);
+
+        if (plexforweb) {
+            var plex_parent = insert_target.parentNode.parentNode
+            plex_parent.appendChild(banner_element);
+
+        }
+        else {
+            insert_target.after(banner_element);
+        }
     }
 }
 
@@ -211,7 +363,9 @@ async function main() {
         // insert stats page link
         if (settings["options_stats_link"] === "true") {
             utils.debug("Main [async] (main): Stats plugin is enabled");
+            toggleLoadingIcon("on")
             stats.init();
+            toggleLoadingIcon("off")
         }
         else {
             utils.debug("Main [async] (main): Stats plugin is disabled");
@@ -435,4 +589,5 @@ window.onhashchange = function () {
     utils.debug("Main (window.onhashchange): Page change detected");
     runOnReady();
 }
+utils.debug("Main: Starting EnhancedPlex");
 runOnReady();
