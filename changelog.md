@@ -1,5 +1,5 @@
 ## **v3.1.0**
-#### 2023-04-26
+#### 2023-05-26
 - Bug: Fixed an issue where the missing episodes plugin would ignore special seasons
 - Bug: Fixed an issue where links would sometimes be inserted multiple times
 - Enhancement: Restructured the options page to add better clarity
