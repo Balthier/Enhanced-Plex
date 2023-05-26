@@ -122,6 +122,10 @@ utils = {
         else if (type === "local") {
             command = chrome.storage.local;
         }
+        else {
+            utils.debug("Utils [async] (cache_get): No type selected. Aborting...");
+            return;
+        }
         key = key.replace(/[^A-Za-z0-9_]/g, "_");
         utils.debug("Utils [async] (cache_get): Retrieving the following from cache: " + key);
         var cache_key = "cache-time-" + key;
@@ -156,6 +160,10 @@ utils = {
         }
         else if (type === "local") {
             command = chrome.storage.local;
+        }
+        else {
+            utils.debug("Utils [async] (cache_set): No type selected. Aborting...");
+            return;
         }
         key = key.replace(/[^A-Za-z0-9_]/g, "_");
         utils.debug("Utils [async] (cache_set): Committing the following to cache in " + type + " storage: " + key + " With the value of: ");
