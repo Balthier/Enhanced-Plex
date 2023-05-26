@@ -12,10 +12,24 @@ function sortObj(obj) {
 	}, {});
 }
 
+function setProgress(current, total, loadType, cached) {
+	var loadingTextElement = document.getElementById("loading-text");
+	if (!cached) {
+		loadingTextElement.innerHTML = "<h2>LOADING</h2></br>Loading " + loadType + " Library Data: " + current + "/" + total + "</br><i>Larger libraries will take time to process</i>";
+	}
+	else {
+		loadingTextElement.innerHTML = "<h2>LOADING</h2></br>Loading " + loadType + " Cached Library Data: " + current + "/" + total + "</br><i>Larger libraries will take time to process</i>";
+	}
+}
+
 async function generateShowData(uri, plex_token, section_keys, show_categories, show_categories_cached) {
+	loadType = "Show";
 	if (Array.isArray(show_categories_cached) && show_categories_cached.length) {
 		utils.debug("Stats [async] (generateShowData): Retreiving show data from cache for cached show categories");
+		var total = section_keys.length;
+		var cached = true;
 		for (var k = 0; k < show_categories_cached.length; k++) {
+			setProgress(k, total, loadType, cached);
 			var chartId = show_categories_cached[k];
 			var key = "stats_" + chartId;
 			result = await utils.cache_get(key, "sync");
@@ -29,7 +43,10 @@ async function generateShowData(uri, plex_token, section_keys, show_categories, 
 		var shows = [];
 		var episodes = [];
 		var show_genres = [];
+		var total = section_keys.length;
+		var cached = false;
 		for (var j = 0; j < section_keys.length; j++) {
+			setProgress(j, total, loadType, cached);
 			var section_key = section_keys[j];
 			const timer = ms => new Promise(res => setTimeout(res, ms));
 			var library_section_url = uri + "/library/sections/" + section_key + "/all?X-Plex-Token=" + plex_token;
@@ -102,9 +119,13 @@ async function generateShowData(uri, plex_token, section_keys, show_categories, 
 }
 
 async function generateMovieData(uri, plex_token, section_keys, movie_categories, movie_categories_cached) {
+	var loadType = "Movie";
 	if (Array.isArray(movie_categories_cached) && movie_categories_cached.length) {
 		utils.debug("Stats [async] (generateMovieData): Retreiving movie data from cache for cached movie categories");
+		var total = section_keys.length;
+		var cached = true;
 		for (var k = 0; k < movie_categories_cached.length; k++) {
+			setProgress(k, total, loadType, cached);
 			var chartId = movie_categories_cached[k];
 			var key = "stats_" + chartId;
 			result = await utils.cache_get(key, "sync");
@@ -116,7 +137,10 @@ async function generateMovieData(uri, plex_token, section_keys, movie_categories
 	if (Array.isArray(movie_categories) && movie_categories.length) {
 		utils.debug("Stats [async] (generateMovieData): Generating movie data for non-cached movie categories");
 		var movies = [];
+		var total = section_keys.length;
+		var cached = false;
 		for (var j = 0; j < section_keys.length; j++) {
+			setProgress(j, total, loadType, cached);
 			var section_key = section_keys[j];
 			const timer = ms => new Promise(res => setTimeout(res, ms));
 			var library_section_url = uri + "/library/sections/" + section_key + "/all?X-Plex-Token=" + plex_token;
