@@ -10,7 +10,7 @@ tvdb = {
         var tvdb_container_element = document.createElement("span");
         tvdb_container_element.setAttribute("id", "tvdb-container");
         tvdb_container_element.style.backgroundColor = "transparent";
-        tvdb_container_element.classList.add("ep_container")
+        tvdb_container_element.classList.add("ep_container");
 
         // construct link
         var tvdb_element_link = document.createElement("a");
@@ -35,7 +35,7 @@ tvdb = {
         }
         else {
             var type = "show";
-            var site = "tvdb"
+            var site = "tvdb";
             utils.debug("TVDB Plugin [async] (insertTvdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
             var tvdb_id = await tmdb_api.getId(site, type, metadata_xml);
             if (tvdb_id) {
@@ -49,4 +49,4 @@ tvdb = {
             }
         }
     }
-}
+};

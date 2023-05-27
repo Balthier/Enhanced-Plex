@@ -1,11 +1,15 @@
 ## **v3.1.0**
-#### 2023-04-26
+#### 2023-05-26
 - Bug: Fixed an issue where the missing episodes plugin would ignore special seasons
 - Bug: Fixed an issue where links would sometimes be inserted multiple times
-- Enhancement: Added a lot more information on the main pages
 - Enhancement: Restructured the options page to add better clarity
 - Enhancement: Added support for locally hosted Plex (Plex Web 4.100.1)
+- Enhancement: Added version checking for the latest tested version, compared to the installed/active version of Plex for Web
+- Enhancement: Added a warning/error icon when there is a version mismatch between Plex for Web and the latest tested version
+- Enhancement: Added loading display on stats page
+- Miscellaneous: Updated the README to include a couple more links
 - Miscellaneous: Removed some code that was no longer being used
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to (4.106.2)
 
 ## **v3.0.6**
 #### 2023-04-21

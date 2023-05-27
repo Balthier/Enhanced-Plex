@@ -16,7 +16,7 @@ function drawMovieYearsChart(year_data) {
                 x_labels,
                 y_data,
             ],
-            color: function(color, d) {
+            color: function (color, d) {
                 return "#FF9900";
             }
         },
@@ -68,7 +68,7 @@ function drawMovieGenreChart(genre_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -80,7 +80,7 @@ function drawMovieGenreChart(genre_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Movies (" + format(ratio) + ")";
                 }
@@ -98,7 +98,7 @@ function drawMovieRatingChart(rating_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -109,7 +109,7 @@ function drawMovieRatingChart(rating_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Movies (" + format(ratio) + ")";
                 }
@@ -135,7 +135,7 @@ function drawMovieDateAddedChart(date_data) {
                 x_labels,
                 y_data,
             ],
-            color: function(color, d) {
+            color: function (color, d) {
                 return "#109618";
             }
         },
@@ -178,7 +178,7 @@ function drawMovieContentRatingChart(content_rating_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -189,7 +189,7 @@ function drawMovieContentRatingChart(content_rating_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Movies (" + format(ratio) + ")";
                 }
@@ -207,7 +207,7 @@ function drawMovieResolutionChart(resolution_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -218,7 +218,7 @@ function drawMovieResolutionChart(resolution_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Movies (" + format(ratio) + ")";
                 }
@@ -246,7 +246,7 @@ function drawShowYearsChart(year_data) {
                 x_labels,
                 y_data,
             ],
-            color: function(color, d) {
+            color: function (color, d) {
                 return "#9467BD";
             }
         },
@@ -301,7 +301,7 @@ function drawShowGenreChart(genre_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -313,7 +313,7 @@ function drawShowGenreChart(genre_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Shows (" + format(ratio) + ")";
                 }
@@ -331,7 +331,7 @@ function drawShowRatingChart(rating_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -342,7 +342,7 @@ function drawShowRatingChart(rating_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Shows (" + format(ratio) + ")";
                 }
@@ -368,7 +368,7 @@ function drawShowDateAddedChart(date_data) {
                 x_labels,
                 y_data,
             ],
-            color: function(color, d) {
+            color: function (color, d) {
                 return "#D62728";
             }
         },
@@ -411,7 +411,7 @@ function drawShowContentRatingChart(content_rating_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -422,7 +422,7 @@ function drawShowContentRatingChart(content_rating_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Shows (" + format(ratio) + ")";
                 }
@@ -440,7 +440,7 @@ function drawShowResolutionChart(resolution_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -451,7 +451,7 @@ function drawShowResolutionChart(resolution_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Episodes (" + format(ratio) + ")";
                 }
@@ -478,7 +478,7 @@ function drawAlbumYearsChart(year_data) {
                 x_labels,
                 y_data,
             ],
-            color: function(color, d) {
+            color: function (color, d) {
                 return "#109618";
             }
         },
@@ -528,7 +528,7 @@ function drawAlbumGenreChart(genre_data) {
         },
         donut: {
             label: {
-                format: function(value, ratio, id) {
+                format: function (value, ratio, id) {
                     return id;
                 }
             },
@@ -540,7 +540,7 @@ function drawAlbumGenreChart(genre_data) {
         },
         tooltip: {
             format: {
-                value: function(value, ratio, id) {
+                value: function (value, ratio, id) {
                     var format = d3.format(".1%");
                     return value + " Albums (" + format(ratio) + ")";
                 }
@@ -559,7 +559,7 @@ function drawMusicDateAddedChart(date_data) {
 
     // create array of dates with no duplicates
     var dates = Object.keys(song_data).concat(Object.keys(album_data));
-    var unique_dates = dates.filter(function (key, index) {return dates.indexOf(key) == index}).sort();
+    var unique_dates = dates.filter(function (key, index) { return dates.indexOf(key) == index; }).sort();
     x_labels = x_labels.concat(unique_dates);
 
     // iterate through dates and use song data and album data on that date if it exists.
@@ -587,7 +587,7 @@ function drawMusicDateAddedChart(date_data) {
                 y_song_data,
                 y_album_data
             ],
-            color: function(color, d) {
+            color: function (color, d) {
                 if (d === "Total songs" || d["id"] === "Total songs") {
                     return "#1F77B4";
                 }
@@ -644,7 +644,7 @@ function drawMusicBitrateChart(bitrate_data) {
                 x_labels,
                 y_data
             ],
-            color: function(color, d) {
+            color: function (color, d) {
                 return "#E377C2";
             }
         },
