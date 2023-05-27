@@ -25,27 +25,27 @@ trakt = {
         }
         utils.debug("Trakt Plugin [async] (processTarget): TMDB API returned the following IMDB ID (" + imdb_id + ")");
         if (type === "show") {
-            var base_url = "http://trakt.tv/shows/"
+            var base_url = "http://trakt.tv/shows/";
             var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("year");
             var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("title");
         }
         else if (type == "season") {
-            var base_url = "http://trakt.tv/shows/"
+            var base_url = "http://trakt.tv/shows/";
             var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("parentYear");
             var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("parentTitle");
             var directory_metadata = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0];
-            var season_num = directory_metadata.getAttribute("index")
+            var season_num = directory_metadata.getAttribute("index");
         }
         else if (type == "episode") {
-            var base_url = "http://trakt.tv/shows/"
+            var base_url = "http://trakt.tv/shows/";
             var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("grandparentYear");
             var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("grandparentTitle");
             var directory_metadata = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0];
-            var season_num = directory_metadata.getAttribute("parentIndex")
-            var episode_num = directory_metadata.getAttribute("index")
+            var season_num = directory_metadata.getAttribute("parentIndex");
+            var episode_num = directory_metadata.getAttribute("index");
         }
         else if (type === "movie") {
-            var base_url = "http://trakt.tv/movies/"
+            var base_url = "http://trakt.tv/movies/";
             var year = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("year");
             var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("title");
         }
@@ -80,14 +80,14 @@ trakt = {
                 }
             }
             else {
-                var base_url = "https://trakt.tv/search/?query="
+                var base_url = "https://trakt.tv/search/?query=";
                 if (year) {
-                    var minYear = year - 1
-                    var maxYear = year - 1
+                    var minYear = year - 1;
+                    var maxYear = year - 1;
                     var url = base_url + title + "&years=" + minYear + "-" + maxYear;
                 }
                 else {
-                    var url = base_url + title
+                    var url = base_url + title;
                 }
             }
         }
@@ -101,7 +101,7 @@ trakt = {
         var trakt_link_element = document.createElement("a");
         trakt_container_element.style.backgroundColor = "transparent";
         trakt_container_element.setAttribute("id", "trakt-container");
-        trakt_container_element.classList.add("ep_container")
+        trakt_container_element.classList.add("ep_container");
 
         trakt_link_element.setAttribute("id", "trakt-link");
         trakt_link_element.setAttribute("href", trakt_url);
@@ -134,52 +134,52 @@ trakt = {
             if ((type === "show") || (type === "movie")) {
                 extras = await trakt_api.getInfo(api_id, type);
                 if (extras.homepage) {
-                    var homepage = document.createElement("p")
-                    homepage.innerHTML = "<b>Homepage:</b> <a href='" + extras.homepage + "' target='_blank'>" + extras.homepage + "</a>"
-                    parent_box.appendChild(homepage)
+                    var homepage = document.createElement("p");
+                    homepage.innerHTML = "<b>Homepage:</b> <a href='" + extras.homepage + "' target='_blank'>" + extras.homepage + "</a>";
+                    parent_box.appendChild(homepage);
                 }
                 if (extras.status) {
-                    var status_raw = extras.status
-                    words = status_raw.split(" ")
+                    var status_raw = extras.status;
+                    words = status_raw.split(" ");
                     for (let i = 0; i < words.length; i++) {
                         words[i] = words[i][0].toUpperCase() + words[i].substr(1);
                     }
-                    status_text = words.join(" ")
+                    status_text = words.join(" ");
                     if (status_text == "Canceled") {
-                        status_text = "Cancelled"
+                        status_text = "Cancelled";
                     }
-                    current_status = document.createElement("p")
-                    current_status.innerHTML = "<b>Status:</b> " + status_text
-                    parent_box.appendChild(current_status)
+                    current_status = document.createElement("p");
+                    current_status.innerHTML = "<b>Status:</b> " + status_text;
+                    parent_box.appendChild(current_status);
                 }
                 if (extras.runtime) {
-                    var runtime = document.createElement("p")
-                    runtime.innerHTML = "<b>Runtime:</b> " + extras.runtime + " minutes"
-                    parent_box.appendChild(runtime)
+                    var runtime = document.createElement("p");
+                    runtime.innerHTML = "<b>Runtime:</b> " + extras.runtime + " minutes";
+                    parent_box.appendChild(runtime);
                 }
                 if (extras.network) {
-                    var network = document.createElement("p")
-                    network.innerHTML = "<b>Network:</b> " + extras.network
-                    parent_box.appendChild(network)
+                    var network = document.createElement("p");
+                    network.innerHTML = "<b>Network:</b> " + extras.network;
+                    parent_box.appendChild(network);
                 }
                 if (extras.first_aired) {
-                    var aired = document.createElement("p")
-                    first_aired = new Date(extras.first_aired).toLocaleDateString()
-                    aired.innerHTML = "<b>First Aired:</b> " + first_aired
-                    parent_box.appendChild(aired)
+                    var aired = document.createElement("p");
+                    first_aired = new Date(extras.first_aired).toLocaleDateString();
+                    aired.innerHTML = "<b>First Aired:</b> " + first_aired;
+                    parent_box.appendChild(aired);
                 }
                 if (extras.released) {
-                    var aired = document.createElement("p")
-                    released = new Date(extras.released).toLocaleDateString()
-                    aired.innerHTML = "<b>Released:</b> " + released
-                    parent_box.appendChild(aired)
+                    var aired = document.createElement("p");
+                    released = new Date(extras.released).toLocaleDateString();
+                    aired.innerHTML = "<b>Released:</b> " + released;
+                    parent_box.appendChild(aired);
                 }
                 if (extras.trailer) {
-                    var trailer = document.createElement("p")
-                    trailer.innerHTML = "<b>Trailer:</b> <a href='" + extras.trailer + "' target='_blank'>" + extras.trailer + "</a>"
-                    parent_box.appendChild(trailer)
+                    var trailer = document.createElement("p");
+                    trailer.innerHTML = "<b>Trailer:</b> <a href='" + extras.trailer + "' target='_blank'>" + extras.trailer + "</a>";
+                    parent_box.appendChild(trailer);
                 }
             }
         }
     }
-}
+};

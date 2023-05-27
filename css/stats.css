@@ -63,10 +63,14 @@
 }
 
 .loading-text {
-    padding: 30% 0;
+    padding: 20% 0;
     text-align: center;
     color: #EEEEEE;
     background-color: rgba(18, 17, 17, 0.8);
+}
+
+.loading-text h2 {
+    margin-block-end: 0em;
 }
 
 .loading-text i {
