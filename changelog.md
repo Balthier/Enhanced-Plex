@@ -1,3 +1,8 @@
+## **v3.1.1**
+#### 2023-06-09
+- Bug: Fixed an issue where clicking on the compatibility warning/error would inadvertantly send you back to the homepage
+- Bug: Fixed an issue where the compatability warning would stop the extension when displayed
+
 ## **v3.1.0**
 #### 2023-05-26
 - Bug: Fixed an issue where the missing episodes plugin would ignore special seasons
