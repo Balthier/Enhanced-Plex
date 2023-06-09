@@ -16,8 +16,8 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersion = "41062";
-    var MinPfWVersionDisp = "4.106.2";
+    var MinPfWVersion = "41080";
+    var MinPfWVersionDisp = "4.108.0";
 }
 else {
     // Local Plex
@@ -73,7 +73,6 @@ function insertErrorBar(level, details) {
 
     var error_link = document.createElement("a");
     error_link.setAttribute("id", "error-toggle");
-    error_link.setAttribute("href", "#");
 
     var error_img = document.createElement("img");
     error_link.appendChild(error_img);
@@ -163,7 +162,10 @@ function runOnReady() {
                 if (versionerror) {
                     insertErrorBar(level, versionerror);
                     window.clearInterval(interval);
-                    return;
+                    if (level == "error") {
+                        window.clearInterval(interval);
+                        return;
+                    }
                 }
                 utils.debug("Main (runOnReady): Instance of " + LibraryPageLoaded + " detected. Page is ready");
                 window.clearInterval(interval);
@@ -177,7 +179,10 @@ function runOnReady() {
                 if (versionerror) {
                     insertErrorBar(level, versionerror);
                     window.clearInterval(interval);
-                    return;
+                    if (level == "error") {
+                        window.clearInterval(interval);
+                        return;
+                    }
                 }
                 utils.debug("Main (runOnReady): Instance of " + TVPageLoaded + " or " + MoviePageLoaded + "detected. Page is ready");
                 window.clearInterval(interval);
