@@ -1,3 +1,8 @@
+## **v3.1.2**
+#### 2023-07-14
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.110.1
+- Miscellaneous: Updated supported Local Plex for Web version to 4.108.0
+
 ## **v3.1.1**
 #### 2023-06-09
 - Bug: Fixed an issue where clicking on the compatibility warning/error would inadvertantly send you back to the homepage
