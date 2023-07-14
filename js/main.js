@@ -16,8 +16,8 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersion = "41080";
-    var MinPfWVersionDisp = "4.108.0";
+    var MinPfWVersion = "41101";
+    var MinPfWVersionDisp = "4.110.1";
 }
 else {
     // Local Plex
@@ -27,12 +27,12 @@ else {
     var MainPageLoaded = "button";
     var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
     var TVPageLoaded = "PrePlayListTitle-titleContainer";
-    var MoviePageLoaded = "preplay-mainTitle";
+    var MoviePageLoaded = "metadata-title";
     var StatsButtonParent = "NavBar-right";
-    var StatsButtonContainer = "NavBarActivityButton-button";
-    var plexParentBanner = "preplay-thirdTitle";
-    var MinPfWVersion = "41001";
-    var MinPfWVersionDisp = "4.100.1";
+    var StatsButtonContainer = "NavBarActivityButton-container";
+    var plexParentBanner = "metadata-starRatings";
+    var MinPfWVersion = "41080";
+    var MinPfWVersionDisp = "4.108.0";
 }
 
 function minReqs() {
@@ -42,14 +42,14 @@ function minReqs() {
     var PfWVersionDisp = (PfWRaw.match(versionRegex))[0].replace("plex-", "");
     var PfWVersion = PfWVersionDisp.replace(/\./g, "");
     if (PfWVersion < MinPfWVersion) {
-        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp);
-        versionerror = "Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp;
         level = "error";
+        utils.debug("Main (minReqs) [" + level + "]: Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp);
+        versionerror = "Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp;
     }
     else if (PfWVersion > MinPfWVersion) {
-        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp);
-        versionerror = "Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp + " - Please report any issues via the Known Issues link on the Options page";
         level = "warn";
+        utils.debug("Main (minReqs) [" + level + "]: Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp);
+        versionerror = "Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp + " - Please report any issues via the Known Issues link on the Options page";
     }
     else {
         utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is meets the minimum required version: " + MinPfWVersionDisp);
@@ -148,6 +148,7 @@ function runOnReady() {
                         window.clearInterval(interval);
                         return;
                     }
+                    window.clearInterval(interval);
                 }
                 utils.debug("Main (runOnReady): Instance of " + MainPageLoaded + " detected. Page is ready");
                 window.clearInterval(interval);
@@ -259,7 +260,8 @@ function insertBannerTemplate() {
 
         }
         else {
-            insert_target.after(banner_element);
+            var plex_parent = insert_target.parentNode.parentNode;
+            plex_parent.appendChild(banner_element);
         }
     }
 }
