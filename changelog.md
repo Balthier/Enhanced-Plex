@@ -1,3 +1,9 @@
+## **v3.1.3**
+#### 2023-08-25
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.113.2
+- Miscellaneous: Corrected a typo in the minimum required warning message
+- Miscellaneous: Fixed the formatting of the links in the README file
+
 ## **v3.1.2**
 #### 2023-07-14
 - Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.110.1

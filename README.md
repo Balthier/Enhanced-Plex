@@ -1,9 +1,9 @@
 Enhanced Plex
 ==============
 
-[Chrome Store](https://chrome.google.com/webstore/detail/enhanced-plex/kjmpdmgijjacblfohigcnpkeaehalmai)
-[Issues Log](https://github.com/Balthier/Enhanced-Plex/issues)
-[Change Log](https://github.com/Balthier/Enhanced-Plex/blob/master/changelog.md)
+[Chrome Store](https://chrome.google.com/webstore/detail/enhanced-plex/kjmpdmgijjacblfohigcnpkeaehalmai)  
+[Issues Log](https://github.com/Balthier/Enhanced-Plex/issues)  
+[Change Log](https://github.com/Balthier/Enhanced-Plex/blob/master/changelog.md)  
 
 ## NOTE
 Working is still ongoing, however slower that I would like.
