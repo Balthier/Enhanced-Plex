@@ -16,8 +16,8 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersion = "41101";
-    var MinPfWVersionDisp = "4.110.1";
+    var MinPfWVersion = "41132";
+    var MinPfWVersionDisp = "4.113.2";
 }
 else {
     // Local Plex
@@ -52,7 +52,7 @@ function minReqs() {
         versionerror = "Plex for Web version is " + PfWVersionDisp + " which is higher than the currently tested version: " + MinPfWVersionDisp + " - Please report any issues via the Known Issues link on the Options page";
     }
     else {
-        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which is meets the minimum required version: " + MinPfWVersionDisp);
+        utils.debug("Main (minReqs): Plex for Web version is " + PfWVersionDisp + " which meets the minimum required version: " + MinPfWVersionDisp);
         versionerror = false;
     }
     if (versionerror) {
