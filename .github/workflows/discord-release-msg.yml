@@ -12,7 +12,7 @@ jobs:
     name: Sends custom message
     steps:
       - name: Sending message
-        uses: nhevia/discord-styled-releases@main
+        uses: Balthier/Enhanced-Plex@master
         with:
           webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
           webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
