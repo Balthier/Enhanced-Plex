@@ -1,3 +1,7 @@
+## **v3.1.4**
+#### 2023-10-06
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.116.1
+
 ## **v3.1.3**
 #### 2023-08-25
 - Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.113.2
