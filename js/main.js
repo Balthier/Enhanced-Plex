@@ -16,8 +16,8 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersion = "41132";
-    var MinPfWVersionDisp = "4.113.2";
+    var MinPfWVersion = "41161";
+    var MinPfWVersionDisp = "4.116.1";
 }
 else {
     // Local Plex
