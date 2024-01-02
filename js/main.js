@@ -16,8 +16,8 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersion = "41161";
-    var MinPfWVersionDisp = "4.116.1";
+    var MinPfWVersionDisp = "4.121.1";
+    var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 else {
     // Local Plex
@@ -31,8 +31,8 @@ else {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersion = "41080";
-    var MinPfWVersionDisp = "4.108.0";
+    var MinPfWVersionDisp = "4.118.0";
+    var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 
 function minReqs() {
