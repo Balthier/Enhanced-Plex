@@ -1,3 +1,10 @@
+## **v3.1.5**
+#### 2024-01-02
+- Bug: Fixed Missing Episodes not being displayed on Plex for Web version is 4.121.1
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.121.1
+- Miscellaneous: Updated supported Local Plex for Web version to 4.118.0
+- Miscellaneous: Added link to Discord
+
 ## **v3.1.4**
 #### 2023-10-06
 - Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.116.1

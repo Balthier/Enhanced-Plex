@@ -357,7 +357,7 @@ missing_episodes = {
         if (episodeCount <= 45) {
             // insert already present episodes into episode_tiles array
             for (var i = 0; i < episode_tile_list_elements.length; i++) {
-                var episode_num = episode_tile_list_elements[i].querySelectorAll("[class*=MetadataPosterCardTitle-isSecondary]")[0].innerText.match(/\d+/);
+                var episode_num = episode_tile_list_elements[i].querySelectorAll("[class*=MetadataPosterCardTitle]")[1].innerText.match(/\d+/);
 
                 episode_tile_list_elements[i].removeAttribute("data-testid");
                 episode_tile_list_elements[i].removeAttribute("style");
