@@ -152,7 +152,8 @@ missing_episodes = {
 
         // check if page changed before inserting tiles
         if (current_hash === location.hash) {
-            missing_episodes.insertSeasonTiles(tiles_to_insert);
+            await missing_episodes.insertSeasonTiles(tiles_to_insert);
+            missing_episodes.insertEpisodeCount(all_seasons);
         }
         else {
             utils.debug("Missing Episodes [async] (processSeasons) Plugin: Page changed before season tiles could be inserted");
@@ -344,7 +345,7 @@ missing_episodes = {
 
         poster.setAttribute("style", "background-image: url(" + (season["poster"] || utils.getResourcePath("trakt/trakt_season_background_unavailable.png")) + "); width: 100%; height: 100%; background-size: cover; background-position: center center; background-repeat: no-repeat; opacity: 0.5;");
 
-        season_episodes.innerText = season["episodes"].length + " episodes";
+        season_episodes.innerText = "0 / " + season["episodes"].length + " episodes";
 
         return season_tile;
     },
@@ -442,6 +443,33 @@ missing_episodes = {
             season_break.style.clear = "both";
             parent_node.appendChild(season_break);
         }, 1000);
+    },
+
+    insertEpisodeCount: async (all_seasons) => {
+        await utils.timer(500);
+        countnodelist = document.querySelectorAll("[class*=existing_season]>span[class*=MetadataPosterCardTitle-singleLineTitle]");
+        seasonnodelist = document.querySelectorAll("[class*=existing_season]>a[class*=MetadataPosterCardTitle-singleLineTitle]");
+        var retry = 0;
+        while (countnodelist.length == 0 || countnodelist.length == 0) {
+            retry++;
+            await utils.timer(200);
+            if (retry < 10) {
+                utils.debug("Missing Episodes [async] (insertEpisodeCount) Plugin: Waiting for episode count...[" + retry + "]");
+            }
+            else {
+                utils.debug("Missing Episodes [async] (insertEpisodeCount) Plugin: Could not set current episode count... Aborting.");
+                return;
+            }
+            countnodelist = document.querySelectorAll("[class*=existing_season]>span[class*=MetadataPosterCardTitle-singleLineTitle]");
+            seasonnodelist = document.querySelectorAll("[class*=existing_season]>a[class*=MetadataPosterCardTitle-singleLineTitle]");
+        }
+        for (var i = 0; i < countnodelist.length; i++) {
+            var season = seasonnodelist[i].innerText.replace("Specials", "Season 0").match(/\d+/);
+            var current_count = countnodelist[i].innerText.match(/\d+/);
+            var season_total = (seasonnodelist[0].innerHTML.indexOf("Specials") > -1) ? all_seasons[season].episodes.length : all_seasons[season - 1].episodes.length;
+            utils.debug("Season: " + season + " - Episodes: " + current_count + " / " + season_total + " Episodes");
+            countnodelist[i].innerText = current_count + " / " + season_total + " episodes";
+        }
     },
 
     insertSwitch: function () {
