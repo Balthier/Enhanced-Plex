@@ -89,7 +89,6 @@ function refreshExtraOptions() {
             radarr_url[i].style.display = "none";
         }
     }
-
 }
 
 utils.storage_get_all(async function (settings) {
