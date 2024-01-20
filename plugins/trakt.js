@@ -2,7 +2,7 @@ trakt = {
     metadata_xml: null,
     server: null,
 
-    init: function (metadata_xml, type, server) {
+    init: function (metadata_xml, server, type) {
         trakt.server = server;
 
         if ((type === "show") || (type === "movie") || (type === "episode") || (type === "season")) {

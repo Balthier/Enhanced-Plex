@@ -1,3 +1,12 @@
+## **v3.2.0**
+#### 2024-01-20
+- Enhancement: Added Total episode count for each season
+- Enhancement: Added Sonarr Link
+- Enhancement: Added Radarr Link
+- Enhancement: Changed the way text is displayed on the Options page, for better readability
+- Enhancement: Changed the format of the debug text when retrieving / Storing cache items
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.122.0
+
 ## **v3.1.5**
 #### 2024-01-02
 - Bug: Fixed Missing Episodes not being displayed on Plex for Web version is 4.121.1

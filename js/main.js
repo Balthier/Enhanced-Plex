@@ -3,6 +3,28 @@ var UnmatchedDetection = new RegExp(/^local\:\/\//);
 var PlexBannerID = "Enhanced-Plex-Banner";
 var PlexForWebURL = new RegExp(/https:\/\/app\.plex\.tv\/desktop\/?\#\!\/?/);
 var plexforweb = PlexForWebURL.test(document.URL);
+var TVMain = {
+    "imdb_shows_link": "imdb",
+    "trakt_shows_link": "trakt",
+    "tvdb_link": "tvdb",
+    "missing_episodes": "missing_episodes",
+    "sonarr_api": "sonarr"
+};
+var TVSeason = {
+    "imdb_shows_link": "imdb",
+    "trakt_shows_link": "trakt",
+    "tvdb_link": "tvdb",
+    "missing_episodes": "missing_episodes"
+};
+var TVEpisode = {
+    "trakt_shows_link": "trakt"
+};
+var MovieMain = {
+    "imdb_movies_link": "imdb",
+    "tmdb_link": "tmdb",
+    "trakt_movies_link": "trakt",
+    "radarr_api": "radarr"
+};
 
 if (plexforweb) {
     // Plex for Web
@@ -16,7 +38,7 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersionDisp = "4.121.1";
+    var MinPfWVersionDisp = "4.122.0";
     var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 else {
@@ -437,118 +459,26 @@ async function main() {
                     if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("type") === "show") {
                         // we're on the root show page
                         utils.debug("Main [async] (main): We are on root show page");
-
-                        // insert imdb link
-                        if (settings["options_imdb_shows_link"] === "true") {
-                            utils.debug("Main [async] (main): imdb_shows is enabled");
-                            imdb.init(metadata_xml, "show");
-                        }
-                        else {
-                            utils.debug("Main [async] (main): imdb_shows is disabled");
-                        }
-
-                        // create trakt link
-                        if (settings["options_trakt_shows_link"] === "true") {
-                            utils.debug("Main [async] (main): trakt_shows is enabled");
-                            trakt.init(metadata_xml, "show", server);
-                        }
-                        else {
-                            utils.debug("Main [async] (main): trakt_shows is disabled");
-                        }
-
-                        // create tvdb link
-                        if (settings["options_tvdb_link"] === "true") {
-                            utils.debug("Main [async] (main): TVDB plugin is enabled");
-                            tvdb.init(metadata_xml);
-                        }
-                        else {
-                            utils.debug("Main [async] (main): TVDB plugin is disabled");
-                        }
-
-                        // insert missing seasons
-                        if (settings["options_missing_episodes"] === "true") {
-                            utils.debug("Main [async] (main): Missing Episodes plugin is enabled");
-                            missing_episodes.init(metadata_xml, server, "show");
-                        }
-                        else {
-                            utils.debug("Main [async] (main): Missing Episodes plugin is disabled");
+                        for (var option in TVMain) {
+                            settings_name = "options_" + option;
+                            if (settings[settings_name] === "true") {
+                                plugin = TVMain[option];
+                                utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
+                                plugins[plugin](metadata_xml, server, "show");
+                            }
                         }
                     }
                     else if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("type") === "season") {
                         // we're on the season page
                         utils.debug("Main [async] (main): We are on a season page");
-
-                        // insert imdb link
-                        if (settings["options_imdb_shows_link"] === "true") {
-                            utils.debug("Main [async] (main): imdb_shows is enabled");
-                            imdb.init(metadata_xml, "season");
+                        for (var option in TVSeason) {
+                            settings_name = "options_" + option;
+                            if (settings[settings_name] === "true") {
+                                plugin = TVSeason[option];
+                                utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
+                                plugins[plugin](metadata_xml, server, "season");
+                            }
                         }
-                        else {
-                            utils.debug("Main [async] (main): imdb_shows is disabled");
-                        }
-
-                        // create trakt link
-                        if (settings["options_trakt_shows_link"] === "true") {
-                            utils.debug("Main [async] (main): trakt_shows is enabled");
-                            trakt.init(metadata_xml, "season", server);
-                        }
-                        else {
-                            utils.debug("Main [async] (main): trakt_shows is disabled");
-                        }
-
-                        // create tvdb link
-                        if (settings["options_tvdb_link"] === "true") {
-                            utils.debug("Main [async] (main): TVDB plugin is enabled");
-                            tvdb.init(metadata_xml);
-                        }
-                        else {
-                            utils.debug("Main [async] (main): TVDB plugin is disabled");
-                        }
-
-                        // insert missing episodes
-                        if (settings["options_missing_episodes"] === "true") {
-                            utils.debug("Main [async] (main): Missing Episodes plugin is enabled");
-                            missing_episodes.init(metadata_xml, server, "season");
-                        }
-                        else {
-                            utils.debug("Main [async] (main): Missing Episodes plugin is disabled");
-                        }
-                    }
-                }
-                else if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("type") === "movie") {
-                    guid = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("guid");
-                    if (UnmatchedDetection.test(guid)) {
-                        utils.debug("Main [async] (main): Movie does not appear to be Matched. Skipping");
-                        return;
-                    }
-                    // we're on a movie page
-                    utils.debug("Main [async] (main): We are on a movie page");
-
-                    // insert imdb link
-                    if (settings["options_imdb_movies_link"] === "true") {
-                        utils.debug("Main [async] (main): imdb_movies is enabled");
-                        imdb.init(metadata_xml, "movie");
-                    }
-                    else {
-                        utils.debug("Main [async] (main): imdb_movies is disabled");
-                    }
-
-                    // insert tmdb link
-                    if (settings["options_tmdb_link"] === "true") {
-                        utils.debug("Main [async] (main): TMDB plugin is enabled");
-                        tmdb.init(metadata_xml);
-                    }
-                    else {
-                        utils.debug("Main [async] (main): TMDB plugin is disabled");
-                    }
-
-                    // create trakt link
-                    if (settings["options_trakt_movies_link"] === "true") {
-                        utils.debug("Main [async] (main): trakt_movies is enabled");
-                        trakt.init(metadata_xml, "movie", server);
-                    }
-                    else {
-                        utils.debug("Main [async] (main): trakt_movies is disabled");
                     }
                 }
                 else if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("type") === "episode") {
@@ -560,13 +490,30 @@ async function main() {
                     // we're on an episode page
                     utils.debug("Main [async] (main): We are on an episode page");
 
-                    // create trakt link
-                    if (settings["options_trakt_shows_link"] === "true") {
-                        utils.debug("Main [async] (main): trakt_shows is enabled");
-                        trakt.init(metadata_xml, "episode", server);
+                    for (var option in TVEpisode) {
+                        settings_name = "options_" + option;
+                        if (settings[settings_name] === "true") {
+                            plugin = TVEpisode[option];
+                            utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
+                            plugins[plugin](metadata_xml, server, "episode");
+                        }
                     }
-                    else {
-                        utils.debug("Main [async] (main): trakt_shows is disabled");
+                }
+                else if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("type") === "movie") {
+                    guid = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("guid");
+                    if (UnmatchedDetection.test(guid)) {
+                        utils.debug("Main [async] (main): Movie does not appear to be Matched. Skipping");
+                        return;
+                    }
+                    // we're on a movie page
+                    utils.debug("Main [async] (main): We are on a movie page");
+                    for (var option in MovieMain) {
+                        settings_name = "options_" + option;
+                        if (settings[settings_name] === "true") {
+                            plugin = MovieMain[option];
+                            utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
+                            plugins[plugin](metadata_xml, server, "movie");
+                        }
                     }
                 }
             }

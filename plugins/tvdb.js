@@ -1,7 +1,7 @@
 tvdb = {
     metadata_xml: null,
 
-    init: function (metadata_xml) {
+    init: function (metadata_xml, server, type) {
         tvdb.insertTvdbLink(metadata_xml);
     },
 

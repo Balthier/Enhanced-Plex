@@ -116,18 +116,18 @@ utils = {
     },
 
     cache_get: async (key, type) => {
+        var key = key.replace(/[^A-Za-z0-9_]/g, "_");
         if (type === "sync") {
-            command = chrome.storage.sync;
+            var command = chrome.storage.sync;
         }
         else if (type === "local") {
-            command = chrome.storage.local;
+            var command = chrome.storage.local;
         }
         else {
-            utils.debug("Utils [async] (cache_get): No type selected. Aborting...");
+            utils.debug("Utils [async] (cache_get): [" + key + "] - No type selected. Aborting...");
             return;
         }
-        key = key.replace(/[^A-Za-z0-9_]/g, "_");
-        utils.debug("Utils [async] (cache_get): Retrieving the following from cache: " + key);
+        utils.debug("Utils [async] (cache_get): [" + key + "] - Retrieving from storage...");
         var cache_key = "cache-time-" + key;
         var expire_data = await command.get(cache_key) || {};
         if (Object.keys(expire_data).length) {
@@ -135,21 +135,22 @@ utils = {
             var time_now = new Date().getTime();
             var time_diff = time_now - timestamp;
             if (time_diff > 604800000) {
-                utils.debug("Utils [async] (cache_get): Found stale data, removing " + key + " from " + type + " storage");
+                utils.debug("Utils [async] (cache_get): [" + key + "] - Found stale data, removing from " + type + " storage");
                 command.remove(cache_key);
                 command.remove(key);
             }
         }
-        response = await command.get(key) || {};
+        var response = await command.get(key) || {};
+        //await utils.timer(200);
         if (Object.keys(response).length) {
-            utils.debug("Utils [async] (cache_get): Received the following response from " + type + " storage: ");
+            utils.debug("Utils [async] (cache_get):  [" + key + "] - Received the following response from " + type + " storage: ");
             utils.debug(response);
-            utils.debug("Utils [async] (cache_get): Returning the following to calling function:");
+            utils.debug("Utils [async] (cache_get):  [" + key + "] - Returning the following to calling function:");
             utils.debug(response[key]);
             return response[key];
         }
         else {
-            utils.debug("Utils [async] (cache_get): No cache found for: " + key + " in " + type + " storage");
+            utils.debug("Utils [async] (cache_get):  [" + key + "] - No cache found in " + type + " storage");
             return;
         }
     },
@@ -166,14 +167,14 @@ utils = {
             return;
         }
         key = key.replace(/[^A-Za-z0-9_]/g, "_");
-        utils.debug("Utils [async] (cache_set): Committing the following to cache in " + type + " storage: " + key + " With the value of: ");
+        utils.debug("Utils [async] (cache_set): [" + key + "] - Committing to cache in " + type + " storage with the value of: ");
         let object = {};
         object[key] = value;
         utils.debug(object);
         command.set(object);
         let cache_key = "cache-time-" + key;
         let time_now = new Date().getTime();
-        utils.debug("Utils [async] (cache_set): Setting cache timestamp in " + type + " storage: " + cache_key);
+        utils.debug("Utils [async] (cache_set): [" + key + "] - Setting cache timestamp in " + type + " storage: " + cache_key);
         let cache_data = {};
         cache_data[cache_key] = time_now;
         utils.debug(cache_data);
