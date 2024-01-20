@@ -1,5 +1,5 @@
 ## **v3.2.0**
-#### 2024-01-02
+#### 2024-01-20
 - Enhancement: Added Total episode count for each season
 - Enhancement: Added Sonarr Link
 - Enhancement: Added Radarr Link
