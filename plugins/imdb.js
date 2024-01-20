@@ -1,7 +1,7 @@
 imdb = {
     metadata_xml: null,
 
-    init: function (metadata_xml, type) {
+    init: function (metadata_xml, server, type) {
         imdb.insertImdbLink(type, metadata_xml);
     },
     constructImdbLink: function (imdb_url) {

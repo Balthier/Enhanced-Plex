@@ -1,5 +1,5 @@
 .label {
-    width: 41%;
+    width: 40%;
     text-align: right;
 }
 
@@ -9,7 +9,7 @@
 
 .field,
 .label {
-    font-size: 0.7em;
+    font-size: large;
     float: left;
     padding: 4px;
     margin: 4px;
@@ -23,6 +23,12 @@
 #container {
     width: 50%;
     margin: 0 auto;
+}
+
+.section-container {
+    width: 99%;
+    margin: 0 auto;
+    display: table;
 }
 
 .column-left {
@@ -46,7 +52,8 @@
 }
 
 h3 {
-    margin: 0.1em 0;
+    margin: 0.1rem 0;
+    font-size: xx-large;
 }
 
 .extra-options {
@@ -54,7 +61,7 @@ h3 {
 }
 
 .subscript {
-    font-size: 14px;
+    font-size: x-small;
 }
 
 input[type=radio],
@@ -67,7 +74,7 @@ input[type=checkbox]+label {
     display: inline-block;
     margin: -4px;
     padding: 4px 12px;
-    font-size: 20px;
+    font-size: medium;
     line-height: 20px;
     border: 1px solid #E69533;
     cursor: pointer;
@@ -79,8 +86,9 @@ input[type=checkbox]:checked+label {
 }
 
 input[type=url],
+input[type=text],
 input[type="number"] {
-    font-size: 25px;
+    font-size: medium;
     color: white;
     background: url(/resources/background.png);
     border: 1px solid #E69533;
@@ -91,7 +99,7 @@ input[type="number"] {
 }
 
 .debug {
-    margin: 0.5em 0;
+    margin: 0.5rem 0;
 }
 
 #clear-cache {
@@ -100,7 +108,10 @@ input[type="number"] {
     border: 1px solid #E69533;
     border-color: #E69533 #E69533 #E69533;
     cursor: pointer;
-    font-size: 0.92em;
+    font-size: small;
+    width: 30%;
+    margin: 0 auto;
+    display: block;
 }
 
 #clear-cache:hover,
@@ -111,9 +122,9 @@ input[type="number"] {
 }
 
 .thanks {
-    font-size: 20px;
+    font-size: small;
     position: absolute;
-    right: 1em;
+    right: 1rem;
     bottom: 0;
 }
 
@@ -126,5 +137,13 @@ input[type="number"] {
 }
 
 .thanks .field {
-    width: 35%;
+    font-size: medium;
+    width: 45%;
+    float: right;
+}
+
+.thanks .label {
+    font-size: medium;
+    width: 45%;
+    float: left
 }
