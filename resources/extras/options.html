@@ -95,7 +95,7 @@
                         </div>
                     </div>
                     <div class="field-row" id="missing_eps">
-                        <div class="label">Missing Seasons/Episodes:</div>
+                        <div class="label">Missing Content:</div>
                         <div class="field">
                             <input type="radio" id="missing_episodes_on" name="missing_episodes" value="on">
                             <label for="missing_episodes_on">ON</label>
@@ -109,7 +109,7 @@
             <div class="column-left">
                 <h3 class="text-center">Radarr</h1>
                     <div class="field-row" id="radarr_api">
-                        <div class="label">Radarr API:</div>
+                        <div class="label">API:</div>
                         <div class="field">
                             <input type="radio" id="radarr_api_on" name="radarr_api" value="on">
                             <label for="radarr_api_on">ON</label>
@@ -119,13 +119,13 @@
                     </div>
                     <div id="radarr-extra">
                         <div class="field-row" id="radarr_api_url">
-                            <div class="label">Radarr HTTPS URL:</div>
+                            <div class="label">HTTPS URL:</div>
                             <div class="field">
                                 <input type="url" id="radarr_api_url" placeholder="e.g. https://radarr.url" name="radarr_api_url">
                             </div>
                         </div>
                         <div class="field-row" id="radarr_api_key">
-                            <div class="label">Radarr API Key:</div>
+                            <div class="label">API Key:</div>
                             <div class="field">
                                 <input type="text" id="radarr_api_key" name="radarr_api_key">
                             </div>
@@ -135,7 +135,7 @@
             <div class="column-right">
                 <h3 class="text-center">Sonarr</h1>
                     <div class="field-row" id="sonarr_api">
-                        <div class="label">Sonarr API:</div>
+                        <div class="label">API:</div>
                         <div class="field">
                             <input type="radio" id="sonarr_api_on" name="sonarr_api" value="on">
                             <label for="sonarr_api_on">ON</label>
@@ -145,13 +145,13 @@
                     </div>
                     <div id="sonarr-extra">
                         <div class="field-row" id="sonarr_api_url">
-                            <div class="label">Sonarr HTTPS URL:</div>
+                            <div class="label">HTTPS URL:</div>
                             <div class="field">
                                 <input type="url" id="sonarr_api_url" placeholder="e.g. https://sonarr.url" name="sonarr_api_url">
                             </div>
                         </div>
                         <div class="field-row" id="sonarr_api_key">
-                            <div class="label">Sonarr API Key:</div>
+                            <div class="label">API Key:</div>
                             <div class="field">
                                 <input type="text" id="sonarr_api_key" name="sonarr_api_key">
                             </div>
@@ -177,16 +177,17 @@
             </div>
         </div>
         <div id="debug-extra" class="debug">
-            <div class="label">Show Tokens / IPs:</div>
+            <div class="label">Show Tokens:</div>
             <div class="field">
                 <input type="radio" id="debug_unfiltered_on" name="debug_unfiltered" value="on">
                 <label for="debug_unfiltered_on">ON</label>
                 <input type="radio" id="debug_unfiltered_off" name="debug_unfiltered" value="off">
                 <label for="debug_unfiltered_off">OFF</label>
             </div>
-            <button id="clear-cache" class="debug">Clear cache</button>
+        </div>
+        <div class="debug">
+            <button id="clear-cache">Clear cache</button>
         </div>
     </ul>
-    </div>
 </body>
 </html>

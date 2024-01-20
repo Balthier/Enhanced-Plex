@@ -3,10 +3,6 @@
     text-align: right;
 }
 
-.field {
-    width: 30%;
-}
-
 .field,
 .label {
     font-size: large;
@@ -21,7 +17,7 @@
 }
 
 #container {
-    width: 50%;
+    width: 45%;
     margin: 0 auto;
 }
 
@@ -100,6 +96,7 @@ input[type="number"] {
 
 .debug {
     margin: 0.5rem 0;
+    height: 2.5em;
 }
 
 #clear-cache {
@@ -109,7 +106,6 @@ input[type="number"] {
     border-color: #E69533 #E69533 #E69533;
     cursor: pointer;
     font-size: small;
-    width: 30%;
     margin: 0 auto;
     display: block;
 }
@@ -140,10 +136,25 @@ input[type="number"] {
     font-size: medium;
     width: 45%;
     float: right;
+    padding: 0em;
 }
 
 .thanks .label {
     font-size: medium;
     width: 45%;
-    float: left
+    float: left;
+    padding: 0em;
+}
+
+@media (max-width:1280px) {
+
+    input[type=url],
+    input[type=text],
+    input[type="number"] {
+        width: 9em;
+    }
+
+    #container {
+        width: 65%;
+    }
 }
