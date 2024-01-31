@@ -34,8 +34,7 @@
     margin: 0;
 }
 
-.missing_episode,
-.existing_episode {
+.Ep_Container {
     position: relative;
     float: left;
     margin-right: 20px;
@@ -44,6 +43,26 @@
     left: 0px !important;
     top: 0px !important;
     will-change: unset;
+}
+
+.missing_episode img {
+    opacity: 0.5;
+}
+
+.missing_season,
+.existing_season {
+    position: relative;
+    float: left;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    transform: none;
+    left: 0px !important;
+    top: 0px !important;
+    will-change: unset;
+}
+
+.missing_season img {
+    opacity: 0.5;
 }
 
 #error-details {
