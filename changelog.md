@@ -1,3 +1,10 @@
+## **v3.2.1**
+#### 2024-01-20
+- Bug: Fixed an issue with the displayed empisode count when "Specials" is present
+- Bug: Fixed an issue where the Poster Slider size wouldn't work for "missing" episodes (Max. 32 episodes (21 on the "largest" zoom))
+- Bug: Fixed an issue where the Poster Slider size wouldn't work for "missing" seasons
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.123.1
+
 ## **v3.2.0**
 #### 2024-01-20
 - Enhancement: Added Total episode count for each season
