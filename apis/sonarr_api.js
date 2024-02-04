@@ -46,7 +46,7 @@ sonarr_api = {
         if (tvdb_id) {
             utils.debug("Sonarr API [async] (getSeriesURL): TMDB API returned the following TVDB ID (" + tvdb_id + ")");
             var api_url = base_url + "/api/v3/series?tvdbid=" + tvdb_id;
-            var api_data = await utils.getJSON(api_url, custom_headers);
+            var api_data = await utils.getJSON(api_url, custom_headers, "Sonarr_API");
             var sonarr_titleSlug = api_data[0].titleSlug;
             if (sonarr_titleSlug) {
                 var url = base_url + "/series/" + sonarr_titleSlug;

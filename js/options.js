@@ -149,7 +149,16 @@ utils.storage_get_all(async function (settings) {
     });
 
     version_element = document.getElementById("ext_version");
+    title_element = document.getElementsByTagName("title")[0];
     extension_version = utils.getExtensionVersion();
+    title_element.innerHTML = "EnhancedPLEX (" + extension_version + ") options";
     version_element.innerHTML = "Version: <b>v" + extension_version + "</b>";
+
+    data = {
+        Title: document.title,
+        Location: document.location.pathname
+    };
+
+    google_api.sendTracking("page_view", data);
 
 });

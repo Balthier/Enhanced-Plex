@@ -1,5 +1,6 @@
 utils = {
     debug: async (output) => {
+        version = await utils.getExtensionVersion();
         debug_cache = await chrome.storage.sync.get("options_debug") || {};
         debug_unfiltered_cache = await chrome.storage.sync.get("options_debug_unfiltered") || {};
         debug = debug_cache["options_debug"];
@@ -19,7 +20,7 @@ utils = {
                 seconds = ("0" + date.getSeconds()).slice(-2);
                 milliseconds = ("0" + date.getMilliseconds()).slice(-2);
                 now = hours + ":" + minutes + ":" + seconds + "." + milliseconds;
-                console.log("[" + now + "] EnhancedPLEX Debug: " + output);
+                console.log("[" + now + "] EnhancedPLEX (" + version + ") Debug: " + output);
             }
             else {
                 // don't filter xml, use nodeType attribute to detect
@@ -134,7 +135,13 @@ utils = {
             var timestamp = Object.values(expire_data)[0];
             var time_now = new Date().getTime();
             var time_diff = time_now - timestamp;
-            if (time_diff > 604800000) {
+            if (key == "sessionId") {
+                expireTime = 1800000;
+            }
+            else {
+                expireTime = 604800000;
+            }
+            if (time_diff > expireTime) {
                 utils.debug("Utils [async] (cache_get): [" + key + "] - Found stale data, removing from " + type + " storage");
                 command.remove(cache_key);
                 command.remove(key);
@@ -227,7 +234,7 @@ utils = {
 
     },
 
-    getJSON: async (api_url, api_custom_headers) => {
+    getJSON: async (api_url, api_custom_headers, service) => {
         let url = api_url;
         let custom_headers = api_custom_headers;
         utils.debug("Utils [async] (getJSON): Checking for JSON Cache for " + url);
@@ -235,16 +242,38 @@ utils = {
         let searchkey = key.replace(/[^A-Za-z0-9_]/g, "_");
         let cacheCheck = await utils.cache_get(searchkey, "local") || {};
         if (Object.keys(cacheCheck).length) {
+            let data = {
+                service: service,
+                target: "cache"
+            };
+
+            google_api.sendTracking("API", data);
+
             utils.debug("Utils [async] (getJSON): Cache found for " + url);
+
             return cacheCheck;
         }
         else {
             // cache missed or stale, grabbing new data
+            let data = {
+                service: service,
+                target: "live"
+            };
+
+            google_api.sendTracking("API", data);
+
             utils.debug("Utils [async] (getJSON): Fetching JSON from " + url);
-            let response = await fetch(url, {
-                method: 'GET',
-                headers: custom_headers
-            });
+            if (custom_headers) {
+                var response = await fetch(url, {
+                    method: 'GET',
+                    headers: custom_headers
+                });
+            }
+            else {
+                var response = await fetch(url, {
+                    method: 'GET'
+                });
+            }
             let json = await response.json();
             utils.debug("Utils (getJSON): Recieved JSON response");
             utils.debug(json);

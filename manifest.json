@@ -22,6 +22,7 @@
         "apis/tmdb_api.js",
         "apis/sonarr_api.js",
         "apis/radarr_api.js",
+        "apis/google_api.js",
         "plugins/imdb.js",
         "plugins/missing_episodes.js",
         "plugins/stats.js",

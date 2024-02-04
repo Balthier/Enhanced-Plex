@@ -431,6 +431,16 @@ async function getData(uri, plex_token, update_flag) {
 }
 
 utils.storage_get_all(async function (settings) {
+	title_element = document.getElementsByTagName("title")[0];
+	extension_version = utils.getExtensionVersion();
+	title_element.innerHTML = "EnhancedPLEX (" + extension_version + ") Stats";
+
+	data = {
+		Title: document.title,
+		Location: document.location.pathname
+	};
+
+	google_api.sendTracking("page_view", data);
 	const timer = ms => new Promise(res => setTimeout(res, ms));
 	await timer(100);
 	setLoading(true);
