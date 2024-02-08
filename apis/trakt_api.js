@@ -59,7 +59,6 @@ trakt_api = {
             }
             if (type === "show") {
                 var category = "show";
-
                 var year = metadata_root.getAttribute("year");
                 var title = metadata_root.getAttribute("title");
             }
