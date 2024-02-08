@@ -54,8 +54,8 @@
 }
 
 #loading-container {
-    margin-top: -50px;
-    height: 100%;
+    margin-top: -2em;
+    height: 60em;
     width: 100%;
     position: fixed;
     z-index: 1000;
@@ -64,6 +64,7 @@
 
 .loading-text {
     padding: 20% 0;
+    height: 100%;
     text-align: center;
     color: #EEEEEE;
     background-color: rgba(18, 17, 17, 0.8);
