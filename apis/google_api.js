@@ -21,41 +21,47 @@ google_api = {
         return session_id;
     },
     sendTracking: async (type, data) => {
-        //let GA_ENDPOINT = 'https://www.google-analytics.com/mp/collect?v=1';
-        let GA_ENDPOINT = 'https://www.google-analytics.com/debug/mp/collect?v=1';
+        let debugMode = true;
+        let GA_ENDPOINT = 'https://www.google-analytics.com/mp/collect?v=2&npa=1';
+        //let GA_ENDPOINT = 'https://www.google-analytics.com/debug/mp/collect?v=2&npa=1';
         let MEASUREMENT_ID = `G-4NJZQNDLCJ`;
         let API_SECRET = await utils.getApiKey("google");
         let Client_ID = await google_api.getClientId();
         let Session_ID = await google_api.getSessionId();
+        let dimensions = (window.screen.width * window.devicePixelRatio) + "x" + (window.screen.height * window.devicePixelRatio);
+        let version = await utils.getExtensionVersion();
+        let Engagement_Time = 100;
 
         if (type == "page_view") {
-            dimensions = (window.screen.width * window.devicePixelRatio) + "x" + (window.screen.height * window.devicePixelRatio);
             payload = {
                 name: type,
                 params: {
-                    session_id: Session_ID,
-                    engagement_time_msec: 100,
                     page_title: data.Title,
-                    page_location: data.Location,
-                    resolution: dimensions,
-                    version: await utils.getExtensionVersion()
+                    page_location: data.Location
                 },
             };
         }
         else if (type == "API") {
             payload = {
-                name: data.service,
+                name: type,
                 params: {
-                    session_id: Session_ID,
-                    engagement_time_msec: 100,
-                    target: data.target,
-                    version: await utils.getExtensionVersion()
+                    api_name: data.service,
+                    api_target: data.target
                 },
             };
         }
 
+        if (debugMode) {
+            payload.params.debug_mode = debugMode;
+        }
+
+        payload.params.session_id = Session_ID;
+        payload.params.engagement_time_msec = Engagement_Time;
+        payload.params.version = version;
+        payload.params.screen_resolution = dimensions;
+
         if (payload) {
-            fetch(`${GA_ENDPOINT}&measurement_id=${MEASUREMENT_ID}&api_secret=${API_SECRET}`,
+            fetch(`${GA_ENDPOINT}&measurement_id=${MEASUREMENT_ID}&api_secret=${API_SECRET}&sr=${dimensions}&av=${version}`,
                 {
                     method: 'POST',
                     body: JSON.stringify({
