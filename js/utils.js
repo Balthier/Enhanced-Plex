@@ -73,7 +73,7 @@ utils = {
         });
     },
 
-    cache_purge: async () => {
+    cache_purge: async (category) => {
         types = ["sync", "local"];
         var i = 0;
         types.forEach(function (type) {
@@ -90,25 +90,43 @@ utils = {
             command.get(null, function (data) {
                 utils.debug("Utils [async] (cache_purge): Checking " + type + " storage...");
                 for (var data_key in data) {
-                    if (data_key.match(/^cache\-time\-.+/g)) {
-                        if (data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^cache\-time\-stats.+/g)) {
+                    if (category) {
+                        if (category == "stats") {
+                            if (data_key.match(/^cache\-time\-stats.+/g) || data_key.match(/^stats.+/g)) {
+                                utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
+                                command.remove(data_key);
+                                utils.debug(data_key);
+                            }
                         }
-                        else {
-                            utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
-                            command.remove(data_key);
-                            utils.debug(data_key);
-                            var key = data_key.replace("cache-time-", "");
-                            command.remove(key);
-                            utils.debug(key);
+                        else if (category == "options") {
+                            if (data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^options.+/g)) {
+                                utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
+                                command.remove(data_key);
+                                utils.debug(data_key);
+                            }
                         }
                     }
                     else {
-                        if (data_key.match(/^options.+/g) || data_key.match(/^stats.+/g)) {
+                        if (data_key.match(/^cache\-time\-.+/g)) {
+                            if (data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^cache\-time\-stats.+/g)) {
+                            }
+                            else {
+                                utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
+                                command.remove(data_key);
+                                utils.debug(data_key);
+                                var key = data_key.replace("cache-time-", "");
+                                command.remove(key);
+                                utils.debug(key);
+                            }
                         }
                         else {
-                            utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
-                            command.remove(data_key);
-                            utils.debug(data_key);
+                            if (data_key.match(/^options.+/g) || data_key.match(/^stats.+/g)) {
+                            }
+                            else {
+                                utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
+                                command.remove(data_key);
+                                utils.debug(data_key);
+                            }
                         }
                     }
                 }

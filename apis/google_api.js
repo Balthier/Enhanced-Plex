@@ -1,21 +1,21 @@
 google_api = {
     getClientId: async () => {
-        let clientId = await utils.cache_get('clientId', "local");
+        let clientId = await utils.cache_get('gcid', "local");
 
         if (!clientId) {
             clientId = self.crypto.randomUUID();
-            await utils.cache_set('clientId', clientId, "local");
+            await utils.cache_set('gcid', clientId, "local");
         }
         return clientId;
     },
 
     getSessionId: async () => {
-        let session_id = await utils.cache_get('sessionId', "local");
+        let session_id = await utils.cache_get('gsid', "local");
         let currentTimeInMs = Date.now();
 
         if (!session_id) {
             session_id = currentTimeInMs.toString(),
-                await utils.cache_set("sessionId", session_id, "local");
+                await utils.cache_set("gsid", session_id, "local");
         }
 
         return session_id;

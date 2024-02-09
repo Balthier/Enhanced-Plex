@@ -3,18 +3,18 @@ h3,
 h4,
 ul,
 li {
-	font-size: 0.9em;
 	margin: 0px;
 	font-weight: unset;
 }
 
 h2 {
+	font-size: 2rem;
 	margin-top: 20px
 }
 
 h4 {
 	font-style: italic;
-	font-size: 0.7em;
+	font-size: 1rem;
 }
 
 ul {
@@ -23,7 +23,7 @@ ul {
 }
 
 li {
-	font-size: 0.8em;
+	font-size: 1rem;
 	list-style-type: circle;
 }
 
@@ -36,6 +36,28 @@ nav ul li {
 	list-style-type: none;
 }
 
+li li {
+	list-style-type: disc;
+}
+
 nav ul {
 	font-size: 1.0em;
+}
+
+table {
+	width: 90%;
+	border-collapse: collapse;
+	margin: 0 2em;
+}
+
+th {
+	padding: 0.5em 0;
+	background-color: dimgray;
+	border: 1px solid;
+}
+
+tr,
+td {
+	border: 1px solid;
+	padding: 0.25em;
 }

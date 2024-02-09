@@ -21,198 +21,265 @@
     </nav>
     <body>
         <div id="history">
-            <div class="heading">Changelog</div>
-            <h2 id="v3.2.1"><strong>v3.2.1</strong></h2>
-            <h4 id="section">2024-01-20</h4>
-            <ul>
-                <li>Bug: Fixed an issue with the displayed empisode count when &quot;Specials&quot; is present</li>
-                <li>Bug: Fixed an issue where the Poster Slider size wouldn't work for &quot;missing&quot; episodes (Max. 32 episodes (21 on the &quot;largest&quot; zoom))</li>
-                <li>Bug: Fixed an issue where the Poster Slider size wouldn't work for &quot;missing&quot; seasons</li>
-                <li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.123.1</li>
-            </ul>
-            <h2 id="v3.2.0"><strong>v3.2.0</strong></h2>
-            <h4 id="section-1">2024-01-20</h4>
-            <ul>
-                <li>Enhancement: Added Total episode count for each season</li>
-                <li>Enhancement: Added Sonarr Link</li>
-                <li>Enhancement: Added Radarr Link</li>
-                <li>Enhancement: Changed the way text is displayed on the Options page, for better readability</li>
-                <li>Enhancement: Changed the format of the debug text when retrieving / Storing cache items</li>
-                <li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.122.0</li>
-            </ul>
-            <h2 id="v3.1.5"><strong>v3.1.5</strong></h2>
-            <h4 id="section-2">2024-01-02</h4>
-            <ul>
-                <li>Bug: Fixed Missing Episodes not being displayed on Plex for Web version is 4.121.1</li>
-                <li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.121.1</li>
-                <li>Miscellaneous: Updated supported Local Plex for Web version to 4.118.0</li>
-                <li>Miscellaneous: Added link to Discord</li>
-            </ul>
-            <h2 id="v3.1.4"><strong>v3.1.4</strong></h2>
-            <h4 id="section-3">2023-10-06</h4>
-            <ul>
-                <li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.116.1</li>
-            </ul>
-            <h2 id="v3.1.3"><strong>v3.1.3</strong></h2>
-            <h4 id="section-4">2023-08-25</h4>
-            <ul>
-                <li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.113.2</li>
-                <li>Miscellaneous: Corrected a typo in the minimum required warning message</li>
-                <li>Miscellaneous: Fixed the formatting of the links in the README file</li>
-            </ul>
-            <h2 id="v3.1.2"><strong>v3.1.2</strong></h2>
-            <h4 id="section-5">2023-07-14</h4>
-            <ul>
-                <li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.110.1</li>
-                <li>Miscellaneous: Updated supported Local Plex for Web version to 4.108.0</li>
-            </ul>
-            <h2 id="v3.1.1"><strong>v3.1.1</strong></h2>
-            <h4 id="section-6">2023-06-09</h4>
-            <ul>
-                <li>Bug: Fixed an issue where clicking on the compatibility warning/error would inadvertantly send you back to the homepage</li>
-                <li>Bug: Fixed an issue where the compatability warning would stop the extension when displayed</li>
-            </ul>
-            <h2 id="v3.1.0"><strong>v3.1.0</strong></h2>
-            <h4 id="section-7">2023-05-26</h4>
-            <ul>
-                <li>Bug: Fixed an issue where the missing episodes plugin would ignore special seasons</li>
-                <li>Bug: Fixed an issue where links would sometimes be inserted multiple times</li>
-                <li>Enhancement: Restructured the options page to add better clarity</li>
-                <li>Enhancement: Added support for locally hosted Plex (Plex Web 4.100.1)</li>
-                <li>Enhancement: Added version checking for the latest tested version, compared to the installed/active version of Plex for Web</li>
-                <li>Enhancement: Added a warning/error icon when there is a version mismatch between Plex for Web and the latest tested version</li>
-                <li>Enhancement: Added loading display on stats page</li>
-                <li>Miscellaneous: Updated the README to include a couple more links</li>
-                <li>Miscellaneous: Removed some code that was no longer being used</li>
-                <li>Miscellaneous: Updated supported Plex.tv Plex for Web version to (4.106.2)</li>
-            </ul>
-            <h2 id="v3.0.6"><strong>v3.0.6</strong></h2>
-            <h4 id="section-8">2023-04-21</h4>
-            <ul>
-                <li>Bug: Fixed an issue where the missing episodes plugin would fail to properly process seasons/episodes</li>
-                <li>Enhancement: Added further detail to debug logging</li>
-            </ul>
-            <h2 id="v3.0.5"><strong>v3.0.5</strong></h2>
-            <h4 id="section-9">2023-04-13</h4>
-            <ul>
-                <li>Bug: Fixed an issue where the missing episodes plugin would populate episodes from the wrong season</li>
-                <li>Enhancement: Expanded debugging verbosity for the missing episodes plugin</li>
-                <li>Enhancement: Included the Specials season in the missing episodes plugin</li>
-                <li>Miscellaneous: Updated the changelog page</li>
-            </ul>
-            <h2 id="v3.0.4"><strong>v3.0.4</strong></h2>
-            <h4 id="section-10">2023-04-07</h4>
-            <ul>
-                <li>Bug: Fixed a display conflict with Plex for Web (4.104.2)</li>
-                <li>Enhancement: Improved the usage of cached data</li>
-                <li>Enhancement: Expanded the trakt plugin to show links on Season and Episode pages</li>
-                <li>Enhancement: Expanded the TVDB plugin to show links on Season pages</li>
-                <li>Enhancement: Expanded the debugging vebosity</li>
-                <li>Enhancement: Added checks to prevent trying to match against unmatched items</li>
-                <li>Enhancement: Improved the &quot;Clear Cache&quot; functionality</li>
-            </ul>
-            <h2 id="v3.0.3"><strong>v3.0.3</strong></h2>
-            <h4 id="section-11">2023-03-11</h4>
-            <ul>
-                <li>Bug: Fixed a display conflict with Plex for Web (4.102.1)</li>
-            </ul>
-            <h2 id="v3.0.2"><strong>v3.0.2</strong></h2>
-            <h4 id="section-12">2023-03-07</h4>
-            <ul>
-                <li>Bug: Fixed an compatibility issue with the latest version of Plex for Web (4.102.1)</li>
-            </ul>
-            <h2 id="v3.0.1"><strong>v3.0.1</strong></h2>
-            <h4 id="section-13">2023-01-13</h4>
-            <ul>
-                <li>Bug: Fixed a display issue with the Missing Episodes toggle button</li>
-                <li>Bug: Fixed a display issue with the plugin icons in Plex for Web 4.95.2</li>
-                <li>Bug: Fixed a configuration issue where the wrong url for the Options page was used during initial installation</li>
-            </ul>
-            <h2 id="v3.0.0"><strong>v3.0.0</strong></h2>
-            <h4 id="section-14">2022-08-08</h4>
-            <ul>
-                <li>Bug: Fixed a display issue with the Missing Episodes plugin, when the amount of episodes exceeds the max Plex will initially generate</li>
-                <li>Enhancement: Restructured the extension to improve readability on Github</li>
-                <li>Enhancement: Created functionality for directly searching TMDB for various IDs</li>
-                <li>Enhancement: TVDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API</li>
-                <li>Enhancement: TMDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API</li>
-                <li>Enhancement: IMDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API</li>
-                <li>Enhancement: Trakt Plugin - Combined and optimised the code, and improved potential match capabilities by utilising the Trakt API</li>
-                <li>Enhancement: Missing Episodes Plugin - Combined and optimised the code, and improved potential match capabilities by utilising both the TMDB and Trakt APIs</li>
-                <li>Enhancement: Stats Plugin: Rewrote and redesigned the plugin</li>
-                <li>Enhancement: Improved debugging content and effectiveness</li>
-                <li>Miscellaneous: Migrated to manifest v3</li>
-            </ul>
-            <h2 id="v2.1.9"><strong>v2.1.9</strong></h2>
-            <h4 id="section-15">2021-11-09</h4>
-            <ul>
-                <li>Bug: Fixed a display issue from a Plex Update. Now working with Plex Web 4.69.1</li>
-            </ul>
-            <h2 id="v2.1.8"><strong>v2.1.8</strong></h2>
-            <h4 id="section-16">2021-10-17</h4>
-            <ul>
-                <li>Bug: Fixed a display issue from a Plex Update. Now working with Plex Web 4.67.1</li>
-                <li>Bug: Fixed a display issue with the Missing Seasons</li>
-                <li>Miscellaneous: Added Link for reporting issues in the Options</li>
-                <li>Miscellaneous: Added Link for adding a review in the Options</li>
-                <li>Miscellaneous: Removed references and API calls for Trakt Ratings. Plex natively supports ratings</li>
-                <li>Miscellaneous: Brought TMDB in line with other plugins</li>
-            </ul>
-            <h2 id="v2.1.7"><strong>v2.1.7</strong></h2>
-            <h4 id="section-17">2021-07-23</h4>
-            <ul>
-                <li>Enhancement: Improved the reliability of the TMDB plugin</li>
-            </ul>
-            <h2 id="v2.1.6"><strong>v2.1.6</strong></h2>
-            <h4 id="section-18">2021-07-23</h4>
-            <ul>
-                <li>Bug: Fixed a display issue with the latest Plex for Web version for the various plugin links</li>
-            </ul>
-            <h2 id="v2.1.5"><strong>v2.1.5</strong></h2>
-            <h4 id="section-19">2021-05-23</h4>
-            <ul>
-                <li>Bug: Fixed a display issue with the latest Plex for Web version for the Missing Episodes/Seasons plugin</li>
-            </ul>
-            <h2 id="v2.1.4"><strong>v2.1.4</strong></h2>
-            <h4 id="section-20">2021-05-23</h4>
-            <ul>
-                <li>Enhancement: Reformatted &quot;Version History&quot; to improve readability, and better distinguish different types of changes</li>
-                <li>Bug: Reverted back to manifest v2 to fix issue with Stats</li>
-            </ul>
-            <h2 id="v2.1.3"><strong>v2.1.3</strong></h2>
-            <h4 id="section-21">2021-05-17</h4>
-            <ul>
-                <li>Bug: Set default IMDB options to &quot;on&quot;</li>
-                <li>Bug: Fixed Issue with TVDB link not displaying</li>
-                <li>Enhancement: Removed some old references</li>
-                <li>Miscellaneous: Migrated to manifest v3</li>
-            </ul>
-            <h2 id="v2.1.2"><strong>v2.1.2</strong></h2>
-            <h4 id="section-22">2021-05-16</h4>
-            <ul>
-                <li>Bug: Fixed Issue where the plugin would fail to start for Non-Plex Admins</li>
-            </ul>
-            <h2 id="v2.1.1"><strong>v2.1.1</strong></h2>
-            <h4 id="section-23">2021-05-15</h4>
-            <ul>
-                <li>Bug: Fixed Issue with TMDB link not displaying</li>
-            </ul>
-            <h2 id="v2.1.0"><strong>v2.1.0</strong></h2>
-            <h4 id="section-24">2021-05-15</h4>
-            <ul>
-                <li>Enhancement: Added IMDB link and logo to Movie pages</li>
-                <li>Enhancement: Added IMDB link and logo to TV show pages</li>
-            </ul>
-            <h2 id="v2.0.1"><strong>v2.0.1</strong></h2>
-            <h4 id="section-25">2021-04-02</h4>
-            <ul>
-                <li>Bug: Updated to be working with Plex for Web 4.54.5</li>
-            </ul>
-            <h2 id="v2.0.0"><strong>v2.0.0</strong></h2>
-            <h4 id="section-26">2021-03-02</h4>
-            <ul>
-                <li>Bug: Updated to be working with Plex for Web 4.50.1</li>
-            </ul>
-        </div>
-    </body>
+<div class="heading">Changelog</div>
+<h2 id="v3.3.0"><strong>v3.3.0</strong></h2>
+<h4 id="tbc">2024-TBC</h4>
+<ul>
+<li>Bug: Fixed an issue getting the TMDB ID when it isn't in the metadata</li>
+<li>Bug: Fixed an issue where the Audience Rating was being marked as &quot;0-1&quot; incorrectly, when not present</li>
+<li>Bug: Fixed an issue where the &quot;Refresh Data&quot; option would not work in certain circumstances</li>
+<li>Bug: Fixed an issue where multiple Genres would inadvertantly increase total counts for various graphs</li>
+<li>Bug: Fixed an issue where a refresh before charts were drawn fully, would cause a crash</li>
+<li>Enhancement: Now opens the changelog when the extension is updated</li>
+<li>Enhancement: Added new table on the Stats page, for TV/Movies without certain values</li>
+<li>Enhancement: Added new graphs for &quot;Total Added over time&quot;
+<ul>
+<li>Stats cache should automatically be cleared. Any issues, try &quot;Refresh Data&quot; button, first</li>
+</ul>
+</li>
+<li>Enhancement: Migrated TMDB API to utilize cached data</li>
+<li>Enhancement: Migrated Trakt API to fully utilize cached data</li>
+<li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.123.2</li>
+<li>Miscellaneous: Added Google Analytics (No identifiable information, and excluded from Ads. See below table)
+<ul>
+<li>Excerpt from Google's Documentation:</li>
+<li><em>&quot;If you exclude an event or user-scoped custom dimension from ads personalization, then any audience that is based on that data is not eligible for export from Analytics to any of Google's advertising products (e.g., Google Ads, Display &amp; Video 360, Search Ads 360)&quot;</em></li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th><strong>Metric</strong></th>
+<th><strong>Description</strong></th>
+<th><strong>Purpose</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client_ID</td>
+<td>This is randomly generated</td>
+<td>This is used to generate total unique user counts</td>
+</tr>
+<tr>
+<td>Session_ID</td>
+<td>This is randomly generated</td>
+<td>This is used to distinguish between refreshing a page, and pages visits that occur multiple hours apart</td>
+</tr>
+<tr>
+<td>Screen_Resolution</td>
+<td>The current display resolution (e.g. 1920x1080)</td>
+<td>This is used to enable us to accurately test the display of the various pages, based on the most popular resolutions</td>
+</tr>
+<tr>
+<td>Extension_Version</td>
+<td>The version that you are currently using (e.g. v3.0.0)</td>
+<td>This is used to help troubleshoot any potential issues</td>
+</tr>
+<tr>
+<td>API_Usage</td>
+<td>Whether the Plugin APIs are using cached data or connecting to a live service</td>
+<td>This is used to determined how many live API calls are currently being sent, vs how many have been avoided by using the cache</td>
+</tr>
+<tr>
+<td>Page_Views</td>
+<td>Extension page views (Options, Stats, Changelog), does not log any pages related to Plex</td>
+<td>This is used to help us determine where to focus our efforts, when considering features to add.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="v3.2.1"><strong>v3.2.1</strong></h2>
+<h4 id="section">2024-02-01</h4>
+<ul>
+<li>Bug: Fixed an issue with the displayed episode count when &quot;Specials&quot; is present</li>
+<li>Bug: Fixed an issue where the Poster Slider size wouldn't work for &quot;missing&quot; episodes (Max. 32 episodes (21 on the &quot;largest&quot; zoom))</li>
+<li>Bug: Fixed an issue where the Poster Slider size wouldn't work for &quot;missing&quot; seasons</li>
+<li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.123.1</li>
+</ul>
+<h2 id="v3.2.0"><strong>v3.2.0</strong></h2>
+<h4 id="section-1">2024-01-20</h4>
+<ul>
+<li>Enhancement: Added Total episode count for each season</li>
+<li>Enhancement: Added Sonarr Link</li>
+<li>Enhancement: Added Radarr Link</li>
+<li>Enhancement: Changed the way text is displayed on the Options page, for better readability</li>
+<li>Enhancement: Changed the format of the debug text when retrieving / Storing cache items</li>
+<li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.122.0</li>
+</ul>
+<h2 id="v3.1.5"><strong>v3.1.5</strong></h2>
+<h4 id="section-2">2024-01-02</h4>
+<ul>
+<li>Bug: Fixed Missing Episodes not being displayed on Plex for Web version is 4.121.1</li>
+<li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.121.1</li>
+<li>Miscellaneous: Updated supported Local Plex for Web version to 4.118.0</li>
+<li>Miscellaneous: Added link to Discord</li>
+</ul>
+<h2 id="v3.1.4"><strong>v3.1.4</strong></h2>
+<h4 id="section-3">2023-10-06</h4>
+<ul>
+<li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.116.1</li>
+</ul>
+<h2 id="v3.1.3"><strong>v3.1.3</strong></h2>
+<h4 id="section-4">2023-08-25</h4>
+<ul>
+<li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.113.2</li>
+<li>Miscellaneous: Corrected a typo in the minimum required warning message</li>
+<li>Miscellaneous: Fixed the formatting of the links in the README file</li>
+</ul>
+<h2 id="v3.1.2"><strong>v3.1.2</strong></h2>
+<h4 id="section-5">2023-07-14</h4>
+<ul>
+<li>Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.110.1</li>
+<li>Miscellaneous: Updated supported Local Plex for Web version to 4.108.0</li>
+</ul>
+<h2 id="v3.1.1"><strong>v3.1.1</strong></h2>
+<h4 id="section-6">2023-06-09</h4>
+<ul>
+<li>Bug: Fixed an issue where clicking on the compatibility warning/error would inadvertantly send you back to the homepage</li>
+<li>Bug: Fixed an issue where the compatability warning would stop the extension when displayed</li>
+</ul>
+<h2 id="v3.1.0"><strong>v3.1.0</strong></h2>
+<h4 id="section-7">2023-05-26</h4>
+<ul>
+<li>Bug: Fixed an issue where the missing episodes plugin would ignore special seasons</li>
+<li>Bug: Fixed an issue where links would sometimes be inserted multiple times</li>
+<li>Enhancement: Restructured the options page to add better clarity</li>
+<li>Enhancement: Added support for locally hosted Plex (Plex Web 4.100.1)</li>
+<li>Enhancement: Added version checking for the latest tested version, compared to the installed/active version of Plex for Web</li>
+<li>Enhancement: Added a warning/error icon when there is a version mismatch between Plex for Web and the latest tested version</li>
+<li>Enhancement: Added loading display on stats page</li>
+<li>Miscellaneous: Updated the README to include a couple more links</li>
+<li>Miscellaneous: Removed some code that was no longer being used</li>
+<li>Miscellaneous: Updated supported Plex.tv Plex for Web version to (4.106.2)</li>
+</ul>
+<h2 id="v3.0.6"><strong>v3.0.6</strong></h2>
+<h4 id="section-8">2023-04-21</h4>
+<ul>
+<li>Bug: Fixed an issue where the missing episodes plugin would fail to properly process seasons/episodes</li>
+<li>Enhancement: Added further detail to debug logging</li>
+</ul>
+<h2 id="v3.0.5"><strong>v3.0.5</strong></h2>
+<h4 id="section-9">2023-04-13</h4>
+<ul>
+<li>Bug: Fixed an issue where the missing episodes plugin would populate episodes from the wrong season</li>
+<li>Enhancement: Expanded debugging verbosity for the missing episodes plugin</li>
+<li>Enhancement: Included the Specials season in the missing episodes plugin</li>
+<li>Miscellaneous: Updated the changelog page</li>
+</ul>
+<h2 id="v3.0.4"><strong>v3.0.4</strong></h2>
+<h4 id="section-10">2023-04-07</h4>
+<ul>
+<li>Bug: Fixed a display conflict with Plex for Web (4.104.2)</li>
+<li>Enhancement: Improved the usage of cached data</li>
+<li>Enhancement: Expanded the trakt plugin to show links on Season and Episode pages</li>
+<li>Enhancement: Expanded the TVDB plugin to show links on Season pages</li>
+<li>Enhancement: Expanded the debugging vebosity</li>
+<li>Enhancement: Added checks to prevent trying to match against unmatched items</li>
+<li>Enhancement: Improved the &quot;Clear Cache&quot; functionality</li>
+</ul>
+<h2 id="v3.0.3"><strong>v3.0.3</strong></h2>
+<h4 id="section-11">2023-03-11</h4>
+<ul>
+<li>Bug: Fixed a display conflict with Plex for Web (4.102.1)</li>
+</ul>
+<h2 id="v3.0.2"><strong>v3.0.2</strong></h2>
+<h4 id="section-12">2023-03-07</h4>
+<ul>
+<li>Bug: Fixed an compatibility issue with the latest version of Plex for Web (4.102.1)</li>
+</ul>
+<h2 id="v3.0.1"><strong>v3.0.1</strong></h2>
+<h4 id="section-13">2023-01-13</h4>
+<ul>
+<li>Bug: Fixed a display issue with the Missing Episodes toggle button</li>
+<li>Bug: Fixed a display issue with the plugin icons in Plex for Web 4.95.2</li>
+<li>Bug: Fixed a configuration issue where the wrong url for the Options page was used during initial installation</li>
+</ul>
+<h2 id="v3.0.0"><strong>v3.0.0</strong></h2>
+<h4 id="section-14">2022-08-08</h4>
+<ul>
+<li>Bug: Fixed a display issue with the Missing Episodes plugin, when the amount of episodes exceeds the max Plex will initially generate</li>
+<li>Enhancement: Restructured the extension to improve readability on Github</li>
+<li>Enhancement: Created functionality for directly searching TMDB for various IDs</li>
+<li>Enhancement: TVDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API</li>
+<li>Enhancement: TMDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API</li>
+<li>Enhancement: IMDB Plugin - Removed a lot of unused code, and improved potential match capabilities by utilising the TMDB API</li>
+<li>Enhancement: Trakt Plugin - Combined and optimised the code, and improved potential match capabilities by utilising the Trakt API</li>
+<li>Enhancement: Missing Episodes Plugin - Combined and optimised the code, and improved potential match capabilities by utilising both the TMDB and Trakt APIs</li>
+<li>Enhancement: Stats Plugin: Rewrote and redesigned the plugin</li>
+<li>Enhancement: Improved debugging content and effectiveness</li>
+<li>Miscellaneous: Migrated to manifest v3</li>
+</ul>
+<h2 id="v2.1.9"><strong>v2.1.9</strong></h2>
+<h4 id="section-15">2021-11-09</h4>
+<ul>
+<li>Bug: Fixed a display issue from a Plex Update. Now working with Plex Web 4.69.1</li>
+</ul>
+<h2 id="v2.1.8"><strong>v2.1.8</strong></h2>
+<h4 id="section-16">2021-10-17</h4>
+<ul>
+<li>Bug: Fixed a display issue from a Plex Update. Now working with Plex Web 4.67.1</li>
+<li>Bug: Fixed a display issue with the Missing Seasons</li>
+<li>Miscellaneous: Added Link for reporting issues in the Options</li>
+<li>Miscellaneous: Added Link for adding a review in the Options</li>
+<li>Miscellaneous: Removed references and API calls for Trakt Ratings. Plex natively supports ratings</li>
+<li>Miscellaneous: Brought TMDB in line with other plugins</li>
+</ul>
+<h2 id="v2.1.7"><strong>v2.1.7</strong></h2>
+<h4 id="section-17">2021-07-23</h4>
+<ul>
+<li>Enhancement: Improved the reliability of the TMDB plugin</li>
+</ul>
+<h2 id="v2.1.6"><strong>v2.1.6</strong></h2>
+<h4 id="section-18">2021-07-23</h4>
+<ul>
+<li>Bug: Fixed a display issue with the latest Plex for Web version for the various plugin links</li>
+</ul>
+<h2 id="v2.1.5"><strong>v2.1.5</strong></h2>
+<h4 id="section-19">2021-05-23</h4>
+<ul>
+<li>Bug: Fixed a display issue with the latest Plex for Web version for the Missing Episodes/Seasons plugin</li>
+</ul>
+<h2 id="v2.1.4"><strong>v2.1.4</strong></h2>
+<h4 id="section-20">2021-05-23</h4>
+<ul>
+<li>Enhancement: Reformatted &quot;Version History&quot; to improve readability, and better distinguish different types of changes</li>
+<li>Bug: Reverted back to manifest v2 to fix issue with Stats</li>
+</ul>
+<h2 id="v2.1.3"><strong>v2.1.3</strong></h2>
+<h4 id="section-21">2021-05-17</h4>
+<ul>
+<li>Bug: Set default IMDB options to &quot;on&quot;</li>
+<li>Bug: Fixed Issue with TVDB link not displaying</li>
+<li>Enhancement: Removed some old references</li>
+<li>Miscellaneous: Migrated to manifest v3</li>
+</ul>
+<h2 id="v2.1.2"><strong>v2.1.2</strong></h2>
+<h4 id="section-22">2021-05-16</h4>
+<ul>
+<li>Bug: Fixed Issue where the plugin would fail to start for Non-Plex Admins</li>
+</ul>
+<h2 id="v2.1.1"><strong>v2.1.1</strong></h2>
+<h4 id="section-23">2021-05-15</h4>
+<ul>
+<li>Bug: Fixed Issue with TMDB link not displaying</li>
+</ul>
+<h2 id="v2.1.0"><strong>v2.1.0</strong></h2>
+<h4 id="section-24">2021-05-15</h4>
+<ul>
+<li>Enhancement: Added IMDB link and logo to Movie pages</li>
+<li>Enhancement: Added IMDB link and logo to TV show pages</li>
+</ul>
+<h2 id="v2.0.1"><strong>v2.0.1</strong></h2>
+<h4 id="section-25">2021-04-02</h4>
+<ul>
+<li>Bug: Updated to be working with Plex for Web 4.54.5</li>
+</ul>
+<h2 id="v2.0.0"><strong>v2.0.0</strong></h2>
+<h4 id="section-26">2021-03-02</h4>
+<ul>
+<li>Bug: Updated to be working with Plex for Web 4.50.1</li>
+</ul>
+
+</div>
+</body>
 </html>
