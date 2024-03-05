@@ -21,7 +21,7 @@ google_api = {
         return session_id;
     },
     sendTracking: async (type, data) => {
-        let debugMode = true;
+        let debugMode = false;
         let GA_ENDPOINT = 'https://www.google-analytics.com/mp/collect?v=2&npa=1';
         //let GA_ENDPOINT = 'https://www.google-analytics.com/debug/mp/collect?v=2&npa=1';
         let MEASUREMENT_ID = `G-4NJZQNDLCJ`;
