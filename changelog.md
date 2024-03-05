@@ -1,5 +1,5 @@
 ## **v3.3.0**
-#### 2024-TBC
+#### 2024-03-05
 - Bug: Fixed an issue getting the TMDB ID when it isn't in the metadata
 - Bug: Fixed an issue where the Audience Rating was being marked as "0-1" incorrectly, when not present
 - Bug: Fixed an issue where the "Refresh Data" option would not work in certain circumstances
