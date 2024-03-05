@@ -38,12 +38,12 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersionDisp = "4.123.1";
+    var MinPfWVersionDisp = "4.125.1";
     var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 else {
     // Local Plex
-    var MainPageDetection = new RegExp(/(.*)\/web\/index.html\#\!\/$/);
+    var MainPageDetection = new RegExp(/(.*)\/web\/index.html\#\!\/?$/);
     var LibraryPageDetection = new RegExp(/(.*)com.plexapp.plugins.library(.*)$/);
     var TVMoviePageDetection = new RegExp(/(.*)\/server\/(.*)details(.*)$/);
     var MainPageLoaded = "button";
@@ -53,7 +53,7 @@ else {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersionDisp = "4.118.0";
+    var MinPfWVersionDisp = "4.123.2";
     var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 

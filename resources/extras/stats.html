@@ -4,8 +4,12 @@
     <title>EnhancedPLEX stats</title>
     <link rel="stylesheet" type="text/css" href="/css/main.css">
     <link rel="stylesheet" type="text/css" href="/css/stats.css">
+    <link rel="stylesheet" type="text/css" href="/css/dataTables-jquery-1.13.8.css">
     <script src="/js/utils.js"></script>
+    <script src="/js/jquery-3.7.0.min.js"></script>
     <script src="/js/chart-v4.4.1.min.js"></script>
+    <script src="/js/dataTables-jquery-1.13.8.min.js"></script>
+    <script src="/apis/google_api.js"></script>
     <script src="/js/stats.js"></script>
 </head>
 <body>
@@ -29,6 +33,24 @@
         <div class="heading" id="shows-heading">TV Shows</div>
         <div class="row-container chart-center">
             <div class="chart-title-container">
+                <div class="chart-title-left">Missing Values</div>
+            </div>
+            <div class="chart-container">
+                <table class="chart-center nowrap display" id="ShowsByNullValues">
+                    <thead>
+                        <tr>
+                            <th>Library</th>
+                            <th>Name</th>
+                            <th>Year</th>
+                            <th>Audience Rating</th>
+                            <th>Content Rating</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
                 <div class="chart-title-left">First Aired</div>
             </div>
             <div class="chart-container">
@@ -49,7 +71,7 @@
         </div>
         <div class="row-container chart-center">
             <div class="chart-title-container">
-                <div class="chart-title-left">Originally Added</div>
+                <div class="chart-title-left">Shows First Added</div>
             </div>
             <div class="chart-container">
                 <canvas class="chart chart-center" id="ShowsByAddedAt"></canvas>
@@ -67,9 +89,35 @@
                 <canvas class="chart chart-right" id="ShowsByContentRating"></canvas>
             </div>
         </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Total Episodes Added</div>
+            </div>
+            <div class="chart-container">
+                <canvas class="chart chart-center" id="EpisodesOverTime"></canvas>
+            </div>
+        </div>
     </div>
     <div id="movies-container">
         <div class="heading" id="shows-heading">Movies</div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Missing Values</div>
+            </div>
+            <div class="chart-container">
+                <table class="chart-center nowrap display" id="MoviesByNullValues">
+                    <thead>
+                        <tr>
+                            <th>Library</th>
+                            <th>Name</th>
+                            <th>Year</th>
+                            <th>Audience Rating</th>
+                            <th>Content Rating</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
         <div class="row-container chart-center">
             <div class="chart-title-container">
                 <div class="chart-title-left">Year</div>
@@ -108,6 +156,14 @@
             </div>
             <div class="chart-container chart-right">
                 <canvas class="chart chart-right" id="MoviesByContentRating"></canvas>
+            </div>
+        </div>
+        <div class="row-container chart-center">
+            <div class="chart-title-container">
+                <div class="chart-title-left">Total Movies Added</div>
+            </div>
+            <div class="chart-container">
+                <canvas class="chart chart-center" id="MoviesOverTime"></canvas>
             </div>
         </div>
     </div>

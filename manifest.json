@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Enhanced Plex",
   "description": "Adds several features to the Plex/Web client for Plex",
-  "version": "3.2.1",
+  "version": "3.3.0",
   "options_page": "resources/extras/options.html",
   "content_scripts": [
     {
@@ -22,6 +22,7 @@
         "apis/tmdb_api.js",
         "apis/sonarr_api.js",
         "apis/radarr_api.js",
+        "apis/google_api.js",
         "plugins/imdb.js",
         "plugins/missing_episodes.js",
         "plugins/stats.js",

@@ -24,14 +24,14 @@ tmdb_api = {
 		utils.debug("TMDB API [async] (getTmdbId): Attempting search via TMDB using Category (" + category + ") Title (" + title + ") and Year (" + year + ")");
 		api_url = "https://api.themoviedb.org/3/search/" + category + "?language=en-US&page=1&include_adult=false&query=" + title + "&first_air_date_year=" + year + "&api_key=" + tmdb_key;
 		utils.debug("TMDB API [async] (getTmdbId): Connecting to endpoint " + api_url);
-		response = await fetch(api_url);
-		json = await response.json();
+		json = await utils.getJSON(api_url, null, "TMDB_API");
+		utils.debug("JSON ID: " + json.results[0].id);
 		try {
-			var tmdb_id = await json.results[0].id;
+			var tmdb_id = json.results[0].id;
 		}
 		catch {
 			utils.debug("TMDB API [async] (getTmdbId): Unable to find TMDB ID");
-			return
+			return;
 		}
 		if (tmdb_id) {
 			utils.debug("TMDB API [async] (getTmdbId): Returning TMDB ID to calling function - " + tmdb_id);
@@ -66,10 +66,10 @@ tmdb_api = {
 				var title = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Video")[0].getAttribute("grandparentTitle");
 				utils.debug("TMDB API [async] (getId): Setting Episode Title to: " + title);
 			}
-			title = title.replace(" ", "_")
-			tmdb_name = title + "_tmdb_id"
-			tvdb_name = title + "_tvdb_id"
-			imdb_name = title + "_imdb_id"
+			title = title.replace(" ", "_");
+			tmdb_name = title + "_tmdb_id";
+			tvdb_name = title + "_tvdb_id";
+			imdb_name = title + "_imdb_id";
 		}
 		if (site == "tmdb") {
 			if (tmdbelement) {
@@ -86,11 +86,11 @@ tmdb_api = {
 				}
 			}
 			else {
-				cache_data = await utils.cache_get(tmdb_name, "local") || {}
+				cache_data = await utils.cache_get(tmdb_name, "local") || {};
 				if (Object.keys(cache_data).length) {
-					tmdb_id = cache_data
+					tmdb_id = cache_data;
 					utils.debug("TMDB API [async] (getId): TMDB ID found in cached data: " + tmdb_id);
-					return tmdb_id
+					return tmdb_id;
 				}
 			}
 		}
@@ -109,11 +109,11 @@ tmdb_api = {
 				}
 			}
 			else {
-				cache_data = await utils.cache_get(tvdb_name, "local") || {}
+				cache_data = await utils.cache_get(tvdb_name, "local") || {};
 				if (Object.keys(cache_data).length) {
-					tvdb_id = cache_data
+					tvdb_id = cache_data;
 					utils.debug("TMDB API [async] (getId): TVDB ID found in cached data: " + tvdb_id);
-					return tvdb_id
+					return tvdb_id;
 				}
 			}
 		}
@@ -132,30 +132,30 @@ tmdb_api = {
 				}
 			}
 			else {
-				imdb_cache_data = await utils.cache_get(imdb_name, "local") || {}
+				imdb_cache_data = await utils.cache_get(imdb_name, "local") || {};
 				if (Object.keys(imdb_cache_data).length) {
-					imdb_id = imdb_cache_data
+					imdb_id = imdb_cache_data;
 					utils.debug("TMDB API [async] (getId): IMDB ID found in cached data: " + imdb_id);
-					return imdb_id
+					return imdb_id;
 				}
 			}
 		}
 		utils.debug("TMDB API [async] (getId): Retrieving TMDB API Key...");
 		var tmdb_key = await utils.getApiKey("tmdb");
-		var retry = 0
+		var retry = 0;
 		while (tmdb_key == null) {
-			retry++
+			retry++;
 			if (retry < 10) {
 				utils.debug("TMDB API [async] (getId): TMDB API Key not returned yet...[" + retry + "]");
 			}
 			else {
 				utils.debug("TMDB API [async] (getId): Could not set TMDB API Key... Aborting.");
-				return
+				return;
 			}
 		}
-		cache_data = await utils.cache_get(tmdb_name, "local") || {}
+		cache_data = await utils.cache_get(tmdb_name, "local") || {};
 		if (Object.keys(cache_data).length) {
-			tmdb_id = cache_data
+			tmdb_id = cache_data;
 			utils.debug("TMDB API [async] (getId): TMDB ID found in cached data: " + tmdb_id);
 		}
 		if (!tmdb_id) {
@@ -174,8 +174,7 @@ tmdb_api = {
 			}
 			var api_url = base_url + tmdb_id + "/external_ids?api_key=" + tmdb_key;
 			utils.debug("TMDB API [async] (getId): Connecting to endpoint " + api_url);
-			response = await fetch(api_url);
-			json = await response.json();
+			json = await utils.getJSON(api_url, null, "TMDB_API");
 			if (site == "imdb") {
 				var imdb_id = json.imdb_id;
 				if (imdb_id) {
@@ -198,12 +197,23 @@ tmdb_api = {
 					utils.debug("TMDB API [async] (getId): TVDB ID not found... Aborting...");
 				}
 			}
+			else if (site == "tmdb") {
+				var tmdb_id = json.id;
+				if (tmdb_id) {
+					utils.debug("TMDB API [async] (getId): TMDB ID found - " + tmdb_id);
+					utils.cache_set(tmdb_name, tmdb_id, "local");
+					return tmdb_id;
+				}
+				else {
+					utils.debug("TMDB API [async] (getId): TMDB ID not found... Aborting...");
+				}
+			}
 			else {
-				utils.debug("TMDB API [async] (getId): Unrecognised Site... Aborting...");
+				utils.debug("TMDB API [async] (getId): Unrecognised Site: " + site + "... Aborting...");
 			}
 		}
 		else {
 			utils.debug("TMDB API [async] (getId): TMDB ID not found... Aborting...");
 		}
 	}
-}
+};

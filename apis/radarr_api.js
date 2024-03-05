@@ -46,7 +46,7 @@ radarr_api = {
         if (tmdb_id) {
             utils.debug("Radarr API [async] (getSeriesURL): TMDB API returned the following TVDB ID (" + tmdb_id + ")");
             var api_url = base_url + "/api/v3/movie?tmdbid=" + tmdb_id;
-            var api_data = await utils.getJSON(api_url, custom_headers);
+            var api_data = await utils.getJSON(api_url, custom_headers, "Radarr_API");
             var radarr_titleSlug = api_data[0].titleSlug;
             if (radarr_titleSlug) {
                 var url = base_url + "/movie/" + radarr_titleSlug;

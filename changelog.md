@@ -1,6 +1,35 @@
+## **v3.3.0**
+#### 2024-03-05
+- Bug: Fixed an issue getting the TMDB ID when it isn't in the metadata
+- Bug: Fixed an issue where the Audience Rating was being marked as "0-1" incorrectly, when not present
+- Bug: Fixed an issue where the "Refresh Data" option would not work in certain circumstances
+- Bug: Fixed an issue where multiple Genres would inadvertantly increase total counts for various graphs
+- Bug: Fixed an issue where a refresh before charts were drawn fully, would cause a crash
+- Bug: Fixed an issue where the main page wouldn't be detected for local Plex installs, without the trailing slash
+- Enhancement: Now opens the changelog when the extension is updated
+- Enhancement: Added new table on the Stats page, for TV/Movies without certain values
+- Enhancement: Added new graphs for "Total Added over time"
+  - Stats cache should automatically be cleared. Any issues, try the "Refresh Data" button, first
+- Enhancement: Migrated TMDB API to utilize cached data
+- Enhancement: Migrated Trakt API to fully utilize cached data
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.125.1
+- Miscellaneous: Updated supported Local Plex for Web version to 4.123.2
+- Miscellaneous: Added Google Analytics (No identifiable information, and excluded from Ads. See below table)
+  - Excerpt from Google's Documentation:
+  - _"If you exclude an event or user-scoped custom dimension from ads personalization, then any audience that is based on that data is not eligible for export from Analytics to any of Google's advertising products (e.g., Google Ads, Display & Video 360, Search Ads 360)"_
+
+| **Metric**        | **Description**                                                                          | **Purpose**                                                                                                                   |
+|-------------------|------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| Client_ID         | This is randomly generated                                                               | This is used to generate total unique user counts                                                                             |
+| Session_ID        | This is randomly generated                                                               | This is used to distinguish between refreshing a page, and pages visits that occur multiple hours apart                       |
+| Screen_Resolution | The current display resolution (e.g. 1920x1080)                                          | This is used to enable us to accurately test the display of the various pages, based on the most popular resolutions          |
+| Extension_Version | The version that you are currently using (e.g. v3.0.0)                                   | This is used to help troubleshoot any potential issues                                                                        |
+| API_Usage         | Whether the Plugin APIs are using cached data or connecting to a live service            | This is used to determined how many live API calls are currently being sent, vs how many have been avoided by using the cache |
+| Page_Views        | Extension page views (Options, Stats, Changelog), does not log any pages related to Plex | This is used to help us determine where to focus our efforts, when considering features to add.                               |
+
 ## **v3.2.1**
-#### 2024-01-20
-- Bug: Fixed an issue with the displayed empisode count when "Specials" is present
+#### 2024-02-01
+- Bug: Fixed an issue with the displayed episode count when "Specials" is present
 - Bug: Fixed an issue where the Poster Slider size wouldn't work for "missing" episodes (Max. 32 episodes (21 on the "largest" zoom))
 - Bug: Fixed an issue where the Poster Slider size wouldn't work for "missing" seasons
 - Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.123.1
