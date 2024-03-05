@@ -43,7 +43,7 @@ if (plexforweb) {
 }
 else {
     // Local Plex
-    var MainPageDetection = new RegExp(/(.*)\/web\/index.html\#\!/);
+    var MainPageDetection = new RegExp(/(.*)\/web\/index.html\#\!\/?$/);
     var LibraryPageDetection = new RegExp(/(.*)com.plexapp.plugins.library(.*)$/);
     var TVMoviePageDetection = new RegExp(/(.*)\/server\/(.*)details(.*)$/);
     var MainPageLoaded = "button";
