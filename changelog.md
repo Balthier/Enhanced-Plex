@@ -1,3 +1,9 @@
+## **v3.3.1**
+#### 2024-06-14
+- Bug: Fixed an issue with settings not retaining, and returning to default values after a period of time
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.131.1
+- Miscellaneous: Updated supported Local Plex for Web version to 4.125.1
+
 ## **v3.3.0**
 #### 2024-03-05
 - Bug: Fixed an issue getting the TMDB ID when it isn't in the metadata

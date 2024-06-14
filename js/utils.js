@@ -159,7 +159,10 @@ utils = {
             else {
                 expireTime = 604800000;
             }
-            if (time_diff > expireTime) {
+            if (key.match(/^options\_.+/g) || key.match(/^stats\_.+/g)) {
+
+            }
+            else if (time_diff > expireTime) {
                 utils.debug("Utils [async] (cache_get): [" + key + "] - Found stale data, removing from " + type + " storage");
                 command.remove(cache_key);
                 command.remove(key);

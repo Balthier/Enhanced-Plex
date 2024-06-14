@@ -38,7 +38,7 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersionDisp = "4.125.1";
+    var MinPfWVersionDisp = "4.131.1";
     var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 else {
@@ -53,7 +53,7 @@ else {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersionDisp = "4.123.2";
+    var MinPfWVersionDisp = "4.125.1";
     var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 
