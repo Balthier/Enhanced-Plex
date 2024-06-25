@@ -11,8 +11,12 @@ utils = {
                     if (typeof global_plex_token != "undefined") {
                         output = output.replace(global_plex_token, "XXXXXXXXXXXXXXXXXXXX");
                     }
+                    if (typeof localStorage["myPlexAccessToken"] != "undefined") {
+                        output = output.replace(localStorage["myPlexAccessToken"], "XXXXXXXXXXXXXXXXXXXX");
+                    }
                     output = output.replace(/X-Plex-Token=[\w\d]{20}/, "X-Plex-Token=XXXXXXXXXXXXXXXXXXXX");
                     output = output.replace(/\d+\.\d+\.\d+\.\d+/, "XXX.XXX.X.XX");
+                    output = output.replace(/https\:\/\/\d+\-\d+\-\d+\-\d+/, "https://XXX-XXX-XXX-XXX");
                 }
                 date = new Date();
                 hours = ("0" + date.getHours()).slice(-2);

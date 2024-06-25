@@ -222,7 +222,7 @@ function runOnReady() {
 function getPlexToken() {
     if (localStorage["myPlexAccessToken"]) {
         var plex_token = localStorage["myPlexAccessToken"];
-        utils.debug("Main (getPlexToken): plex_token fetched from localStorage - " + localStorage["myPlexAccessToken"]);
+        utils.debug("Main (getPlexToken): plex_token fetched from localStorage - " + plex_token);
         return plex_token;
     }
 }
