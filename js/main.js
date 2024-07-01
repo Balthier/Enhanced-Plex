@@ -38,7 +38,7 @@ if (plexforweb) {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersionDisp = "4.131.1";
+    var MinPfWVersionDisp = "4.132.3";
     var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 else {
@@ -53,7 +53,7 @@ else {
     var StatsButtonParent = "NavBar-right";
     var StatsButtonContainer = "NavBarActivityButton-container";
     var plexParentBanner = "metadata-starRatings";
-    var MinPfWVersionDisp = "4.125.1";
+    var MinPfWVersionDisp = "4.129.1";
     var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 
@@ -288,54 +288,6 @@ function insertBannerTemplate() {
     }
 }
 
-async function getServerAddresses(requests_url, plex_token) {
-    cache_data = await utils.cache_get("options_server_addresses", "sync") || {};
-    if (Object.keys(cache_data).length) {
-        server_addresses = cache_data;
-    }
-    else {
-        var xml_lookup_tag_name = "Device";
-        var request_path = "/resources?includeHttps=1";
-        var requests_url = "https://plex.tv/pms";
-        var servers_xml = await utils.getXML(requests_url + request_path + "&X-Plex-Token=" + plex_token) || {};
-        if (Object.keys(servers_xml).length) {
-            var devices = servers_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName(xml_lookup_tag_name);
-            var server_addresses = {};
-            for (var i = 0; i < devices.length; i++) {
-                const device = devices[i];
-                var serverCheck = device.getAttribute("provides");
-                if (serverCheck.includes("server")) {
-                    const name = device.getAttribute("name");
-                    const machine_identifier = device.getAttribute("clientIdentifier");
-                    const access_token = device.getAttribute("accessToken");
-                    const connections = device.getElementsByTagName("Connection");
-                    for (j = 0; j < connections.length; j++) {
-                        uri = connections[j].getAttribute("uri");
-                        test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
-                        if (Object.keys(test).length) {
-                            utils.debug("Main [async] (getServerAddresses): Connection success... Adding to list.. (" + uri + ")");
-                            server_addresses[machine_identifier] = {
-                                "name": name,
-                                "machine_identifier": machine_identifier,
-                                "access_token": access_token,
-                                "uri": uri
-                            };
-                        }
-                        else {
-                            utils.debug("Main [async] (getServerAddresses): Could not get a response from the connection... Aborting.");
-                        }
-                    }
-                }
-                serverCheck = null;
-            }
-            utils.cache_set("options_server_addresses", server_addresses, "sync");
-        }
-    }
-    utils.debug("Main [async] (getServerAddresses): Server Addresses collected..");
-    utils.debug(server_addresses);
-    return server_addresses;
-}
-
 function processLibrarySections(sections_xml) {
     var directories = sections_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
     var dir_metadata = {};
@@ -375,9 +327,8 @@ async function main() {
 
     // use plex.tv for API requests if we have plex token
     var requests_url = "https://plex.tv/pms";
-    utils.debug("Main [async] (main): Requests_url set as " + requests_url);
 
-    var server_addresses = await getServerAddresses(requests_url, plex_token) || {};
+    var server_addresses = await utils.getServerAddresses(plex_token) || {};
     const timer = ms => new Promise(res => setTimeout(res, ms));
     await timer(100);
     if (Object.keys(server_addresses).length) {
@@ -404,6 +355,7 @@ async function main() {
             utils.debug("Main [async] (main): We are in library section");
             var page_identifier = page_url.match(/\/media\/(.[^\/]+)(.*)source\=(\d+)/);
             var machine_identifier = page_identifier[1];
+            var machine_identifier_local = page_identifier[1] + "_local";
             var section_num = page_identifier[3];
             utils.debug("Main [async] (main): Machine identifier - " + machine_identifier);
             utils.debug("Main [async] (main): Library section - " + section_num);
@@ -415,7 +367,7 @@ async function main() {
                 var library_sections = processLibrarySections(sections_xml);
                 var server;
                 if (server_addresses) {
-                    server = server_addresses[machine_identifier];
+                    server = server_addresses[machine_identifier_local] || server_addresses[machine_identifier];
                 }
                 else {
                     server = {};
@@ -430,10 +382,16 @@ async function main() {
             utils.debug("Main [async] (main): We are on a Movie/TV show details page");
             var page_identifier = page_url.match(/\/server\/(.[^\/]+)(.*)%2Flibrary%2Fmetadata%2F(\d+)/);
             var machine_identifier = page_identifier[1];
+            var machine_identifier_local = page_identifier[1] + "_local";
             var parent_item_id = page_identifier[3];
             utils.debug("Main [async] (main): Metadata id - " + parent_item_id);
 
-            var server = server_addresses[machine_identifier];
+            if (server_addresses) {
+                server = server_addresses[machine_identifier_local] || server_addresses[machine_identifier];
+            }
+            else {
+                server = {};
+            }
 
             // construct metadata xml link
             utils.debug("Main [async] (main): Fetching metadata for id - " + parent_item_id);

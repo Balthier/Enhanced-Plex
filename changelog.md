@@ -1,3 +1,9 @@
+## **v3.3.2**
+#### 2024-07-01
+- Bug: Fixed an issue with the console displaying certain information that should be excluded while debug options are turned off
+- Bug: Fixed an issue where the extension would not handle connection timeouts when checking for servers
+- Enhancement: Changed the preference to use the local uri, where possible, to enable faster requests
+
 ## **v3.3.1**
 #### 2024-06-14
 - Bug: Fixed an issue with settings not retaining, and returning to default values after a period of time
