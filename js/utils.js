@@ -11,8 +11,12 @@ utils = {
                     if (typeof global_plex_token != "undefined") {
                         output = output.replace(global_plex_token, "XXXXXXXXXXXXXXXXXXXX");
                     }
+                    if (typeof localStorage["myPlexAccessToken"] != "undefined") {
+                        output = output.replace(localStorage["myPlexAccessToken"], "XXXXXXXXXXXXXXXXXXXX");
+                    }
                     output = output.replace(/X-Plex-Token=[\w\d]{20}/, "X-Plex-Token=XXXXXXXXXXXXXXXXXXXX");
                     output = output.replace(/\d+\.\d+\.\d+\.\d+/, "XXX.XXX.X.XX");
+                    output = output.replace(/https\:\/\/\d+\-\d+\-\d+\-\d+/, "https://XXX-XXX-XXX-XXX");
                 }
                 date = new Date();
                 hours = ("0" + date.getHours()).slice(-2);
@@ -301,5 +305,82 @@ utils = {
             utils.cache_set(key, json, "local");
             return json;
         }
+    },
+    getServerAddresses: async (plex_token) => {
+        cache_data = await utils.cache_get("rr_servers", "sync") || {};
+        if (Object.keys(cache_data).length) {
+            server_addresses = cache_data;
+        }
+        else {
+            var requests_url = "https://plex.tv/pms/resources?includeHttps=1&X-Plex-Token=" + plex_token;
+            var servers_xml = await utils.getXML(requests_url) || {};
+            if (Object.keys(servers_xml).length) {
+                var devices = servers_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Device");
+                var server_addresses = {};
+                for (var i = 0; i < devices.length; i++) {
+                    const device = devices[i];
+                    var serverCheck = device.getAttribute("provides");
+                    if (serverCheck.includes("server")) {
+                        const plex_name = device.getAttribute("name");
+                        const access_token = device.getAttribute("accessToken");
+                        const connections = device.getElementsByTagName("Connection");
+                        for (j = 0; j < connections.length; j++) {
+                            const localattr = connections[j].getAttribute("local");
+                            var machine_identifier = device.getAttribute("clientIdentifier");
+                            if (localattr == true) {
+                                var name = device.getAttribute("clientIdentifier") + "_local";
+                                uri = "https://" + connections[j].getAttribute("address") + ":" + connections[j].getAttribute("port");
+                            }
+                            else {
+                                var name = device.getAttribute("clientIdentifier");
+                                uri = connections[j].getAttribute("uri");
+                            }
+                            try {
+                                test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
+                            }
+                            catch {
+                                if (localattr) {
+                                    utils.debug("Utils [async]  (getServerAddresses): Failed to connect locally via HTTPS. Trying Plex Proxy.");
+                                    try {
+                                        uri = connections[j].getAttribute("uri");
+                                        test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
+                                    }
+                                    catch {
+                                        utils.debug("Utils [async]  (getServerAddresses): Failed to connect via Plex Proxy. Trying local HTTP");
+                                        uri = "http://" + connections[j].getAttribute("address") + ":" + connections[j].getAttribute("port");
+                                        try {
+                                            test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
+                                        }
+                                        catch {
+                                            utils.debug("Utils [async]  (getServerAddresses): Failed to connect via HTTP.");
+                                        }
+                                    }
+                                }
+                                else {
+                                    test = {};
+                                }
+                            }
+                            if (Object.keys(test).length) {
+                                utils.debug("Utils [async]  (getServerAddresses): Connection success... Adding to list.. (" + uri + ")");
+                                server_addresses[name] = {
+                                    "name": plex_name,
+                                    "machine_identifier": machine_identifier,
+                                    "access_token": access_token,
+                                    "uri": uri
+                                };
+                            }
+                            else {
+                                utils.debug("Utils [async]  (getServerAddresses): Could not get a response from the connection... Aborting.");
+                            }
+                        }
+                    }
+                    serverCheck = null;
+                }
+                utils.cache_set("rr_servers", server_addresses, "sync");
+            }
+        }
+        utils.debug("Main [async] (getServerAddresses): Server Addresses collected..");
+        utils.debug(server_addresses);
+        return server_addresses;
     }
 };

@@ -370,22 +370,13 @@ function setLoading(value) {
 		element.style.display = "none";
 	}
 }
-async function getServerAddresses() {
-	utils.debug("Stats [async] (getServerAddresses): Retrieving Server addresses");
-	var response = await utils.cache_get("options_server_addresses", "sync");
-	const timer = ms => new Promise(res => setTimeout(res, ms));
-	await timer(100);
-	utils.debug("Stats [async] (getServerAddresses): Received the following server addresses: ");
-	utils.debug(response);
-	return response;
-}
 
 async function updateData() {
 	const timer = ms => new Promise(res => setTimeout(res, ms));
 	await timer(100);
 	setLoading(true);
 	utils.debug("Stats [async] (updateData): Retrieving items from cache");
-	var pms_servers = await getServerAddresses();
+	var pms_servers = await utils.getServerAddresses(null);
 
 	// check to make sure user has opened plex/web first so we can receive server addresses
 	if (!pms_servers) {
@@ -394,8 +385,9 @@ async function updateData() {
 	servers = pms_servers;
 	utils.debug("Stats [async] (updateData): Server addresses fetched:");
 	utils.debug(servers);
-	utils.debug("Stats [async] (updateData): Selecting first Server");
-	uri = Object.values(servers)[0].uri;
+	machine_identifier = Object.values(servers)[0].machine_identifier;
+	machine_identifier_local = machine_identifier + "_local";
+	uri = servers[machine_identifier_local].uri || server_addresses[machine_identifier].uri;
 	utils.debug("Stats [async] (updateData): Grabbing Access Token");
 	plex_token = Object.values(servers)[0].access_token;
 	await getData(uri, plex_token, true);
@@ -553,7 +545,7 @@ utils.storage_get_all(async function (settings) {
 	await timer(100);
 	setLoading(true);
 	utils.debug("Stats [async] (utils.storage_get_all): Retrieving items from cache");
-	var pms_servers = await getServerAddresses();
+	var pms_servers = await utils.getServerAddresses();
 
 	// check to make sure user has opened plex/web first so we can receive server addresses
 	if (!pms_servers) {
@@ -562,8 +554,9 @@ utils.storage_get_all(async function (settings) {
 	servers = pms_servers;
 	utils.debug("Stats [async] (utils.storage_get_all): Server addresses fetched:");
 	utils.debug(servers);
-	utils.debug("Stats [async] (utils.storage_get_all): Selecting first Server");
-	uri = Object.values(servers)[0].uri;
+	machine_identifier = Object.values(servers)[0].machine_identifier;
+	machine_identifier_local = machine_identifier + "_local";
+	uri = servers[machine_identifier_local].uri || server_addresses[machine_identifier].uri;
 	utils.debug("Stats [async] (utils.storage_get_all): Grabbing Access Token");
 	plex_token = Object.values(servers)[0].access_token;
 	await getData(uri, plex_token, false);
