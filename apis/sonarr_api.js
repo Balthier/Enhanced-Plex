@@ -20,7 +20,6 @@ sonarr_api = {
             'Content-Type': 'application/json',
             'X-Api-Key': sonarr_key
         };
-        utils.debug(custom_headers);
         return custom_headers;
     },
     getSeriesURL: async (metadata_xml) => {
