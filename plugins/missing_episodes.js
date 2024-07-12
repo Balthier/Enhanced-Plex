@@ -140,7 +140,7 @@ missing_episodes = {
 
         // check if page changed before inserting tiles
         if (current_hash === location.hash) {
-            await missing_episodes.insertSeasonTiles(tiles_to_insert);
+            await missing_episodes.insertSeasonTiles(tiles_to_insert, metadata_xml);
             missing_episodes.insertEpisodeCount(all_seasons);
         }
         else {
@@ -241,7 +241,20 @@ missing_episodes = {
         return Se_Container;
     },
 
-    insertSeasonTiles: function (season_tiles) {
+    insertSeasonTiles: async (season_tiles, metadata_xml) => {
+        var directory_metadata = metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0];
+        var show_metadata_id = directory_metadata.getAttribute("ratingKey");
+        var seasons_metadata_xml_url = missing_episodes.server["uri"] + "/library/metadata/" + show_metadata_id + "/children?X-Plex-Token=" + missing_episodes.server["access_token"];
+        var seasons_metadata_xml = await utils.getXML(seasons_metadata_xml_url);
+        seasons_xml = seasons_metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
+        seasons = {};
+        for (var i = 0; i < seasons_xml.length; i++) {
+            var season_index = parseInt(seasons_xml[i].getAttribute("index"));
+            if (!isNaN(season_index)) {
+                var season_title = seasons_xml[i].getAttribute("title").replace("&amp;", "&");
+                seasons[season_title] = season_index;
+            }
+        }
         var sliderValue = document.querySelector("[role*=slider]");
         var sliderMultiplier = (sliderValue.ariaValueNow) - 1;
         var valueWInt = (sliderMultiplier) * 70 + 130;
@@ -258,7 +271,8 @@ missing_episodes = {
 
         // insert already present seasons into season_tiles array
         for (var i = 0; i < season_tile_list_elements.length; i++) {
-            var season_num = season_tile_list_elements[i].querySelectorAll("[class*=MetadataPosterCardTitle-singleLineTitle]")[0].innerHTML.match(/\d+/) || 0;
+            var season_text = season_tile_list_elements[i].querySelectorAll("[data-testid*=metadataTitleLink]")[0].innerHTML.replace("&amp;", "&");
+            var season_num = season_text.match(/\d+/) || seasons[season_text];
             var Se_Container = season_tile_list_elements[i];
             var Poster_Container = Se_Container.childNodes[0];
             var Poster_Img_Container = Se_Container.childNodes[0].childNodes[0];
@@ -360,7 +374,6 @@ missing_episodes = {
     },
 
     insertEpisodeCount: async (all_seasons) => {
-        utils.debug(all_seasons);
         await utils.timer(500);
         countnodelist = document.querySelectorAll("[class*=existing_season]>span[class*=MetadataPosterCardTitle-singleLineTitle]");
         seasonnodelist = document.querySelectorAll("[class*=existing_season]>a[class*=MetadataPosterCardTitle-singleLineTitle]");
@@ -379,7 +392,7 @@ missing_episodes = {
             seasonnodelist = document.querySelectorAll("[class*=existing_season]>a[class*=MetadataPosterCardTitle-singleLineTitle]");
         }
         for (var i = 0; i < countnodelist.length; i++) {
-            var season = seasonnodelist[i].innerText.replace("Specials", "Season 0").match(/\d+/);
+            var season = seasonnodelist[i].parentElement.id.replace("se_", "");
             var season_disp = season;
             var season_index = all_seasons.findIndex(item => item.number == season);
             var current_count = countnodelist[i].innerText.match(/\d+/);
@@ -569,7 +582,8 @@ missing_episodes = {
         var valueH = valueHInt + "px";
         var valueImgHInt = (sliderMultiplier) * 78 + 163;
         var valueImgH = valueImgHInt + "px";
-
+        var hubTitle = document.querySelectorAll("[data-testid*=hubTitle]")[1].parentElement.parentElement;
+        hubTitle.style.clear = "Both";
         var episode_tile_list = document.querySelectorAll("[data-testid*=cellItem]")[0].parentElement;
         var parent_node = document.querySelectorAll("[data-testid*=cellItem]")[0].parentElement.parentNode;
         episode_tile_list.style.padding = "0 40px 20px";

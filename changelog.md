@@ -1,3 +1,12 @@
+## **v3.3.3**
+#### 2024-07-12
+- Bug: Fixed an issue where "named" seasons would not be recognised
+- Bug: Fixed a display alignment issue with Missing Episodes
+- Bug: Fixed an issue with the display of the Plex Token during debug
+- Miscellaneous: Removed unneccessary debug code
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.133.0
+- Miscellaneous: Updated supported Local Plex for Web version to 4.132.2
+
 ## **v3.3.2**
 #### 2024-07-01
 - Bug: Fixed an issue with the console displaying certain information that should be excluded while debug options are turned off
