@@ -582,7 +582,8 @@ missing_episodes = {
         var valueH = valueHInt + "px";
         var valueImgHInt = (sliderMultiplier) * 78 + 163;
         var valueImgH = valueImgHInt + "px";
-
+        var hubTitle = document.querySelectorAll("[data-testid*=hubTitle]")[1].parentElement.parentElement;
+        hubTitle.style.clear = "Both";
         var episode_tile_list = document.querySelectorAll("[data-testid*=cellItem]")[0].parentElement;
         var parent_node = document.querySelectorAll("[data-testid*=cellItem]")[0].parentElement.parentNode;
         episode_tile_list.style.padding = "0 40px 20px";
