@@ -1,18 +1,57 @@
 
-name: Release messages to discord announcement channel
+name: Discord Notifications
 
-on: 
+# Triggers for the workflow
+on:
+  # Trigger on release publication
   release:
     types:
       - published
+  # Trigger when an issue is labeled
+  issues:
+    types:
+      - labeled
 
 jobs:
-  run_main:
+  # Job for sending release notifications
+  notify_release:
+    # Only run this job for release events
+    if: github.event_name == 'release'
     runs-on: ubuntu-latest
-    name: Sends custom message
+    name: Send Release Message
     steps:
-      - name: Sending message
+      - name: Sending release message to Discord
         uses: nhevia/discord-styled-releases@main
         with:
           webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
           webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+
+  # Job for sending issue notifications
+  notify_accepted_bug:
+    # Only run this job for issue labeling events
+    if: github.event_name == 'issues' && github.event.action == 'labeled'
+    runs-on: ubuntu-latest
+    name: Send Accepted Bug Issue Message
+    steps:
+      # Step 1: Check if BOTH 'Accepted' and 'Bug' labels are present on the issue
+      # The `github.event.issue.labels` context contains all labels AFTER the 'labeled' event.
+      # We use contains() to check if the array of label names includes both required labels.
+      - name: Check for Accepted and Bug labels
+        id: check_labels
+        run: echo "Labels match!" # This step just confirms the condition below is met
+        # Condition to check if the issue's labels contain BOTH 'Accepted' AND 'Bug'
+        if: contains(github.event.issue.labels.*.name, 'Accepted') && contains(github.event.issue.labels.*.name, 'Bug')
+
+      # Step 2: Send notification ONLY if the check above passed
+      - name: Send issue message to Discord
+        # Only run this step if the previous step ('check_labels') was executed (meaning labels matched)
+        if: steps.check_labels.conclusion == 'success'
+        # Using a generic Discord webhook action. You can customize the message content.
+        uses: tsickert/discord-webhook@v2.0.0
+        with:
+          webhook-url: https://discord.com/api/webhooks/${{ secrets.DISCORD_WEBHOOK_ID }}/${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          content: |
+            🐞 **Accepted Bug Reported!** 🐞
+            Issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}
+            Labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
+            View Issue: ${{ github.event.issue.html_url }}
