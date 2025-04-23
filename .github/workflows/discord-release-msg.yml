@@ -47,7 +47,7 @@ jobs:
         # Only run this step if the previous step ('check_labels') was executed (meaning labels matched)
         if: steps.check_labels.conclusion == 'success'
         # Using a generic Discord webhook action. You can customize the message content.
-        uses: tsickert/discord-webhook@main
+        uses: tsickert/discord-webhook@v7.0.0
         with:
           webhook-url: https://discord.com/api/webhooks/${{ secrets.DISCORD_WEBHOOK_ID }}/${{ secrets.DISCORD_WEBHOOK_TOKEN }}
           content: |
