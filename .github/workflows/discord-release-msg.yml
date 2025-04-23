@@ -51,7 +51,35 @@ jobs:
           webhook-url: https://discord.com/api/webhooks/${{ secrets.DISCORD_TEST_WEBHOOK_ID }}/${{ secrets.DISCORD_TEST_WEBHOOK_TOKEN }}
           username: "GitHub Issues Bot"
           avatar-url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
-          embed-title: "🐞 Accepted Bug Reported! #${{ github.event.issue.number }} 🐞"
-          embed-description: "**${{ github.event.issue.title }}**\n\nLabels: ${{ join(github.event.issue.labels.*.name, ', ') }}\n\n[Click here to view the issue](${{ github.event.issue.html_url }})"
+          embed-title: "🐞 Bug Raised: #${{ github.event.issue.number }} ${{ github.event.issue.title }}"
+          embed-description: "**${{ github.event.issue.body }}**\n\nLabels: ${{ join(github.event.issue.labels.*.name, ', ') }}\n\n[Click here to view the issue](${{ github.event.issue.html_url }})"
           embed-color: 15158332 # Decimal color code (e.g., red)
+          embed-url: ${{ github.event.issue.html_url }}
+          
+  notify_issue_fixed:
+    # Only run this job for issue closing events
+    if: github.event_name == 'issues' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    name: Send Issue Fixed Message
+    steps:
+      # Step 1: Check if the closed issue had the 'Bug' label
+      # We check github.event.issue context which contains the state just BEFORE closing usually,
+      # or reflects the state at the time of closing, including labels.
+      - name: Check if closed issue has 'Bug' label
+        id: check_bug_label_on_close
+        if: contains(github.event.issue.labels.*.name, 'Bug') && contains(github.event.issue.labels.*.name, 'Accepted')
+        run: echo "Closed issue has 'Bug' & 'Accepted' labels."
+
+        # Step 2: Send notification ONLY if the check above passed
+      - name: Send fixed issue message to Discord
+        if: steps.check_bug_label_on_close.conclusion == 'success'
+        # Using the latest allowed action version
+        uses: tsickert/discord-webhook@v7.0.0
+        with:
+          webhook-url: https://discord.com/api/webhooks/${{ secrets.DISCORD_TEST_WEBHOOK_ID }}/${{ secrets.DISCORD_TEST_WEBHOOK_TOKEN }}
+          username: "GitHub Issues Bot"
+          avatar-url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          embed-title: "✅ Bug Fixed:  #${{ github.event.issue.number }} ${{ github.event.issue.title }}"
+          embed-description: "**${{ github.event.issue.body }}**\n\nClosed by: `${{ github.actor }}`\n\n[Click here to view the issue](${{ github.event.issue.html_url }})"
+          embed-color: 3066993 # Decimal color code (e.g., green)
           embed-url: ${{ github.event.issue.html_url }}
