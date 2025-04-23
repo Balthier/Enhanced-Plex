@@ -33,25 +33,25 @@ jobs:
     runs-on: ubuntu-latest
     name: Send Accepted Bug Issue Message
     steps:
-      # Step 1: Check if BOTH 'Accepted' and 'Bug' labels are present on the issue
-      # The `github.event.issue.labels` context contains all labels AFTER the 'labeled' event.
-      # We use contains() to check if the array of label names includes both required labels.
-      - name: Check for Accepted and Bug labels
-        id: check_labels
-        run: echo "Labels match!" # This step just confirms the condition below is met
-        # Condition to check if the issue's labels contain BOTH 'Accepted' AND 'Bug'
-        if: contains(github.event.issue.labels.*.name, 'Accepted') && contains(github.event.issue.labels.*.name, 'Bug')
+      # Step 1: Check if 'Accepted' was the specific label added AND 'Bug' is also present now
+      - name: Check if 'Accepted' label was added and 'Bug' is present
+        id: check_accepted_labels # Keep ID the same for consistency
+        # --- UPDATED CONDITION ---
+        # Checks the specific label that triggered the event IS 'Accepted'
+        # AND that the 'Bug' label is present in the final list of labels on the issue.
+        if: github.event.label.name == 'Accepted' && contains(github.event.issue.labels.*.name, 'Bug')
+        run: echo "'Accepted' label added and 'Bug' label is present." # Log message for clarity
 
       # Step 2: Send notification ONLY if the check above passed
-      - name: Send issue message to Discord
-        # Only run this step if the previous step ('check_labels') was executed (meaning labels matched)
-        if: steps.check_labels.conclusion == 'success'
-        # Using a generic Discord webhook action. You can customize the message content.
+      - name: Send accepted issue message to Discord
+        # This condition remains the same - it depends on the success of the check step
+        if: steps.check_accepted_labels.conclusion == 'success'
         uses: tsickert/discord-webhook@v7.0.0
         with:
-          webhook-url: https://discord.com/api/webhooks/${{ secrets.DISCORD_WEBHOOK_ID }}/${{ secrets.DISCORD_WEBHOOK_TOKEN }}
-          content: |
-            🐞 **Accepted Bug Reported!** 🐞
-            Issue #${{ github.event.issue.number }}: ${{ github.event.issue.title }}
-            Labels: ${{ join(github.event.issue.labels.*.name, ', ') }}
-            View Issue: ${{ github.event.issue.html_url }}
+          webhook-url: https://discord.com/api/webhooks/${{ secrets.DISCORD_TEST_WEBHOOK_ID }}/${{ secrets.DISCORD_TEST_WEBHOOK_TOKEN }}
+          username: "GitHub Issues Bot"
+          avatar-url: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+          embed-title: "🐞 Accepted Bug Reported! #${{ github.event.issue.number }} 🐞"
+          embed-description: "**${{ github.event.issue.title }}**\n\nLabels: ${{ join(github.event.issue.labels.*.name, ', ') }}\n\n[Click here to view the issue](${{ github.event.issue.html_url }})"
+          embed-color: 15158332 # Decimal color code (e.g., red)
+          embed-url: ${{ github.event.issue.html_url }}
