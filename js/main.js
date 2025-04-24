@@ -85,48 +85,51 @@ function minReqs() {
     }
 }
 
-function insertErrorBar(level, details) {
-    if (document.getElementById("error-details")) {
-        utils.debug("Main (insertErrorBar): Error already present. Skipping.");
-        return;
+async function insertErrorBar(level, details) {
+    ver_mismatch_icon = await utils.cache_get("options_ver_mismatch_icon", "sync") || {};
+    if (ver_mismatch_icon == "true") {
+        if (document.getElementById("error-details")) {
+            utils.debug("Main (insertErrorBar): Error already present. Skipping.");
+            return;
+        }
+        var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
+        var nav_bar_right = rightnavbars[0];
+
+        var error_link = document.createElement("a");
+        error_link.setAttribute("id", "error-toggle");
+
+        var error_img = document.createElement("img");
+        error_link.appendChild(error_img);
+
+        var error_details = document.createElement("div");
+        error_details.setAttribute("id", "error-details");
+        error_details.setAttribute("title", "EnhancedPLEX Error");
+
+        if (level == "warn") {
+            var img_loc = utils.getResourcePath("info-icon.png");
+            error_img.setAttribute("src", img_loc);
+            error_details.innerText = "EnhancedPlex Warning: " + details;
+        }
+        else if (level == "error") {
+            var img_loc = utils.getResourcePath("error-icon.png");
+            error_img.setAttribute("src", img_loc);
+            error_details.innerText = "EnhancedPlex Error: " + details;
+        }
+        else {
+            utils.debug("Main (insertErrorBar): Unknown error level specified: " + level);
+            return;
+        }
+
+        var container = document.createElement("div");
+        container.setAttribute("id", "error-container");
+        container.appendChild(error_link);
+        container.appendChild(error_details);
+        nav_bar_right.parentElement.prepend(container);
+
+        document.getElementById("error-toggle").addEventListener("click", function () {
+            toggleErrorDetails();
+        });
     }
-    var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
-    var nav_bar_right = rightnavbars[0];
-
-    var error_link = document.createElement("a");
-    error_link.setAttribute("id", "error-toggle");
-
-    var error_img = document.createElement("img");
-    error_link.appendChild(error_img);
-
-    var error_details = document.createElement("div");
-    error_details.setAttribute("id", "error-details");
-    error_details.setAttribute("title", "EnhancedPLEX Error");
-
-    if (level == "warn") {
-        var img_loc = utils.getResourcePath("info-icon.png");
-        error_img.setAttribute("src", img_loc);
-        error_details.innerText = "EnhancedPlex Warning: " + details;
-    }
-    else if (level == "error") {
-        var img_loc = utils.getResourcePath("error-icon.png");
-        error_img.setAttribute("src", img_loc);
-        error_details.innerText = "EnhancedPlex Error: " + details;
-    }
-    else {
-        utils.debug("Main (insertErrorBar): Unknown error level specified: " + level);
-        return;
-    }
-
-    var container = document.createElement("div");
-    container.setAttribute("id", "error-container");
-    container.appendChild(error_link);
-    container.appendChild(error_details);
-    nav_bar_right.parentElement.prepend(container);
-
-    document.getElementById("error-toggle").addEventListener("click", function () {
-        toggleErrorDetails();
-    });
 }
 
 function toggleErrorDetails() {
