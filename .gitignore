@@ -1,3 +1,4 @@
 test-scenarios.txt
 *.code-workspace
 .VSCodeCounter/
+manifest-dev.json
