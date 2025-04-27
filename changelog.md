@@ -2,12 +2,12 @@
 
 ## **v3.3.4**
 
-### 2025-04-23
+### 2025-04-27
 
 - Enhancement: Add new option to control whether the Changelog is opened when the extension is updated
 - Enhancement: Add new option to control whether the Warning/Error icon appears when the Plex version doesn't match the latest tested version
 - Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.145.1
-- Miscellaneous: Updated supported Local Plex for Web version to 4.132.2
+- Miscellaneous: Updated supported Local Plex for Web version to 4.145.1
 
 ## **v3.3.3**
 
