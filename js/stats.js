@@ -366,8 +366,10 @@ function setLoading(value) {
 		element.style.display = "block";
 	}
 	else {
-		element = document.getElementById("loading-container");
-		element.style.display = "none";
+		Container = document.getElementById("loading-container");
+		Container.style.display = "none";
+		element = document.getElementById("loading-text");
+		element.innerHTML = "Loading Complete";
 	}
 }
 

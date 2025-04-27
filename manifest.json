@@ -1,59 +1,59 @@
 {
-  "manifest_version": 3,
-  "name": "Enhanced Plex",
-  "description": "Adds several features to the Plex/Web client for Plex",
-  "version": "3.3.3",
-  "options_page": "resources/extras/options.html",
-  "content_scripts": [
-    {
-      "matches": [
-        "*://app.plex.tv/desktop*",
-        "http://127.0.0.1:32400/web*",
-        "http://localhost:32400/web*"
-      ],
-      "run_at": "document_idle",
-      "css": [
-        "css/enhancedplex.css"
-      ],
-      "js": [
-        "js/utils.js",
-        "js/plugins.js",
-        "apis/trakt_api.js",
-        "apis/tmdb_api.js",
-        "apis/sonarr_api.js",
-        "apis/radarr_api.js",
-        "apis/google_api.js",
-        "plugins/imdb.js",
-        "plugins/missing_episodes.js",
-        "plugins/stats.js",
-        "plugins/tmdb.js",
-        "plugins/trakt.js",
-        "plugins/tvdb.js",
-        "plugins/sonarr.js",
-        "plugins/radarr.js",
-        "js/main.js"
-      ]
-    }
-  ],
-  "background": {
-    "service_worker": "js/service_worker.js"
-  },
-  "permissions": [
-    "storage"
-  ],
-  "icons": {
-    "16": "resources/icon16.png",
-    "48": "resources/icon48.png",
-    "128": "resources/icon128.png"
-  },
-  "web_accessible_resources": [
-    {
-      "resources": [
-        "resources/*"
-      ],
-      "matches": [
-        "<all_urls>"
-      ]
-    }
-  ]
+	"manifest_version": 3,
+	"name": "Enhanced Plex",
+	"description": "Adds several features to the Plex/Web client for Plex",
+	"version": "3.3.4",
+	"options_page": "resources/extras/options.html",
+	"content_scripts": [
+		{
+			"matches": [
+				"*://app.plex.tv/desktop*",
+				"http://127.0.0.1:32400/web*",
+				"http://localhost:32400/web*"
+			],
+			"run_at": "document_idle",
+			"css": [
+				"css/enhancedplex.css"
+			],
+			"js": [
+				"js/utils.js",
+				"js/plugins.js",
+				"apis/trakt_api.js",
+				"apis/tmdb_api.js",
+				"apis/sonarr_api.js",
+				"apis/radarr_api.js",
+				"apis/google_api.js",
+				"plugins/imdb.js",
+				"plugins/missing_episodes.js",
+				"plugins/stats.js",
+				"plugins/tmdb.js",
+				"plugins/trakt.js",
+				"plugins/tvdb.js",
+				"plugins/sonarr.js",
+				"plugins/radarr.js",
+				"js/main.js"
+			]
+		}
+	],
+	"background": {
+		"service_worker": "js/service_worker.js"
+	},
+	"permissions": [
+		"storage"
+	],
+	"icons": {
+		"16": "resources/icon16.png",
+		"48": "resources/icon48.png",
+		"128": "resources/icon128.png"
+	},
+	"web_accessible_resources": [
+		{
+			"resources": [
+				"resources/*"
+			],
+			"matches": [
+				"<all_urls>"
+			]
+		}
+	]
 }

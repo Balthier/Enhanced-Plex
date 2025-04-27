@@ -24,7 +24,7 @@
         <div class="section-container">
             <div class="column-left">
                 <h3 class="text-center">General</h3>
-                <div class="field-row" id="stats_link">
+                <div class="field-row option" id="stats_link">
                     <div class="label">Stats page link:</div>
                     <div class="field">
                         <input type="radio" id="stats_link_on" name="stats_link" value="on">
@@ -33,12 +33,30 @@
                         <label for="stats_link_off">OFF</label>
                     </div>
                 </div>
+                <div class="field-row option" id="changelog_pop">
+                    <div class="label">Changelog tab on update:</div>
+                    <div class="field">
+                        <input type="radio" id="changelog_pop_on" name="changelog_pop" value="on">
+                        <label for="changelog_pop_on">ON</label>
+                        <input type="radio" id="changelog_pop_off" name="changelog_pop" value="off">
+                        <label for="changelog_pop_off">OFF</label>
+                    </div>
+                </div>
+                <div class="field-row option" id="ver_mismatch_icon">
+                    <div class="label">Version mismatch icon:</div>
+                    <div class="field">
+                        <input type="radio" id="ver_mismatch_icon_on" name="ver_mismatch_icon" value="on">
+                        <label for="ver_mismatch_icon_on">ON</label>
+                        <input type="radio" id="ver_mismatch_icon_off" name="ver_mismatch_icon" value="off">
+                        <label for="ver_mismatch_icon_off">OFF</label>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="section-container">
             <div class="column-left">
                 <h3 class="text-center">Movies</h1>
-                    <div class="field-row" id="tmdb_link">
+                    <div class="field-row option" id="tmdb_link">
                         <div class="label">TMDB:</div>
                         <div class="field">
                             <input type="radio" id="tmdb_link_on" name="tmdb_link" value="on">
@@ -47,7 +65,7 @@
                             <label for="tmdb_link_off">OFF</label>
                         </div>
                     </div>
-                    <div class="field-row" id="trakt_movies_link">
+                    <div class="field-row option" id="trakt_movies_link">
                         <div class="label">Trakt:</div>
                         <div class="field">
                             <input type="radio" id="trakt_movies_link_on" name="trakt_movies_link" value="on">
@@ -56,7 +74,7 @@
                             <label for="trakt_movies_link_off">OFF</label>
                         </div>
                     </div>
-                    <div class="field-row" id="imdb_movies_link">
+                    <div class="field-row option" id="imdb_movies_link">
                         <div class="label">IMDB:</div>
                         <div class="field">
                             <input type="radio" id="imdb_movies_link_on" name="imdb_movies_link" value="on">
@@ -68,7 +86,7 @@
             </div>
             <div class="column-right">
                 <h3 class="text-center">Shows</h1>
-                    <div class="field-row" id="tvdb_link">
+                    <div class="field-row option" id="tvdb_link">
                         <div class="label">TVDB:</div>
                         <div class="field">
                             <input type="radio" id="tvdb_link_on" name="tvdb_link" value="on">
@@ -77,7 +95,7 @@
                             <label for="tvdb_link_off">OFF</label>
                         </div>
                     </div>
-                    <div class="field-row" id="trakt_shows_link">
+                    <div class="field-row option" id="trakt_shows_link">
                         <div class="label">Trakt:</div>
                         <div class="field">
                             <input type="radio" id="trakt_shows_link_on" name="trakt_shows_link" value="on">
@@ -86,7 +104,7 @@
                             <label for="trakt_shows_link_off">OFF</label>
                         </div>
                     </div>
-                    <div class="field-row" id="imdb_shows_link">
+                    <div class="field-row option" id="imdb_shows_link">
                         <div class="label">IMDB:</div>
                         <div class="field">
                             <input type="radio" id="imdb_shows_link_on" name="imdb_shows_link" value="on">
@@ -95,7 +113,7 @@
                             <label for="imdb_shows_link_off">OFF</label>
                         </div>
                     </div>
-                    <div class="field-row" id="missing_eps">
+                    <div class="field-row option" id="missing_episodes">
                         <div class="label">Missing Content:</div>
                         <div class="field">
                             <input type="radio" id="missing_episodes_on" name="missing_episodes" value="on">
@@ -109,7 +127,7 @@
         <div class="section-container">
             <div class="column-left">
                 <h3 class="text-center">Radarr</h1>
-                    <div class="field-row" id="radarr_api">
+                    <div class="field-row option" id="radarr_api">
                         <div class="label">API:</div>
                         <div class="field">
                             <input type="radio" id="radarr_api_on" name="radarr_api" value="on">
@@ -119,13 +137,13 @@
                         </div>
                     </div>
                     <div id="radarr-extra">
-                        <div class="field-row" id="radarr_api_url">
+                        <div class="field-row option" id="radarr_api_url">
                             <div class="label">HTTPS URL:</div>
                             <div class="field">
                                 <input type="url" id="radarr_api_url" placeholder="e.g. https://radarr.url" name="radarr_api_url">
                             </div>
                         </div>
-                        <div class="field-row" id="radarr_api_key">
+                        <div class="field-row option" id="radarr_api_key">
                             <div class="label">API Key:</div>
                             <div class="field">
                                 <input type="text" id="radarr_api_key" name="radarr_api_key">
@@ -135,7 +153,7 @@
             </div>
             <div class="column-right">
                 <h3 class="text-center">Sonarr</h1>
-                    <div class="field-row" id="sonarr_api">
+                    <div class="field-row option" id="sonarr_api">
                         <div class="label">API:</div>
                         <div class="field">
                             <input type="radio" id="sonarr_api_on" name="sonarr_api" value="on">
@@ -145,13 +163,13 @@
                         </div>
                     </div>
                     <div id="sonarr-extra">
-                        <div class="field-row" id="sonarr_api_url">
+                        <div class="field-row option" id="sonarr_api_url">
                             <div class="label">HTTPS URL:</div>
                             <div class="field">
                                 <input type="url" id="sonarr_api_url" placeholder="e.g. https://sonarr.url" name="sonarr_api_url">
                             </div>
                         </div>
-                        <div class="field-row" id="sonarr_api_key">
+                        <div class="field-row option" id="sonarr_api_key">
                             <div class="label">API Key:</div>
                             <div class="field">
                                 <input type="text" id="sonarr_api_key" name="sonarr_api_key">
@@ -168,7 +186,7 @@
         <li>Join us on Discord <a href="https://discord.gg/d4uYxjuhu4" target="blank">HERE</a></li>
         <li>Don't forget to give us a review <a href="https://chrome.google.com/webstore/detail/enhanced-plex/kjmpdmgijjacblfohigcnpkeaehalmai/reviews" target="blank">HERE</a>!</li>
         <li id="ext_version">Version: <b>v3.0.0</b></li>
-        <div id="debug" class="debug">
+        <div id="debug" class="debug option">
             <div class="label">Debug:</div>
             <div class="field">
                 <input type="radio" id="debug_on" name="debug" value="on">
@@ -177,7 +195,7 @@
                 <label for="debug_off">OFF</label>
             </div>
         </div>
-        <div id="debug-extra" class="debug">
+        <div id="debug_unfiltered" class="debug option">
             <div class="label">Show Tokens:</div>
             <div class="field">
                 <input type="radio" id="debug_unfiltered_on" name="debug_unfiltered" value="on">

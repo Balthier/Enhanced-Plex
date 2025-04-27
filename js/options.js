@@ -5,7 +5,7 @@ function saveOption(name, value) {
 }
 
 async function restoreOptions() {
-    var options = ["tmdb_link", "tvdb_link", "missing_episodes", "stats_link", "trakt_movies_link", "trakt_shows_link", "imdb_shows_link", "imdb_movies_link", "sonarr_api", "sonarr_api_url", "sonarr_api_key", "radarr_api", "radarr_api_url", "radarr_api_key", "debug", "debug_unfiltered"];
+    var options = Array.from(document.getElementsByClassName('option')).map(element => element.id)
     for (i = 0; i < options.length; i++) {
         option_name = options[i];
         option = "options_" + option_name;
@@ -56,7 +56,7 @@ async function restoreOptions() {
 }
 
 function refreshExtraOptions() {
-    var debug_extra_options = document.querySelectorAll("#debug-extra");
+    var debug_extra_options = document.querySelectorAll("#debug_unfiltered");
     var sonarr_url = document.querySelectorAll("#sonarr-extra");
     var radarr_url = document.querySelectorAll("#radarr-extra");
     if (document.getElementById("debug_on").checked) {
