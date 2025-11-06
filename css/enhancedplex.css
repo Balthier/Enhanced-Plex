@@ -1,87 +1,87 @@
 #missing-switch {
-    cursor: pointer;
-    cursor: hand;
+	cursor: pointer;
+	cursor: hand;
 }
 
 #Enhanced-Plex-Banner {
-    border-style: double;
-    border-color: #28292A;
-    margin-left: -0.6em;
-    padding: 1em;
-    border-width: medium;
+	border-style: double;
+	border-color: #28292A;
+	margin-left: -0.6em;
+	padding: 1em;
+	border-width: medium;
 }
 
 #stats-page-link {
-    font-size: 1.5em;
+	font-size: 1.5em;
 }
 
 .ep_container {
-    margin-right: 1em;
+	margin-right: 1em;
 }
 
 .ep_h1 {
-    font-size: 1.5em;
-    line-height: 1.7em;
-    margin: -0.3em 0 0 0;
-    padding: 0;
+	font-size: 1.5em;
+	line-height: 1.7em;
+	margin: -0.3em 0 0 0;
+	padding: 0;
 }
 
 #ep_infobox p {
-    margin: 0em;
+	margin: 0em;
 }
 
 .ep_box {
-    margin: 0;
+	margin: 0;
 }
 
 .Ep_Container {
-    position: relative;
-    float: left;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    transform: none;
-    left: 0px !important;
-    top: 0px !important;
-    will-change: unset;
+	position: relative;
+	float: left;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	transform: none;
+	left: 0px !important;
+	top: 0px !important;
+	will-change: unset;
 }
 
 .missing_episode img {
-    opacity: 0.5;
+	opacity: 0.5;
 }
 
 .missing_season,
 .existing_season {
-    position: relative;
-    float: left;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    transform: none;
-    left: 0px !important;
-    top: 0px !important;
-    will-change: unset;
+	position: relative;
+	float: left;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	transform: none;
+	left: 0px !important;
+	top: 0px !important;
+	will-change: unset;
 }
 
 .missing_season img {
-    opacity: 0.5;
+	opacity: 0.5;
 }
 
 #error-details {
-    display: none;
-    clear: both;
-    position: absolute;
-    top: 4em;
-    right: 4em;
-    background-color: dimgray;
-    padding: 1em;
-    border-style: double;
+	display: none;
+	clear: both;
+	padding: 1em;
+	width: max-content;
 }
 
 #error-container img {
-    height: 24px;
+	height: 24px;
 }
 
 #loading-extension {
-    line-height: 60px;
-    vertical-align: middle;
-    padding-right: 10px;
+	line-height: 60px;
+	vertical-align: middle;
+	padding-right: 10px;
+}
+
+.nav-button {
+	margin: 0 1em;
 }

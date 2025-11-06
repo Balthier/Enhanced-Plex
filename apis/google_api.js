@@ -20,7 +20,7 @@ google_api = {
 
 		return session_id;
 	},
-	sendTracking: async (type, data) => {
+	sendTracking: async (type, data, resolution) => {
 		let debugMode = false;
 		let GA_ENDPOINT = 'https://www.google-analytics.com/mp/collect?v=2&npa=1';
 		//let GA_ENDPOINT = 'https://www.google-analytics.com/debug/mp/collect?v=2&npa=1';
@@ -28,8 +28,8 @@ google_api = {
 		let API_SECRET = await utils.getApiKey("google");
 		let Client_ID = await google_api.getClientId();
 		let Session_ID = await google_api.getSessionId();
-		let dimensions = Math.round((window.screen.width * window.devicePixelRatio)) + "x" + Math.round((window.screen.height * window.devicePixelRatio));
-		let version = await utils.getExtensionVersion();
+		let dimensions = resolution || Math.round((window.screen.width * window.devicePixelRatio)) + "x" + Math.round((window.screen.height * window.devicePixelRatio));
+		let version = await utils.getExtensionInfo("version");
 		let Engagement_Time = 100;
 
 		if (type == "page_view") {

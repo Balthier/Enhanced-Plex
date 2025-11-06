@@ -1,164 +1,166 @@
 function saveOption(name, value) {
-    option = "options_" + name;
-    utils.debug("Options: Setting " + option + " to " + value);
-    utils.cache_set(option, value, "sync");
+	const option = "options_" + name;
+	utils.debug("Options: Setting " + option + " to " + value);
+	utils.cache_set(option, value, "sync");
 }
 
 async function restoreOptions() {
-    var options = Array.from(document.getElementsByClassName('option')).map(element => element.id)
-    for (i = 0; i < options.length; i++) {
-        option_name = options[i];
-        option = "options_" + option_name;
-        utils.debug("Options [async] (restoreOptions): Retrieving cache for " + option);
-        cache_data = await utils.cache_get(option, "sync") || {};
-        if (Object.keys(cache_data).length) {
-            utils.debug("Options [async] (restoreOptions): Cache found.");
-            value = cache_data;
-        }
-        else {
-            if (option_name == "debug" || option_name == "debug_unfiltered" || option_name == "sonarr_api" || option_name == "radarr_api") {
-                utils.debug("Options [async] (restoreOptions): No cache found. Setting option to disabled by default");
-                utils.cache_set(option, "false", "sync");
-                value = "false";
-            }
-            else if (option_name.includes("_key") || option_name.includes("_url")) {
-                utils.debug("Options [async] (restoreOptions): No cache found. Setting option to unset by default");
-                utils.cache_set(option, "", "sync");
-                value = "";
-            }
-            else {
-                utils.debug("Options [async] (restoreOptions): No cache found. Setting option to enabled by default");
-                utils.cache_set(option, "true", "sync");
-                value = "true";
-            }
-        }
-        if (value == "true") {
-            onOff = "on";
-        }
-        else if (value == "false") {
-            onOff = "off";
-        }
-        else {
-            onOff = "NA";
-        }
-        if (onOff == "NA") {
-            textfield = document.querySelector("input#" + options[i]);
-            textfield.value = value;
-        }
-        else {
-            id = options[i] + "_" + onOff;
-            utils.debug("Options [async] (restoreOptions): Setting the HTML element on " + id);
-            checkbox = document.getElementById(id);
-            checkbox.checked = value;
-        }
-    }
-    refreshExtraOptions();
+	const options = Array.from(document.getElementsByClassName('option')).map(element => element.id);
+	for (const option of options) {
+		const option_name = "options_" + option;
+		utils.debug("Options [async] (restoreOptions): Retrieving cache for " + option_name);
+
+		let value = await utils.cache_get(option_name, "sync");
+		if (value === undefined || value === null) {
+			if (option == "debug" || option == "debug_unfiltered") {
+				utils.debug("Options [async] (restoreOptions): No cache found. Setting option to disabled by default");
+				value = false;
+			} else if (option.includes("_key") || option.includes("_url")) {
+				utils.debug("Options [async] (restoreOptions): No cache found. Setting option to unset by default");
+				value = "";
+			} else {
+				utils.debug("Options [async] (restoreOptions): No cache found. Setting option to enabled by default");
+				value = true;
+			}
+			await utils.cache_set(option_name, value, "sync");
+		} else {
+			utils.debug("Options [async] (restoreOptions): Cache found. Value: " + value + ", Type: " + typeof value);
+		}
+		if (typeof value === 'boolean') {
+			const onOff = value ? "on" : "off";
+			const id = option + "_" + onOff;
+
+			utils.debug("Options [async] (restoreOptions): Setting the HTML element on " + id);
+
+			const radio_button = document.getElementById(id);
+			if (radio_button) {
+				radio_button.checked = true;
+			} else {
+				utils.debug(`Options[async] (restoreOptions): Warning: Radio element not found for ID: ${id}`);
+			}
+
+		} else if (typeof value === 'string') {
+			const textfield = document.querySelector(`input#${option}`) || document.querySelector(`textarea#${option}`);
+
+			if (textfield) {
+				textfield.value = value;
+			} else {
+				utils.debug(`Options[async] (restoreOptions): Warning: Text field element not found for ID: ${option}`);
+			}
+		}
+	}
+	refreshExtraOptions();
 }
 
 function refreshExtraOptions() {
-    var debug_extra_options = document.querySelectorAll("#debug_unfiltered");
-    var sonarr_url = document.querySelectorAll("#sonarr-extra");
-    var radarr_url = document.querySelectorAll("#radarr-extra");
-    if (document.getElementById("debug_on").checked) {
-        for (var i = 0; i < debug_extra_options.length; i++) {
-            debug_extra_options[i].style.display = "block";
-        }
-    }
-    else {
-        for (var i = 0; i < debug_extra_options.length; i++) {
-            debug_extra_options[i].style.display = "none";
-        }
-    }
-    if (document.getElementById("sonarr_api_on").checked) {
-        for (var i = 0; i < debug_extra_options.length; i++) {
-            sonarr_url[i].style.display = "block";
-        }
-    }
-    else {
-        for (var i = 0; i < debug_extra_options.length; i++) {
-            sonarr_url[i].style.display = "none";
-        }
-    }
-    if (document.getElementById("radarr_api_on").checked) {
-        for (var i = 0; i < debug_extra_options.length; i++) {
-            radarr_url[i].style.display = "block";
-        }
-    }
-    else {
-        for (var i = 0; i < debug_extra_options.length; i++) {
-            radarr_url[i].style.display = "none";
-        }
-    }
+	const debug_extra_options = document.getElementById("debug_unfiltered");
+	const sonarr_url = document.getElementById("sonarr-extra");
+	const radarr_url = document.getElementById("radarr-extra");
+
+	if (document.getElementById("debug_on") && document.getElementById("debug_on").checked) {
+		debug_extra_options.style.display = "block";
+	} else {
+		debug_extra_options.style.display = "none";
+	}
+
+	if (document.getElementById("sonarr_api_on") && document.getElementById("sonarr_api_on").checked) {
+		sonarr_url.style.display = "block";
+	} else {
+		sonarr_url.style.display = "none";
+	}
+
+	if (document.getElementById("radarr_api_on") && document.getElementById("radarr_api_on").checked) {
+		radarr_url.style.display = "block";
+	} else {
+		radarr_url.style.display = "none";
+	}
 }
 
-utils.storage_get_all(async function (settings) {
-    utils.debug("Options [async] (utils.storage_get_all): Restoring options.");
-    await restoreOptions();
+async function main() {
+	utils.debug("Options [async] Options: Restoring options.");
+	await restoreOptions();
 
-    // add click listener on all inputs to automatically save changes
-    var input_elements = document.getElementsByTagName('input');
-    for (var i = 0; i < input_elements.length; i++) {
-        if (input_elements[i].type === "url") {
-            input_elements[i].addEventListener("change", function (e) {
-                if (e.target.checkValidity()) {
-                    raw_value = e.target.value;
-                    e.target.style.border = "1px solid #E69533";
-                    value = raw_value.replace(/\/$/, "");
-                    e.target.value = value;
-                    element_name = this.name;
-                    saveOption(element_name, value);
-                }
-                else {
-                    e.target.style.border = "3px solid red";
-                }
-            });
-        }
-        else if (input_elements[i].type === "text") {
-            input_elements[i].addEventListener("change", function (e) {
-                value = e.target.value;
-                element_name = this.name;
-                saveOption(element_name, value);
-            });
-        }
-        else if (input_elements[i].type === "radio") {
-            input_elements[i].addEventListener("click", function () {
-                element_id = this.id;
-                if (element_id.match(/on$/g)) {
-                    value = "true";
-                }
-                else if (element_id.match(/off$/g)) {
-                    value = "false";
-                }
-                element_name = this.name;
-                saveOption(element_name, value);
-                refreshExtraOptions();
-            });
-        }
-    }
+	// add click listener on all inputs to automatically save changes
+	const input_elements = document.getElementsByTagName('input');
+	for (const element of input_elements) {
+		if (element.type === "url") {
+			element.addEventListener("change", function (e) {
+				if (e.target.checkValidity()) {
+					const raw_value = e.target.value;
+					e.target.style.border = "1px solid #E69533";
 
-    // add click listener to clear cache
-    cache_element = document.getElementById("clear-cache");
-    cache_element.addEventListener("click", function (e) {
-        this.innerHTML = "Cleared";
-        utils.cache_purge();
+					const value = raw_value.replace(/\/$/, "");
+					e.target.value = value;
 
-        var button = this;
-        setTimeout(function () {
-            button.innerHTML = "Clear cache";
-        }, 1500);
-    });
+					const element_name = this.name;
+					saveOption(element_name, value);
+				}
+				else {
+					e.target.style.border = "3px solid red";
+				}
+			});
+		}
+		else if (element.type === "text") {
+			element.addEventListener("change", function (e) {
+				const value = e.target.value;
+				const element_name = this.name;
+				saveOption(element_name, value);
+			});
+		}
+		else if (element.type === "radio") {
+			element.addEventListener("click", function () {
+				const element_id = this.id;
+				let value;
+				if (element_id.match(/on$/g)) {
+					value = true;
+				}
+				else if (element_id.match(/off$/g)) {
+					value = false;
+				}
+				const element_name = this.name;
+				saveOption(element_name, value);
+				refreshExtraOptions();
+			});
+		}
+	}
+	const txtarea_elements = document.getElementsByTagName('textarea');
+	for (const element of txtarea_elements) {
+		element.addEventListener("change", function (e) {
+			const value = e.target.value;
+			const element_name = this.name;
+			saveOption(element_name, value);
+		});
+	}
 
-    version_element = document.getElementById("ext_version");
-    title_element = document.getElementsByTagName("title")[0];
-    extension_version = utils.getExtensionVersion();
-    title_element.innerHTML = "EnhancedPLEX (" + extension_version + ") options";
-    version_element.innerHTML = "Version: <b>v" + extension_version + "</b>";
+	const cache_element = document.getElementById("clear-cache");
+	cache_element.addEventListener("click", function (e) {
+		this.innerHTML = "Cleared";
+		utils.cache_purge();
 
-    data = {
-        Title: document.title,
-        Location: document.location.pathname
-    };
+		const button = this;
+		setTimeout(function () {
+			button.innerHTML = "Clear cache";
+		}, 1500);
+	});
 
-    google_api.sendTracking("page_view", data);
+	const version_element = document.getElementById("ext_version");
+	const title_element = document.getElementsByTagName("title")[0];
+	const extension_version = utils.getExtensionInfo("version");
+	title_element.innerHTML = "EnhancedCN (" + extension_version + ") options";
+	version_element.innerHTML = "Version: <b>v" + extension_version + "</b>";
 
+	const data = {
+		Title: document.title,
+		Location: document.location.pathname
+	};
+
+	google_api.sendTracking("page_view", data);
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+	if (typeof main === 'function') {
+		main();
+	} else {
+		console.error("Initialization failed: 'main' function is missing.");
+	}
 });

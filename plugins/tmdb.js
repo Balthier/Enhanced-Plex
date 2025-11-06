@@ -1,49 +1,43 @@
 tmdb = {
-    metadata_xml: null,
+	init: function (TraktData) {
+		tmdb.insertTmdbLink(TraktData);
+	},
 
-    init: function (metadata_xml, server, type) {
-        tmdb.insertTmdbLink(metadata_xml);
-    },
+	insertTmdbLink: function (TraktData) {
+		const tmdb_exists = document.getElementById("tmdb-container");
+		if (tmdb_exists) {
+			utils.debug("TMDB Plugin (insertTmdbLink): TMDB already present on page. Skipping.");
+		}
+		else {
+			const tmdb_id = TraktData.IDs.TMDB;
+			if (tmdb_id) {
+				utils.debug("TMDB Plugin (insertTmdbLink): TMDB API returned the following TMDB ID (" + tmdb_id + ")");
+				// insert themoviedb link element to bottom of metadata container
+				const logo_url = utils.getResourcePath("tmdb/tmdb_logo.svg");
+				const tmdb_container = document.createElement("span");
+				tmdb_container.setAttribute("id", "tmdb-container");
+				tmdb_container.classList.add("ep_container");
 
-    constructTmdbLink: function (tmdb_id) {
-        var logo_url = utils.getResourcePath("tmdb/tmdb_logo.svg");
-        var tmdb_container_element = document.createElement("span");
-        tmdb_container_element.setAttribute("id", "tmdb-container");
-        tmdb_container_element.classList.add("ep_container");
+				// construct link
+				const tmdb_element_link = document.createElement("a");
+				tmdb_element_link.setAttribute("id", "tmdb-link");
+				tmdb_element_link.setAttribute("href", "https://www.themoviedb.org/movie/" + tmdb_id);
+				tmdb_element_link.setAttribute("target", "_blank");
+				tmdb_container.style.backgroundColor = "transparent";
 
-        // construct link
-        var tmdb_element_link = document.createElement("a");
-        tmdb_element_link.setAttribute("id", "tmdb-link");
-        tmdb_element_link.setAttribute("href", "https://www.themoviedb.org/movie/" + tmdb_id);
-        tmdb_element_link.setAttribute("target", "_blank");
-        tmdb_container_element.style.backgroundColor = "transparent";
+				// construct logo
+				const tmdb_element_img = document.createElement("img");
+				tmdb_element_img.setAttribute("src", logo_url);
+				tmdb_element_img.setAttribute("height", "20px");
 
-        // construct logo
-        var tmdb_element_img = document.createElement("img");
-        tmdb_element_img.setAttribute("src", logo_url);
-        tmdb_element_img.setAttribute("height", "20px");
-
-        tmdb_element_link.appendChild(tmdb_element_img);
-        tmdb_container_element.appendChild(tmdb_element_link);
-
-        return tmdb_container_element;
-    },
-
-    insertTmdbLink: async (metadata_xml) => {
-        tmdb_exists = document.getElementById("tmdb-container");
-        if (tmdb_exists) {
-            utils.debug("TMDB Plugin [async] (insertTmdbLink): TMDB already present on page. Skipping.");
-        }
-        else {
-            var type = "movie";
-            var site = "tmdb";
-            utils.debug("TMDB Plugin [async] (insertTmdbLink): Lauching TMDB API (Site: " + site + ") (Type: " + type + ")");
-            var tmdb_id = await tmdb_api.getId(site, type, metadata_xml);
-            utils.debug("TMDB Plugin [async] (insertTmdbLink): TMDB API returned the following TMDB ID (" + tmdb_id + ")");
-            // insert themoviedb link element to bottom of metadata container
-            var tmdb_container = tmdb.constructTmdbLink(tmdb_id);
-            utils.debug("TMDB plugin [async] (insertTmdbLink): Inserting tmdb container into page");
-            document.getElementById("ep_links").appendChild(tmdb_container);
-        }
-    }
+				tmdb_element_link.appendChild(tmdb_element_img);
+				tmdb_container.appendChild(tmdb_element_link);
+				utils.debug("TMDB plugin (insertTmdbLink): Inserting tmdb container into page");
+				document.getElementById("ep_links").appendChild(tmdb_container);
+			}
+			else {
+				utils.debug("TMDB Plugin (insertTmdbLink): No TMDB ID found. Skipping.");
+			}
+		}
+	}
 };

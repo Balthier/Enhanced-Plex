@@ -19,7 +19,6 @@
 				"js/utils.js",
 				"js/plugins.js",
 				"apis/trakt_api.js",
-				"apis/tmdb_api.js",
 				"apis/sonarr_api.js",
 				"apis/radarr_api.js",
 				"apis/google_api.js",
