@@ -336,7 +336,7 @@ utils = {
 								if (https && serverIsHttps) {
 									test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
 								}
-								else if (!https && !serverIsHttps) {
+								else if (!https) {
 									test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
 								}
 								else {

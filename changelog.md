@@ -1,5 +1,20 @@
 # Enhanced Plex Changelog
 
+## **v3.4.0**
+
+### 2025-11-07
+
+- Bug: Reworked the API access system to be more in line with recommended practices for Chrome extensions
+- Enhancement: Revamped the majority of the codebase using modern Javascript practices
+- Enhancement: Reworked the Trakt API usage
+- Enhancement: Made huge improvements to the caching system used, leading to improved performance overall
+- Enhancement: Removed a lot of unnecessary code, further improving performance
+- Miscellaneous: Removed the need for the TMDB API
+- Miscellaneous: Made style changes to the version mismatch error, making it less intrusive
+- Miscellaneous: Change the screen resolution being reported, to be whole numbers only
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.145.1
+- Miscellaneous: Updated supported Local Plex for Web version to 4.145.1
+
 ## **v3.3.4**
 
 ### 2025-04-27

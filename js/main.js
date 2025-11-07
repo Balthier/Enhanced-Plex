@@ -103,7 +103,7 @@ function minReqs() {
 
 async function insertErrorBar(level, details) {
 	const ver_mismatch_icon = await utils.cache_get("options_ver_mismatch_icon", "sync") || {};
-	if (ver_mismatch_icon == "true") {
+	if (ver_mismatch_icon == true) {
 		if (document.getElementById("error-details")) {
 			utils.debug("Main (insertErrorBar): Error already present. Skipping.");
 			return;
@@ -356,7 +356,7 @@ async function main() {
 	if (Object.keys(server_addresses).length) {
 
 		// insert stats page link
-		if (settings["options_stats_link"] === "true") {
+		if (settings["options_stats_link"] === true) {
 			utils.debug("Main [async] (main): Stats plugin is enabled");
 			toggleLoadingIcon("on");
 			stats.init();
@@ -442,7 +442,7 @@ async function main() {
 						TraktData = await trakt_api.getSourceData(metadata_xml, "show", server);
 						for (const option in TVMain) {
 							settings_name = "options_" + option;
-							if (settings[settings_name] === "true") {
+							if (settings[settings_name] === true) {
 								plugin = TVMain[option];
 								utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
 								plugins[plugin](metadata_xml, server, "show", TraktData);
@@ -456,7 +456,7 @@ async function main() {
 						TraktData = await trakt_api.getSourceData(metadata_xml, "season", server);
 						for (const option in TVSeason) {
 							settings_name = "options_" + option;
-							if (settings[settings_name] === "true") {
+							if (settings[settings_name] === true) {
 								plugin = TVSeason[option];
 								utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
 								plugins[plugin](metadata_xml, server, "season", TraktData);
@@ -476,7 +476,7 @@ async function main() {
 					TraktData = await trakt_api.getSourceData(metadata_xml, "episode", server);
 					for (const option in TVEpisode) {
 						settings_name = "options_" + option;
-						if (settings[settings_name] === "true") {
+						if (settings[settings_name] === true) {
 							plugin = TVEpisode[option];
 							utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
 							plugins[plugin](metadata_xml, server, "episode", TraktData);
@@ -495,7 +495,7 @@ async function main() {
 					TraktData = await trakt_api.getSourceData(metadata_xml, "movie", server);
 					for (const option in MovieMain) {
 						settings_name = "options_" + option;
-						if (settings[settings_name] === "true") {
+						if (settings[settings_name] === true) {
 							plugin = MovieMain[option];
 							utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
 							plugins[plugin](metadata_xml, server, "movie", TraktData);
