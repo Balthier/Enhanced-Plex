@@ -278,6 +278,7 @@ function generateChart(FullData, chartId) {
 		let maintainAspectRatio;
 		let responsive;
 		let total;
+		let aspectRatio;
 		if (chartId.includes("Year")) {
 			chartType = "bar";
 		}
@@ -534,7 +535,7 @@ async function getPlexBasics() {
 	utils.debug(servers);
 	const machine_identifier = Object.values(servers)[0].machine_identifier;
 	const machine_identifier_local = machine_identifier + "_local";
-	const uri = servers[machine_identifier_local].uri || server_addresses[machine_identifier].uri;
+	const uri = servers[machine_identifier_local]?.uri || servers[machine_identifier]?.uri;
 	utils.debug("Stats (getPlexBasics): Grabbing Access Token");
 	const plex_token = Object.values(servers)[0].access_token;
 
