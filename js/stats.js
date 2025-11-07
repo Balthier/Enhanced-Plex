@@ -382,7 +382,7 @@ function setLoading(value) {
 async function updateData() {
 	setLoading(true);
 	utils.debug("Stats [async] (updateData): Retrieving items from cache");
-	const { uri, plex_token } = getPlexBasics();
+	const { uri, plex_token } = await getPlexBasics();
 	await getData(uri, plex_token, true);
 	setLoading(false);
 }
@@ -554,7 +554,7 @@ async function main() {
 	google_api.sendTracking("page_view", data);
 	setLoading(true);
 	utils.debug("Stats (main): Retrieving items from cache");
-	const { uri, plex_token } = getPlexBasics();
+	const { uri, plex_token } = await getPlexBasics();
 	await getData(uri, plex_token, false);
 	setLoading(false);
 };
