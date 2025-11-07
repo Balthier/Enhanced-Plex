@@ -108,7 +108,6 @@ async function insertErrorBar(level, details) {
 			utils.debug("Main (insertErrorBar): Error already present. Skipping.");
 			return;
 		}
-		const nav_bar_right = document.body.querySelector("[class*=" + CSS.escape(StatsButtonContainer) + "]");
 
 		const error_link = document.createElement("a");
 		error_link.setAttribute("id", "error-toggle");
@@ -140,13 +139,9 @@ async function insertErrorBar(level, details) {
 		errorcontainer.setAttribute("class", "nav-button");
 		errorcontainer.appendChild(error_link);
 
-		const container = document.createElement("div");
-		container.setAttribute("id", "button-container");
-		container.setAttribute("class", nav_bar_right.className);
-		container.appendChild(error_details);
+		const container = document.getElementById("button-container");
 		container.appendChild(errorcontainer);
 
-		nav_bar_right.parentElement.prepend(container);
 
 		document.getElementById("error-toggle").addEventListener("click", function () {
 			toggleErrorDetails();
@@ -169,6 +164,8 @@ function toggleErrorDetails() {
 
 function runOnReady() {
 	versiondata = minReqs();
+	let versionerror;
+	let level;
 	if (versiondata) {
 		versionerror = versiondata[0];
 		level = versiondata[1];
@@ -189,6 +186,11 @@ function runOnReady() {
 		if (MainPageDetection.test(document.URL)) {
 			utils.debug("Main (runOnReady): Main page detected. Checking if ready...");
 			if (document.getElementsByTagName(MainPageLoaded).length > 0) {
+				const nav_bar_right = document.body.querySelector("[class*=" + CSS.escape(StatsButtonContainer) + "]");
+				const container = document.createElement("div");
+				container.setAttribute("id", "button-container");
+				container.setAttribute("class", nav_bar_right.className);
+				nav_bar_right.parentElement.prepend(container);
 				if (versionerror) {
 					insertErrorBar(level, versionerror);
 					if (level == "error") {
