@@ -146,7 +146,7 @@ async function main() {
 	const version_element = document.getElementById("ext_version");
 	const title_element = document.getElementsByTagName("title")[0];
 	const extension_version = utils.getExtensionInfo("version");
-	title_element.innerHTML = "EnhancedCN (" + extension_version + ") options";
+	title_element.innerHTML = "EnhancedPLEX (" + extension_version + ") options";
 	version_element.innerHTML = "Version: <b>v" + extension_version + "</b>";
 
 	const data = {
