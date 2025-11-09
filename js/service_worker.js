@@ -30,8 +30,14 @@ chrome.runtime.onInstalled.addListener(async function (details) {
 					])
 				);
 
-				console.log("Original items:", items);
-				console.log("Corrected items:", fixedItems);
+				chrome.storage.sync.set(fixedItems, () => {
+					if (chrome.runtime.lastError) {
+						console.error("Error saving corrected data:", chrome.runtime.lastError);
+						return;
+					}
+					console.log("Original items:", items);
+					console.log("Corrected items:", fixedItems);
+				});
 			});
 		}
 	}

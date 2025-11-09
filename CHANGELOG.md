@@ -1,5 +1,11 @@
 # Enhanced Plex Changelog
 
+## **v3.4.1**
+
+### 2025-11-09
+
+- Bug: Fixed issue with Options migration in v3.4.0
+
 ## **v3.4.0**
 
 ### 2025-11-07
