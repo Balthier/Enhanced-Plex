@@ -299,17 +299,20 @@ utils = {
 	},
 
 	getServerAddresses: async (plex_token, https) => {
+		utils.debug("Utils[async] (getServerAddresses): Checking cache for rr_servers");
 		const cache_data = await utils.cache_get("rr_servers", "sync") || {};
 		let server_addresses;
 		if (Object.keys(cache_data).length) {
 			server_addresses = cache_data;
 		}
 		else {
+			utils.debug("Utils[async] (getServerAddresses): Getting Servers from Plex");
 			const requests_url = "https://plex.tv/pms/resources?includeHttps=1&X-Plex-Token=" + plex_token;
 			const servers_xml = await utils.getXML(requests_url) || {};
+			let server_addresses;
 			if (Object.keys(servers_xml).length) {
 				const devices = servers_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Device");
-				const server_addresses = {};
+				server_addresses = {};
 				for (const device of devices) {
 					const serverCheck = device.getAttribute("provides");
 					if (serverCheck.includes("server")) {
@@ -387,7 +390,7 @@ utils = {
 						}
 					}
 				}
-				utils.cache_set("rr_servers", server_addresses, "sync");
+				await utils.cache_set("rr_servers", server_addresses, "sync");
 			}
 		}
 		utils.debug("Utils [async] (getServerAddresses): Server Addresses collected..");
