@@ -1,13 +1,13 @@
 utils = {
 	debug: async (output) => {
-		version = await utils.getExtensionVersion();
-		debug_cache = await chrome.storage.sync.get("options_debug") || {};
-		debug_unfiltered_cache = await chrome.storage.sync.get("options_debug_unfiltered") || {};
-		debug = debug_cache["options_debug"];
-		debug_unfiltered = debug_unfiltered_cache["options_debug_unfiltered"];
-		if (debug === "true") {
+		const version = await utils.getExtensionInfo("version");
+		const debug_cache = await chrome.storage.sync.get("options_debug") || {};
+		const debug_unfiltered_cache = await chrome.storage.sync.get("options_debug_unfiltered") || {};
+		const debug = debug_cache["options_debug"];
+		const debug_unfiltered = debug_unfiltered_cache["options_debug_unfiltered"];
+		if (debug === true) {
 			if (typeof output === "string") {
-				if (debug_unfiltered === "false") {
+				if (debug_unfiltered === false) {
 					if (typeof global_plex_token != "undefined") {
 						output = output.replace(global_plex_token, "XXXXXXXXXXXXXXXXXXXX");
 					}
@@ -18,24 +18,19 @@ utils = {
 					output = output.replace(/\d+\.\d+\.\d+\.\d+/, "XXX.XXX.X.XX");
 					output = output.replace(/https\:\/\/\d+\-\d+\-\d+\-\d+/, "https://XXX-XXX-XXX-XXX");
 				}
-				date = new Date();
-				hours = ("0" + date.getHours()).slice(-2);
-				minutes = ("0" + date.getMinutes()).slice(-2);
-				seconds = ("0" + date.getSeconds()).slice(-2);
-				milliseconds = ("0" + date.getMilliseconds()).slice(-2);
-				now = hours + ":" + minutes + ":" + seconds + "." + milliseconds;
+				const date = new Date();
+				const hours = ("0" + date.getHours()).slice(-2);
+				const minutes = ("0" + date.getMinutes()).slice(-2);
+				const seconds = ("0" + date.getSeconds()).slice(-2);
+				const milliseconds = ("0" + date.getMilliseconds()).slice(-2);
+				const now = hours + ":" + minutes + ":" + seconds + "." + milliseconds;
 				console.log("[" + now + "] EnhancedPLEX (" + version + ") Debug: " + output);
 			}
 			else {
 				// don't filter xml, use nodeType attribute to detect
-				if (debug_unfiltered === "false" && !("nodeType" in output)) {
+				if (debug_unfiltered === false && !("nodeType" in output)) {
 					// clone object so we can filter out values
-					var output_ = {};
-					for (var key in output) {
-						if (output.hasOwnProperty(key)) {
-							output_[key] = output[key];
-						}
-					}
+					const output_ = { ...output };
 
 					if ("access_token" in output_) {
 						output_["access_token"] = "XXXXXXXXXXXXXXXXXXXX";
@@ -55,32 +50,26 @@ utils = {
 
 	timer: ms => new Promise(res => setTimeout(res, ms)),
 
-	getExtensionVersion: function () {
-		var version = chrome.runtime.getManifest()["version"];
-		return version;
+	getExtensionInfo: function (attribute) {
+		const info = chrome.runtime.getManifest()[attribute];
+		return info;
 	},
 
 	getOptionsURL: function () {
-		var options_url = chrome.runtime.getURL("resources/extras/options.html");
+		const options_url = chrome.runtime.getURL("resources/extras/options.html");
 		return options_url;
 	},
 
 	getStatsURL: function () {
-		var stats_url = chrome.runtime.getURL("resources/extras/stats.html");
+		const stats_url = chrome.runtime.getURL("resources/extras/stats.html");
 		return stats_url;
 	},
 
-	storage_get_all: function (callback) {
-		chrome.storage.sync.get(function (results) {
-			global_settings = results;
-			callback(results);
-		});
-	},
-
 	cache_purge: async (category) => {
-		types = ["sync", "local"];
-		var i = 0;
-		types.forEach(function (type) {
+		const types = ["sync", "local"];
+
+		for (const type of types) {
+			let command;
 			if (type === "sync") {
 				command = chrome.storage.sync;
 			}
@@ -91,72 +80,67 @@ utils = {
 				utils.debug("Utils [async] (cache_purge): WARNING! Unrecognised storage type: " + type);
 				return;
 			}
-			command.get(null, function (data) {
-				utils.debug("Utils [async] (cache_purge): Checking " + type + " storage...");
-				for (var data_key in data) {
-					if (category) {
-						if (category == "stats") {
-							if (data_key.match(/^cache\-time\-stats.+/g) || data_key.match(/^stats.+/g)) {
-								utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
-								command.remove(data_key);
-								utils.debug(data_key);
-							}
+			const data = await command.get(null);
+			utils.debug("Utils [async] (cache_purge): Checking " + type + " storage...");
+
+			const keysToRemove = [];
+
+			for (const data_key in data) {
+				let shouldRemove = false;
+
+				if (category) {
+					if (category == "stats") {
+						if (data_key.match(/^cache\-time\-stats.+/g) || data_key.match(/^stats.+/g)) {
+							shouldRemove = true;
 						}
-						else if (category == "options") {
-							if (data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^options.+/g)) {
-								utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
-								command.remove(data_key);
-								utils.debug(data_key);
-							}
+					} else if (category == "options") {
+						if (data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^options.+/g)) {
+							shouldRemove = true;
 						}
 					}
-					else {
-						if (data_key.match(/^cache\-time\-.+/g)) {
-							if (data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^cache\-time\-stats.+/g)) {
-							}
-							else {
-								utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
-								command.remove(data_key);
-								utils.debug(data_key);
-								var key = data_key.replace("cache-time-", "");
-								command.remove(key);
-								utils.debug(key);
-							}
+
+					if (shouldRemove) {
+						keysToRemove.push(data_key);
+					}
+				} else {
+					if (data_key.match(/^cache\-time\-.+/g)) {
+						if (!(data_key.match(/^cache\-time\-options.+/g) || data_key.match(/^cache\-time\-stats.+/g))) {
+							keysToRemove.push(data_key);
+							const key = data_key.replace("cache-time-", "");
+							keysToRemove.push(key);
 						}
-						else {
-							if (data_key.match(/^options.+/g) || data_key.match(/^stats.+/g)) {
-							}
-							else {
-								utils.debug("Utils [async] (cache_purge): Removing the following entries from " + type + " storage");
-								command.remove(data_key);
-								utils.debug(data_key);
-							}
-						}
+					} else if (!(data_key.match(/^options.+/g) || data_key.match(/^stats.+/g))) {
+						keysToRemove.push(data_key);
 					}
 				}
-			});
-		});
+			}
+			if (keysToRemove.length > 0) {
+				utils.debug(`Utils [async] (cache_purge): Batch removing ${keysToRemove.length} entries from ${type} storage.`);
+				await command.remove(keysToRemove);
+			}
+		}
 	},
 
-	cache_get: async (key, type) => {
-		var key = key.replace(/[^A-Za-z0-9_]/g, "_");
-		if (type === "sync") {
-			var command = chrome.storage.sync;
-		}
-		else if (type === "local") {
-			var command = chrome.storage.local;
-		}
-		else {
-			utils.debug("Utils [async] (cache_get): [" + key + "] - No type selected. Aborting...");
-			return;
+	cache_get: async (rawkey, type) => {
+		const key = rawkey.replace(/[^A-Za-z0-9_]/g, "_");
+		const storageMap = {
+			"sync": chrome.storage.sync,
+			"local": chrome.storage.local
+		};
+		const command = storageMap[type];
+
+		if (!command) {
+			utils.debug(`Utils [async] (cache_get): [${key}] - Invalid type selected: ${type}. Aborting...`);
+			return undefined;
 		}
 		utils.debug("Utils [async] (cache_get): [" + key + "] - Retrieving from storage...");
-		var cache_key = "cache-time-" + key;
-		var expire_data = await command.get(cache_key) || {};
-		if (Object.keys(expire_data).length) {
-			var timestamp = Object.values(expire_data)[0];
-			var time_now = new Date().getTime();
-			var time_diff = time_now - timestamp;
+		const cache_key = `cache-time-${key}`;
+		const expire_data = await command.get(cache_key) || {};
+		const timestamp = expire_data[cache_key];
+		if (timestamp) {
+			const time_now = new Date().getTime();
+			const time_diff = time_now - timestamp;
+			let expireTime;
 			if (key == "sessionId") {
 				expireTime = 1800000;
 			}
@@ -168,12 +152,11 @@ utils = {
 			}
 			else if (time_diff > expireTime) {
 				utils.debug("Utils [async] (cache_get): [" + key + "] - Found stale data, removing from " + type + " storage");
-				command.remove(cache_key);
-				command.remove(key);
+				await command.remove(cache_key);
+				await command.remove(key);
 			}
 		}
-		var response = await command.get(key) || {};
-		//await utils.timer(200);
+		const response = await command.get(key) || {};
 		if (Object.keys(response).length) {
 			utils.debug("Utils [async] (cache_get):  [" + key + "] - Received the following response from " + type + " storage: ");
 			utils.debug(response);
@@ -187,30 +170,35 @@ utils = {
 		}
 	},
 
-	cache_set: async (key, value, type) => {
-		if (type === "sync") {
-			command = chrome.storage.sync;
+	cache_set: async (rawkey, value, type) => {
+		const key = rawkey.replace(/[^A-Za-z0-9_]/g, "_");
+		const storageMap = {
+			"sync": chrome.storage.sync,
+			"local": chrome.storage.local
+		};
+		const command = storageMap[type];
+
+		if (!command) {
+			utils.debug(`Utils [async] (cache_set): [${key}] - Invalid type selected: ${type}. Aborting...`);
+			return undefined;
 		}
-		else if (type === "local") {
-			command = chrome.storage.local;
-		}
-		else {
-			utils.debug("Utils [async] (cache_set): No type selected. Aborting...");
-			return;
-		}
-		key = key.replace(/[^A-Za-z0-9_]/g, "_");
+
+
 		utils.debug("Utils [async] (cache_set): [" + key + "] - Committing to cache in " + type + " storage with the value of: ");
-		let object = {};
+
+		const object = {};
 		object[key] = value;
+
 		utils.debug(object);
-		command.set(object);
-		let cache_key = "cache-time-" + key;
-		let time_now = new Date().getTime();
+
+		await command.set(object);
+		const cache_key = "cache-time-" + key;
+		const time_now = new Date().getTime();
 		utils.debug("Utils [async] (cache_set): [" + key + "] - Setting cache timestamp in " + type + " storage: " + cache_key);
-		let cache_data = {};
+		const cache_data = {};
 		cache_data[cache_key] = time_now;
 		utils.debug(cache_data);
-		command.set(cache_data);
+		await command.set(cache_data);
 
 	},
 
@@ -219,60 +207,57 @@ utils = {
 	},
 
 	getApiKey: async (api_name) => {
-		var file_path = utils.getResourcePath("api_keys/" + api_name + ".txt");
-		var text;
-		response = await fetch(file_path);
-		text = await response.text();
+		const file_path = utils.getResourcePath("api_keys/" + api_name + ".txt");
+		const response = await fetch(file_path);
+		const text = await response.text();
 		utils.debug("Utils [async] (getApiKey): Returning API Key for: " + api_name);
 		return text;
 	},
 
 	getXML: async (url) => {
 		utils.debug("Utils [async] (getXML): Fetching XML from " + url);
-		response = await fetch(url);
-		text = await response.text();
-		var parser = new DOMParser();
-		var xml = parser.parseFromString(text, "application/xml");
+		const response = await fetch(url);
+		const text = await response.text();
+		const parser = new DOMParser();
+		const xml = parser.parseFromString(text, "application/xml");
 		utils.debug("Utils [async] (getXML): Recieved XML response " + url);
 		utils.debug(xml);
 		return xml;
 	},
 
-	getXML_test: async (url) => {
-		utils.debug("Utils [async] (getXML_test): Checking for XML Cache for " + url);
-		key = "xml-cache-" + url;
-		var cacheCheck = await utils.cache_get(key, "local") || {};
-		if (Object.keys(cacheCheck).length) {
-			return cacheCheck;
-		}
-		else {
-			utils.debug("Utils [async] (getXML_test): Fetching XML from " + url);
-			response = await fetch(url);
-			text = await response.text();
-			var parser = new DOMParser();
-			var xml = parser.parseFromString(text, "application/xml");
-			utils.debug("Utils [async] (getXML_test): Recieved XML response " + url);
-			utils.debug(xml);
-			utils.cache_set(key, xml, "local");
-			return xml;
-		}
-
+	getBGRequest: async (message) => {
+		return new Promise((resolve, reject) => {
+			chrome.runtime.sendMessage(message, (response) => {
+				console.log(response.data);
+				if (chrome.runtime.lastError) {
+					return reject(chrome.runtime.lastError);
+				}
+				if (!response) {
+					return reject(new Error("Service Worker sent no response object."));
+				}
+				if (response.error) {
+					return reject(new Error(response.error));
+				}
+				resolve(response.data);
+			});
+		});
 	},
 
-	getJSON: async (api_url, api_custom_headers, service) => {
+	getJSON: async (api_url, api_custom_headers, service, dimensions) => {
 		let url = api_url;
 		let custom_headers = api_custom_headers;
 		utils.debug("Utils [async] (getJSON): Checking for JSON Cache for " + url);
 		let key = "json-cache-" + url;
 		let searchkey = key.replace(/[^A-Za-z0-9_]/g, "_");
 		let cacheCheck = await utils.cache_get(searchkey, "local") || {};
+		let response;
 		if (Object.keys(cacheCheck).length) {
 			let data = {
 				service: service,
 				target: "cache"
 			};
 
-			google_api.sendTracking("API", data);
+			google_api.sendTracking("API", data, dimensions);
 
 			utils.debug("Utils [async] (getJSON): Cache found for " + url);
 
@@ -285,74 +270,103 @@ utils = {
 				target: "live"
 			};
 
-			google_api.sendTracking("API", data);
+			google_api.sendTracking("API", data, dimensions);
 
 			utils.debug("Utils [async] (getJSON): Fetching JSON from " + url);
-			if (custom_headers) {
-				var response = await fetch(url, {
-					method: 'GET',
-					headers: custom_headers
-				});
+			try {
+				if (custom_headers) {
+					response = await fetch(url, {
+						method: 'GET',
+						headers: custom_headers
+					});
+				}
+				else {
+					response = await fetch(url, {
+						method: 'GET'
+					});
+				}
+				let json = await response.json();
+				utils.debug("Utils (getJSON): Recieved JSON response");
+				utils.debug(json);
+				utils.cache_set(key, json, "local");
+				return json;
 			}
-			else {
-				var response = await fetch(url, {
-					method: 'GET'
-				});
+			catch (error) {
+				utils.debug("Utils[async](getJSON): Error: " + error);
+				return null;
 			}
-			let json = await response.json();
-			utils.debug("Utils (getJSON): Recieved JSON response");
-			utils.debug(json);
-			utils.cache_set(key, json, "local");
-			return json;
 		}
 	},
-	getServerAddresses: async (plex_token) => {
-		cache_data = await utils.cache_get("rr_servers", "sync") || {};
+
+	getServerAddresses: async (plex_token, https) => {
+		utils.debug("Utils[async] (getServerAddresses): Checking cache for rr_servers");
+		const cache_data = await utils.cache_get("rr_servers", "sync") || {};
+		let server_addresses;
 		if (Object.keys(cache_data).length) {
 			server_addresses = cache_data;
 		}
 		else {
-			var requests_url = "https://plex.tv/pms/resources?includeHttps=1&X-Plex-Token=" + plex_token;
-			var servers_xml = await utils.getXML(requests_url) || {};
+			utils.debug("Utils[async] (getServerAddresses): Getting Servers from Plex");
+			const requests_url = "https://plex.tv/pms/resources?includeHttps=1&X-Plex-Token=" + plex_token;
+			const servers_xml = await utils.getXML(requests_url) || {};
 			if (Object.keys(servers_xml).length) {
-				var devices = servers_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Device");
-				var server_addresses = {};
-				for (var i = 0; i < devices.length; i++) {
-					const device = devices[i];
-					var serverCheck = device.getAttribute("provides");
+				const devices = servers_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Device");
+				server_addresses = {};
+				for (const device of devices) {
+					const serverCheck = device.getAttribute("provides");
 					if (serverCheck.includes("server")) {
 						const plex_name = device.getAttribute("name");
 						const access_token = device.getAttribute("accessToken");
 						const connections = device.getElementsByTagName("Connection");
-						for (j = 0; j < connections.length; j++) {
-							const localattr = connections[j].getAttribute("local");
-							var machine_identifier = device.getAttribute("clientIdentifier");
+						for (const connection of connections) {
+							const protocol = connection.getAttribute("protocol");
+							const serverIsHttps = protocol.includes("https");
+							const localattr = connection.getAttribute("local");
+							const machine_identifier = device.getAttribute("clientIdentifier");
+							let name;
+							let uri;
+							let test;
 							if (localattr == true) {
-								var name = device.getAttribute("clientIdentifier") + "_local";
-								uri = "https://" + connections[j].getAttribute("address") + ":" + connections[j].getAttribute("port");
+								name = device.getAttribute("clientIdentifier") + "_local";
+								uri = "https://" + connection.getAttribute("address") + ":" + connection.getAttribute("port");
 							}
 							else {
-								var name = device.getAttribute("clientIdentifier");
-								uri = connections[j].getAttribute("uri");
+								name = device.getAttribute("clientIdentifier");
+								uri = connection.getAttribute("uri");
 							}
 							try {
-								test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
+								if (https && serverIsHttps) {
+									test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
+								}
+								else if (!https) {
+									test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
+								}
+								else {
+									utils.debug("Utils [async] (getServerAddresses) {" + uri + "}: Protocol mismatch. Both client and server must be using the same security (http/https)");
+									test = {};
+								}
 							}
 							catch {
 								if (localattr) {
-									utils.debug("Utils [async]  (getServerAddresses) {" + uri + "}: Failed to connect locally via HTTPS. Trying Plex Proxy.");
+									utils.debug("Utils [async] (getServerAddresses) {" + uri + "}: Failed to connect locally via HTTPS. Trying Plex Proxy.");
 									try {
-										uri = connections[j].getAttribute("uri");
+										uri = connection.getAttribute("uri");
 										test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
 									}
 									catch {
-										utils.debug("Utils [async]  (getServerAddresses) {" + uri + "}: Failed to connect via Plex Proxy. Trying local HTTP");
-										uri = "http://" + connections[j].getAttribute("address") + ":" + connections[j].getAttribute("port");
-										try {
-											test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
+										if (!https) {
+											utils.debug("Utils [async]  (getServerAddresses) {" + uri + "}: Failed to connect via Plex Proxy. Trying local HTTP");
+											uri = "http://" + connection.getAttribute("address") + ":" + connection.getAttribute("port");
+											try {
+												test = await utils.getXML(uri + "?X-Plex-Token=" + access_token) || {};
+											}
+											catch {
+												utils.debug("Utils [async] (getServerAddresses) {" + uri + "}: Failed to connect via HTTP.");
+											}
 										}
-										catch {
-											utils.debug("Utils [async]  (getServerAddresses) {" + uri + "}: Failed to connect via HTTP.");
+										else {
+											utils.debug("Utils [async] (getServerAddresses) {" + uri + "}: Skipping HTTP check, as client is using HTTPS");
+											test = {};
 										}
 									}
 								}
@@ -374,13 +388,30 @@ utils = {
 							}
 						}
 					}
-					serverCheck = null;
 				}
-				utils.cache_set("rr_servers", server_addresses, "sync");
+				await utils.cache_set("rr_servers", server_addresses, "sync");
 			}
 		}
-		utils.debug("Main [async] (getServerAddresses): Server Addresses collected..");
+		utils.debug("Utils [async] (getServerAddresses): Server Addresses collected..");
 		utils.debug(server_addresses);
 		return server_addresses;
+	},
+
+	convertISOtoStd: function (isoDateString) {
+		const dateObject = new Date(isoDateString);
+
+		// 1. Get UTC components
+		const year = dateObject.getUTCFullYear();
+		// Month is 0-indexed (0 = Jan, 9 = Oct), so add 1
+		const month = dateObject.getUTCMonth() + 1;
+		const day = dateObject.getUTCDate();
+
+		// 2. Pad single digits with a leading zero
+		const formattedMonth = String(month).padStart(2, '0');
+		const formattedDay = String(day).padStart(2, '0');
+
+		// 3. Combine into the desired format
+		const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
+		return formattedDate;
 	}
 };

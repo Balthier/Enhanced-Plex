@@ -1,25 +1,39 @@
 // Hopefully these will make it easier to update in future Plex for Web updates.
-var UnmatchedDetection = new RegExp(/^local\:\/\//);
-var PlexBannerID = "Enhanced-Plex-Banner";
-var PlexForWebURL = new RegExp(/https:\/\/app\.plex\.tv\/desktop\/?\#\!\/?/);
-var plexforweb = PlexForWebURL.test(document.URL);
-var TVMain = {
+let MainPageDetection;
+let LibraryPageDetection;
+let TVMoviePageDetection;
+let MainPageLoaded;
+let LibraryPageLoaded;
+let TVPageLoaded;
+let MoviePageLoaded;
+let StatsButtonParent;
+let StatsButtonContainer;
+let plexParentBanner;
+let MinPfWVersionDisp;
+let MinPfWVersion;
+let TraktData;
+
+const UnmatchedDetection = new RegExp(/^local\:\/\//);
+const PlexBannerID = "Enhanced-Plex-Banner";
+const PlexForWebURL = new RegExp(/https:\/\/app\.plex\.tv\/desktop\/?\#\!\/?/);
+const plexforweb = PlexForWebURL.test(document.URL);
+const TVMain = {
 	"imdb_shows_link": "imdb",
 	"trakt_shows_link": "trakt",
 	"tvdb_link": "tvdb",
 	"missing_episodes": "missing_episodes",
 	"sonarr_api": "sonarr"
 };
-var TVSeason = {
+const TVSeason = {
 	"imdb_shows_link": "imdb",
 	"trakt_shows_link": "trakt",
 	"tvdb_link": "tvdb",
 	"missing_episodes": "missing_episodes"
 };
-var TVEpisode = {
+const TVEpisode = {
 	"trakt_shows_link": "trakt"
 };
-var MovieMain = {
+const MovieMain = {
 	"imdb_movies_link": "imdb",
 	"tmdb_link": "tmdb",
 	"trakt_movies_link": "trakt",
@@ -28,41 +42,43 @@ var MovieMain = {
 
 if (plexforweb) {
 	// Plex for Web
-	var MainPageDetection = new RegExp(/(.*)\/desktop\/?\#\!\/?$/);
-	var LibraryPageDetection = new RegExp(/(.*)com.plexapp.plugins.library(.*)$/);
-	var TVMoviePageDetection = new RegExp(/(.*)\/server\/(.*)details(.*)$/);
-	var MainPageLoaded = "button";
-	var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
-	var TVPageLoaded = "PrePlayListTitle-titleContainer";
-	var MoviePageLoaded = "metadata-title";
-	var StatsButtonParent = "NavBar-right";
-	var StatsButtonContainer = "NavBarActivityButton-container";
-	var plexParentBanner = "metadata-starRatings";
-	var MinPfWVersionDisp = "4.145.1";
-	var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
+	MainPageDetection = new RegExp(/(.*)\/desktop\/?\#\!\/?$/);
+	LibraryPageDetection = new RegExp(/(.*)com.plexapp.plugins.library(.*)$/);
+	TVMoviePageDetection = new RegExp(/(.*)\/server\/(.*)details(.*)$/);
+	MainPageLoaded = "button";
+	LibraryPageLoaded = "MetadataPosterCard-cardContainer";
+	TVPageLoaded = "PrePlayListTitle-titleContainer";
+	MoviePageLoaded = "metadata-title";
+	StatsButtonParent = "NavBar-right";
+	StatsButtonContainer = "NavBarActivityButton-container";
+	plexParentBanner = "metadata-starRatings";
+	MinPfWVersionDisp = "4.152.0";
+	MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 else {
 	// Local Plex
-	var MainPageDetection = new RegExp(/(.*)\/web\/index.html\#\!\/?$/);
-	var LibraryPageDetection = new RegExp(/(.*)com.plexapp.plugins.library(.*)$/);
-	var TVMoviePageDetection = new RegExp(/(.*)\/server\/(.*)details(.*)$/);
-	var MainPageLoaded = "button";
-	var LibraryPageLoaded = "MetadataPosterCard-cardContainer";
-	var TVPageLoaded = "PrePlayListTitle-titleContainer";
-	var MoviePageLoaded = "metadata-title";
-	var StatsButtonParent = "NavBar-right";
-	var StatsButtonContainer = "NavBarActivityButton-container";
-	var plexParentBanner = "metadata-starRatings";
-	var MinPfWVersionDisp = "4.145.1";
-	var MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
+	MainPageDetection = new RegExp(/(.*)\/web\/index.html\#\!\/?$/);
+	LibraryPageDetection = new RegExp(/(.*)com.plexapp.plugins.library(.*)$/);
+	TVMoviePageDetection = new RegExp(/(.*)\/server\/(.*)details(.*)$/);
+	MainPageLoaded = "button";
+	LibraryPageLoaded = "MetadataPosterCard-cardContainer";
+	TVPageLoaded = "PrePlayListTitle-titleContainer";
+	MoviePageLoaded = "metadata-title";
+	StatsButtonParent = "NavBar-right";
+	StatsButtonContainer = "NavBarActivityButton-container";
+	plexParentBanner = "metadata-starRatings";
+	MinPfWVersionDisp = "4.147.1";
+	MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 
 function minReqs() {
 	utils.debug("Main (minReqs): Checking minimum requirements");
-	var versionRegex = new RegExp(/plex-\d\.\d{3}\.\d/);
-	var PfWRaw = document.head.getElementsByTagName('link')[0].href;
-	var PfWVersionDisp = (PfWRaw.match(versionRegex))[0].replace("plex-", "");
-	var PfWVersion = PfWVersionDisp.replace(/\./g, "");
+	const versionRegex = new RegExp(/plex-\d\.\d{3}\.\d/);
+	const PfWRaw = document.head.getElementsByTagName('link')[0].href;
+	const PfWVersionDisp = (PfWRaw.match(versionRegex))[0].replace("plex-", "");
+	const PfWVersion = PfWVersionDisp.replace(/\./g, "");
+	let level;
+	let versionerror;
 	if (PfWVersion < MinPfWVersion) {
 		level = "error";
 		utils.debug("Main (minReqs) [" + level + "]: Plex for Web version is " + PfWVersionDisp + " which is below the minimum required version: " + MinPfWVersionDisp);
@@ -86,32 +102,30 @@ function minReqs() {
 }
 
 async function insertErrorBar(level, details) {
-	ver_mismatch_icon = await utils.cache_get("options_ver_mismatch_icon", "sync") || {};
-	if (ver_mismatch_icon == "true") {
+	const ver_mismatch_icon = await utils.cache_get("options_ver_mismatch_icon", "sync") || {};
+	if (ver_mismatch_icon == true) {
 		if (document.getElementById("error-details")) {
 			utils.debug("Main (insertErrorBar): Error already present. Skipping.");
 			return;
 		}
-		var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
-		var nav_bar_right = rightnavbars[0];
 
-		var error_link = document.createElement("a");
+		const error_link = document.createElement("a");
 		error_link.setAttribute("id", "error-toggle");
 
-		var error_img = document.createElement("img");
+		const error_img = document.createElement("img");
 		error_link.appendChild(error_img);
 
-		var error_details = document.createElement("div");
+		const error_details = document.createElement("div");
 		error_details.setAttribute("id", "error-details");
 		error_details.setAttribute("title", "EnhancedPLEX Error");
 
 		if (level == "warn") {
-			var img_loc = utils.getResourcePath("info-icon.png");
+			const img_loc = utils.getResourcePath("info-icon.png");
 			error_img.setAttribute("src", img_loc);
 			error_details.innerText = "EnhancedPlex Warning: " + details;
 		}
 		else if (level == "error") {
-			var img_loc = utils.getResourcePath("error-icon.png");
+			const img_loc = utils.getResourcePath("error-icon.png");
 			error_img.setAttribute("src", img_loc);
 			error_details.innerText = "EnhancedPlex Error: " + details;
 		}
@@ -120,11 +134,14 @@ async function insertErrorBar(level, details) {
 			return;
 		}
 
-		var container = document.createElement("div");
-		container.setAttribute("id", "error-container");
-		container.appendChild(error_link);
-		container.appendChild(error_details);
-		nav_bar_right.parentElement.prepend(container);
+		const errorcontainer = document.createElement("div");
+		errorcontainer.setAttribute("id", "error-container");
+		errorcontainer.setAttribute("class", "nav-button");
+		errorcontainer.appendChild(error_link);
+
+		const container = document.getElementById("button-container");
+		container.appendChild(errorcontainer);
+
 
 		document.getElementById("error-toggle").addEventListener("click", function () {
 			toggleErrorDetails();
@@ -147,13 +164,15 @@ function toggleErrorDetails() {
 
 function runOnReady() {
 	versiondata = minReqs();
+	let versionerror;
+	let level;
 	if (versiondata) {
 		versionerror = versiondata[0];
 		level = versiondata[1];
 	}
 	utils.debug("Main (runOnReady): runOnReady called. Starting watch");
-	var page_url = document.URL;
-	var interval = window.setInterval(function () {
+	const page_url = document.URL;
+	const interval = window.setInterval(function () {
 		if (plexforweb) {
 			utils.debug("Main (runOnReady): Plex for Web URL detected");
 		}
@@ -167,13 +186,17 @@ function runOnReady() {
 		if (MainPageDetection.test(document.URL)) {
 			utils.debug("Main (runOnReady): Main page detected. Checking if ready...");
 			if (document.getElementsByTagName(MainPageLoaded).length > 0) {
+				const nav_bar_right = document.body.querySelector("[class*=" + CSS.escape(StatsButtonContainer) + "]");
+				const container = document.createElement("div");
+				container.setAttribute("id", "button-container");
+				container.setAttribute("class", nav_bar_right.className);
+				nav_bar_right.parentElement.prepend(container);
 				if (versionerror) {
 					insertErrorBar(level, versionerror);
 					if (level == "error") {
 						window.clearInterval(interval);
 						return;
 					}
-					window.clearInterval(interval);
 				}
 				utils.debug("Main (runOnReady): Instance of " + MainPageLoaded + " detected. Page is ready");
 				window.clearInterval(interval);
@@ -187,7 +210,6 @@ function runOnReady() {
 			if (document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0) {
 				if (versionerror) {
 					insertErrorBar(level, versionerror);
-					window.clearInterval(interval);
 					if (level == "error") {
 						window.clearInterval(interval);
 						return;
@@ -204,7 +226,6 @@ function runOnReady() {
 			if ((document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0) || (document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0)) {
 				if (versionerror) {
 					insertErrorBar(level, versionerror);
-					window.clearInterval(interval);
 					if (level == "error") {
 						window.clearInterval(interval);
 						return;
@@ -224,7 +245,7 @@ function runOnReady() {
 
 function getPlexToken() {
 	if (localStorage["myPlexAccessToken"]) {
-		var plex_token = localStorage["myPlexAccessToken"];
+		const plex_token = localStorage["myPlexAccessToken"];
 		utils.debug("Main (getPlexToken): plex_token fetched from localStorage:");
 		utils.debug(plex_token);
 		return plex_token;
@@ -233,9 +254,8 @@ function getPlexToken() {
 
 function toggleLoadingIcon(option) {
 	if (option == "on") {
-		var rightnavbars = document.body.querySelectorAll("[class*=" + CSS.escape(StatsButtonContainer) + "]");
-		var nav_bar_right = rightnavbars[0];
-		var img = document.createElement("img");
+		const nav_bar_right = document.body.querySelector("[class*=" + CSS.escape(StatsButtonContainer) + "]");
+		const img = document.createElement("img");
 		img.setAttribute("src", utils.getResourcePath("loading_stats.gif"));
 		img.setAttribute("id", "loading-extension");
 		img.setAttribute("height", "30px");
@@ -244,7 +264,7 @@ function toggleLoadingIcon(option) {
 		nav_bar_right.insertBefore(img, nav_bar_right.firstChild);
 	}
 	else if (option == "off") {
-		var loading_icon = document.getElementById("loading-extension");
+		const loading_icon = document.getElementById("loading-extension");
 		if (loading_icon) {
 			utils.debug("Main (toggleLoadingIcon): Removing Loading icon");
 			loading_icon.parentNode.removeChild(loading_icon);
@@ -253,26 +273,26 @@ function toggleLoadingIcon(option) {
 }
 
 function insertBannerTemplate() {
-	var existing_banner = document.getElementById("Enhanced-Plex-Banner");
+	const existing_banner = document.getElementById("Enhanced-Plex-Banner");
 	if (existing_banner) {
 		utils.debug("Main [async] (insertBannerTemplate): Banner already exists on page. Skipping.");
 	}
 	else {
 		utils.debug("Main [async] (insertBannerTemplate): Banner not present. Constructing.");
-		var insert_target = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
-		var banner_element = document.createElement("span");
+		const insert_target = document.querySelectorAll("[data-testid*=" + CSS.escape(plexParentBanner) + "]")[0];
+		const banner_element = document.createElement("span");
 		banner_element.setAttribute("id", PlexBannerID);
-		var info_box = document.createElement("div");
+		const info_box = document.createElement("div");
 		info_box.setAttribute("id", "ep_infobox");
 		info_box.classList.add("ep_box");
 		banner_element.appendChild(info_box);
 
-		var heading = document.createElement("h1");
+		const heading = document.createElement("h1");
 		heading.innerText = "Additional Information";
 		heading.classList.add("ep_h1");
 		info_box.appendChild(heading);
 
-		var links_box = document.createElement("div");
+		const links_box = document.createElement("div");
 		links_box.setAttribute("id", "ep_links");
 		links_box.classList.add("ep_box");
 		links_box.innerHTML = "<b>Links: </b> <br>";
@@ -281,24 +301,24 @@ function insertBannerTemplate() {
 		utils.debug("Main [async] (insertBannerTemplate): Inserting Banner");
 
 		if (plexforweb) {
-			var plex_parent = insert_target.parentNode.parentNode;
+			const plex_parent = insert_target.parentNode.parentNode;
 			plex_parent.appendChild(banner_element);
 
 		}
 		else {
-			var plex_parent = insert_target.parentNode.parentNode;
+			const plex_parent = insert_target.parentNode.parentNode;
 			plex_parent.appendChild(banner_element);
 		}
 	}
 }
 
 function processLibrarySections(sections_xml) {
-	var directories = sections_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
-	var dir_metadata = {};
-	for (var i = 0; i < directories.length; i++) {
-		var type = directories[i].getAttribute("type");
-		var section_num = directories[i].getAttribute("path").match(/\/(\d+)$/)[1];
-		var machine_identifier = directories[i].getAttribute("machineIdentifier");
+	const directories = sections_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory");
+	const dir_metadata = {};
+	for (let i = 0; i < directories.length; i++) {
+		const type = directories[i].getAttribute("type");
+		const section_num = directories[i].getAttribute("path").match(/\/(\d+)$/)[1];
+		const machine_identifier = directories[i].getAttribute("machineIdentifier");
 
 		if (machine_identifier in dir_metadata) {
 			dir_metadata[machine_identifier][section_num] = { "type": type, "section_num": section_num };
@@ -318,11 +338,11 @@ async function main() {
 	settings = await chrome.storage.sync.get();
 	utils.debug("Main [async] (main): Running main()");
 
-	var page_url = document.URL;
-	var plex_token = getPlexToken();
+	const page_url = document.URL;
+	const plex_token = getPlexToken();
 
 	// add observer for fast user switching functionality, to reload token and server addresses
-	var observer = new MutationObserver(function (mutations) {
+	const observer = new MutationObserver(function (mutations) {
 		observer.disconnect();
 
 		utils.debug("Main [async] (main): User switched");
@@ -330,15 +350,15 @@ async function main() {
 	});
 
 	// use plex.tv for API requests if we have plex token
-	var requests_url = "https://plex.tv/pms";
+	const requests_url = "https://plex.tv/pms";
 
-	var server_addresses = await utils.getServerAddresses(plex_token) || {};
+	const server_addresses = await utils.getServerAddresses(plex_token, plexforweb) || {};
 	const timer = ms => new Promise(res => setTimeout(res, ms));
 	await timer(100);
 	if (Object.keys(server_addresses).length) {
 
 		// insert stats page link
-		if (settings["options_stats_link"] === "true") {
+		if (settings["options_stats_link"] === true) {
 			utils.debug("Main [async] (main): Stats plugin is enabled");
 			toggleLoadingIcon("on");
 			stats.init();
@@ -357,26 +377,26 @@ async function main() {
 		// check if on library section
 		else if (LibraryPageDetection.test(page_url)) {
 			utils.debug("Main [async] (main): We are in library section");
-			var page_identifier = page_url.match(/\/media\/(.[^\/]+)(.*)source\=(\d+)/);
-			var machine_identifier = page_identifier[1];
-			var machine_identifier_local = page_identifier[1] + "_local";
-			var section_num = page_identifier[3];
+			const page_identifier = page_url.match(/\/media\/(.[^\/]+)(.*)source\=(\d+)/);
+			const machine_identifier = page_identifier[1];
+			const machine_identifier_local = page_identifier[1] + "_local";
+			const section_num = page_identifier[3];
 			utils.debug("Main [async] (main): Machine identifier - " + machine_identifier);
 			utils.debug("Main [async] (main): Library section - " + section_num);
 
 			// get library sections xml
-			var library_sections_url = requests_url + "/system/library/sections?X-Plex-Token=" + plex_token;
-			var sections_xml = await utils.getXML(library_sections_url) || {};
+			const library_sections_url = requests_url + "/system/library/sections?X-Plex-Token=" + plex_token;
+			const sections_xml = await utils.getXML(library_sections_url) || {};
 			if (Object.keys(sections_xml).length) {
-				var library_sections = processLibrarySections(sections_xml);
-				var server;
+				const library_sections = processLibrarySections(sections_xml);
+				let server;
 				if (server_addresses) {
 					server = server_addresses[machine_identifier_local] || server_addresses[machine_identifier];
 				}
 				else {
 					server = {};
 				}
-				var section = library_sections[machine_identifier][section_num];
+				const section = library_sections[machine_identifier][section_num];
 			};
 		}
 
@@ -384,12 +404,12 @@ async function main() {
 		else if (TVMoviePageDetection.test(page_url)) {
 			insertBannerTemplate();
 			utils.debug("Main [async] (main): We are on a Movie/TV show details page");
-			var page_identifier = page_url.match(/\/server\/(.[^\/]+)(.*)%2Flibrary%2Fmetadata%2F(\d+)/);
-			var machine_identifier = page_identifier[1];
-			var machine_identifier_local = page_identifier[1] + "_local";
-			var parent_item_id = page_identifier[3];
+			const page_identifier = page_url.match(/\/server\/(.[^\/]+)(.*)%2Flibrary%2Fmetadata%2F(\d+)/);
+			const machine_identifier = page_identifier[1];
+			const machine_identifier_local = page_identifier[1] + "_local";
+			const parent_item_id = page_identifier[3];
 			utils.debug("Main [async] (main): Metadata id - " + parent_item_id);
-
+			let server;
 			if (server_addresses) {
 				server = server_addresses[machine_identifier_local] || server_addresses[machine_identifier];
 			}
@@ -400,12 +420,11 @@ async function main() {
 			// construct metadata xml link
 			utils.debug("Main [async] (main): Fetching metadata for id - " + parent_item_id);
 
-			var metadata_xml_url = server["uri"] + "/library/metadata/" + parent_item_id + "?X-Plex-Token=" + server["access_token"];
+			const metadata_xml_url = server["uri"] + "/library/metadata/" + parent_item_id + "?X-Plex-Token=" + server["access_token"];
 
 			// fetch metadata xml asynchronously
-			var metadata_xml = await utils.getXML(metadata_xml_url) || {};
+			const metadata_xml = await utils.getXML(metadata_xml_url) || {};
 
-			utils.debug(metadata_xml);
 			const timer = ms => new Promise(res => setTimeout(res, ms));
 			await timer(100);
 			if (Object.keys(metadata_xml).length) {
@@ -421,24 +440,28 @@ async function main() {
 					if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("type") === "show") {
 						// we're on the root show page
 						utils.debug("Main [async] (main): We are on root show page");
-						for (var option in TVMain) {
+
+						TraktData = await trakt_api.getSourceData(metadata_xml, "show", server);
+						for (const option in TVMain) {
 							settings_name = "options_" + option;
-							if (settings[settings_name] === "true") {
+							if (settings[settings_name] === true) {
 								plugin = TVMain[option];
 								utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
-								plugins[plugin](metadata_xml, server, "show");
+								plugins[plugin](metadata_xml, server, "show", TraktData);
 							}
 						}
 					}
 					else if (metadata_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Directory")[0].getAttribute("type") === "season") {
 						// we're on the season page
 						utils.debug("Main [async] (main): We are on a season page");
-						for (var option in TVSeason) {
+
+						TraktData = await trakt_api.getSourceData(metadata_xml, "season", server);
+						for (const option in TVSeason) {
 							settings_name = "options_" + option;
-							if (settings[settings_name] === "true") {
+							if (settings[settings_name] === true) {
 								plugin = TVSeason[option];
 								utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
-								plugins[plugin](metadata_xml, server, "season");
+								plugins[plugin](metadata_xml, server, "season", TraktData);
 							}
 						}
 					}
@@ -452,12 +475,13 @@ async function main() {
 					// we're on an episode page
 					utils.debug("Main [async] (main): We are on an episode page");
 
-					for (var option in TVEpisode) {
+					TraktData = await trakt_api.getSourceData(metadata_xml, "episode", server);
+					for (const option in TVEpisode) {
 						settings_name = "options_" + option;
-						if (settings[settings_name] === "true") {
+						if (settings[settings_name] === true) {
 							plugin = TVEpisode[option];
 							utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
-							plugins[plugin](metadata_xml, server, "episode");
+							plugins[plugin](metadata_xml, server, "episode", TraktData);
 						}
 					}
 				}
@@ -469,12 +493,14 @@ async function main() {
 					}
 					// we're on a movie page
 					utils.debug("Main [async] (main): We are on a movie page");
-					for (var option in MovieMain) {
+
+					TraktData = await trakt_api.getSourceData(metadata_xml, "movie", server);
+					for (const option in MovieMain) {
 						settings_name = "options_" + option;
-						if (settings[settings_name] === "true") {
+						if (settings[settings_name] === true) {
 							plugin = MovieMain[option];
 							utils.debug("Main [async] (main): " + option + " plugin is enabled. Running....");
-							plugins[plugin](metadata_xml, server, "movie");
+							plugins[plugin](metadata_xml, server, "movie", TraktData);
 						}
 					}
 				}
