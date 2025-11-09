@@ -309,7 +309,6 @@ utils = {
 			utils.debug("Utils[async] (getServerAddresses): Getting Servers from Plex");
 			const requests_url = "https://plex.tv/pms/resources?includeHttps=1&X-Plex-Token=" + plex_token;
 			const servers_xml = await utils.getXML(requests_url) || {};
-			let server_addresses;
 			if (Object.keys(servers_xml).length) {
 				const devices = servers_xml.getElementsByTagName("MediaContainer")[0].getElementsByTagName("Device");
 				server_addresses = {};
