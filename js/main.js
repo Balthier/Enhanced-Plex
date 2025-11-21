@@ -104,11 +104,10 @@ function minReqs() {
 async function insertErrorBar(level, details) {
 	const ver_mismatch_icon = await utils.cache_get("options_ver_mismatch_icon", "sync") || {};
 	if (ver_mismatch_icon == true) {
-		if (document.getElementById("error-details")) {
+		if (document.getElementById("error-container")) {
 			utils.debug("Main (insertErrorBar): Error already present. Skipping.");
 			return;
 		}
-
 		const error_link = document.createElement("a");
 		error_link.setAttribute("id", "error-toggle");
 
@@ -137,6 +136,7 @@ async function insertErrorBar(level, details) {
 		const errorcontainer = document.createElement("div");
 		errorcontainer.setAttribute("id", "error-container");
 		errorcontainer.setAttribute("class", "nav-button");
+		errorcontainer.appendChild(error_details);
 		errorcontainer.appendChild(error_link);
 
 		const container = document.getElementById("button-container");
@@ -154,7 +154,7 @@ function toggleErrorDetails() {
 	current_display = window.getComputedStyle(error_element).display;
 	if ((current_display == "none") || (!current_display)) {
 		utils.debug("Main (toggleErrorDetails): Details currently hidden. Displaying...");
-		error_element.style.display = "block";
+		error_element.style.display = "inline";
 	}
 	else {
 		utils.debug("Main (toggleErrorDetails): Details currently set to: " + current_display + " - Hiding...");
@@ -187,9 +187,12 @@ function runOnReady() {
 			utils.debug("Main (runOnReady): Main page detected. Checking if ready...");
 			if (document.getElementsByTagName(MainPageLoaded).length > 0) {
 				const nav_bar_right = document.body.querySelector("[class*=" + CSS.escape(StatsButtonContainer) + "]");
-				const container = document.createElement("div");
-				container.setAttribute("id", "button-container");
-				container.setAttribute("class", nav_bar_right.className);
+				let container = document.getElementById("button-container");
+				if (!container) {
+					container = document.createElement("div");
+					container.setAttribute("id", "button-container");
+					container.setAttribute("class", nav_bar_right.className);
+				}
 				nav_bar_right.parentElement.prepend(container);
 				if (versionerror) {
 					insertErrorBar(level, versionerror);

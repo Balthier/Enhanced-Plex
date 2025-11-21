@@ -14,7 +14,7 @@ chrome.runtime.onInstalled.addListener(async function (details) {
 		if (version == "3.0.0") {
 			utils.cache_purge("stats");
 		}
-		else if (version == "3.4.0") {
+		else if (version == "3.4.2") {
 			console.log("Checking for old values");
 			chrome.storage.sync.get(null, (items) => {
 				if (!items || typeof items !== 'object') {

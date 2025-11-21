@@ -1,5 +1,13 @@
 # Enhanced Plex Changelog
 
+## **v3.4.2**
+
+### 2025-11-21
+
+- Bug: Fixed issue with Options migration in v3.4.1
+- Bug: Fixed an issue with the Version mismatch error appearing multiple times
+- Bug: Fixed an issue with the Version mismatch not showing the detailed information
+
 ## **v3.4.1**
 
 ### 2025-11-09
