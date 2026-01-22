@@ -2,7 +2,7 @@
 
 ## **v3.4.2**
 
-### 2025-11-21
+### 2026-01-22
 
 - Bug: Fixed issue with Options migration in v3.4.1
 - Bug: Fixed an issue with the Version mismatch error appearing multiple times
