@@ -8,6 +8,8 @@
 - Bug: Fixed an issue with the Version mismatch error appearing multiple times
 - Bug: Fixed an issue with the Version mismatch not showing the detailed information
 - Bug: Fixed an issue with the "Additional Information" box not appearing correctly
+- Bug: Fixed an issue with the Stats icon not appearing when there was no version mismatch error
+- Bug: Fixed an issue with the Stats icon not appearing when navigating directly to a library item, bypassing the dashboard
 - Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.157.0
 
 ## **v3.4.1**
