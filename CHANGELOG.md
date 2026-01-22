@@ -7,6 +7,8 @@
 - Bug: Fixed issue with Options migration in v3.4.1
 - Bug: Fixed an issue with the Version mismatch error appearing multiple times
 - Bug: Fixed an issue with the Version mismatch not showing the detailed information
+- Bug: Fixed an issue with the "Additional Information" box not appearing correctly
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.157.0
 
 ## **v3.4.1**
 

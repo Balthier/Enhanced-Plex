@@ -52,7 +52,7 @@ if (plexforweb) {
 	StatsButtonParent = "NavBar-right";
 	StatsButtonContainer = "NavBarActivityButton-container";
 	plexParentBanner = "metadata-starRatings";
-	MinPfWVersionDisp = "4.155.0";
+	MinPfWVersionDisp = "4.157.0";
 	MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 else {
