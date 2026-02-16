@@ -1,5 +1,14 @@
 # Enhanced Plex Changelog
 
+## **v3.4.3**
+
+### 2026-02-16
+
+- Bug: Fixed an issue with the version mismatch error stopping the extension from loading
+- Bug: Fixed an issue with the Missing Episodes/Seasons not being displayed correctly
+- Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.158.0
+- Miscellaneous: Updated supported Local Plex for Web version to 4.156.0
+
 ## **v3.4.2**
 
 ### 2026-01-22

@@ -220,6 +220,10 @@ missing_episodes = {
 		const { valueW, valueH, valueImgH } = missing_episodes.calculateSeasonSlider(sliderMultiplier);
 
 		const season_tile_list = document.querySelectorAll("[data-testid*=cellItem]")[0].parentElement;
+		season_tile_list.style.display = "flex";
+		season_tile_list.style.flexWrap = "wrap";
+		season_tile_list.style.width = "auto";
+		season_tile_list.style.height = "auto";
 		const parent_node = season_tile_list.parentNode;
 		season_tile_list.style.padding = "0 40px 20px";
 		const season_tile_list_elements = season_tile_list.children;
@@ -516,6 +520,10 @@ missing_episodes = {
 		const hubTitle = document.querySelector("[data-testid*=hubTitle]").parentElement.parentElement;
 		hubTitle.style.clear = "Both";
 		const episode_tile_list = document.querySelector("[data-testid*=cellItem]").parentElement;
+		episode_tile_list.style.display = "flex";
+		episode_tile_list.style.flexWrap = "wrap";
+		episode_tile_list.style.width = "auto";
+		episode_tile_list.style.height = "auto";
 		const parent_node = episode_tile_list.parentNode;
 		episode_tile_list.style.padding = "0 40px 20px";
 		const episode_tile_list_elements = episode_tile_list.children;

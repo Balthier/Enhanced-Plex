@@ -35,8 +35,6 @@
 }
 
 .Ep_Container {
-	position: relative;
-	float: left;
 	margin-right: 20px;
 	margin-bottom: 20px;
 	transform: none;
@@ -52,7 +50,6 @@
 .missing_season,
 .existing_season {
 	position: relative;
-	float: left;
 	margin-right: 20px;
 	margin-bottom: 20px;
 	transform: none;
