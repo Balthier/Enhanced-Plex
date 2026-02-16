@@ -161,7 +161,7 @@ function toggleErrorDetails() {
 		error_element.style.display = "none";
 	}
 }
-function insertMenuBar(versionerror) {
+function insertMenuBar(level, versionerror) {
 	const nav_bar_right = document.body.querySelector("[class*=" + CSS.escape(StatsButtonContainer) + "]");
 	let container = document.getElementById("button-container");
 	if (!container) {
@@ -203,7 +203,7 @@ function runOnReady() {
 		if (MainPageDetection.test(document.URL)) {
 			utils.debug("Main (runOnReady): Main page detected. Checking if ready...");
 			if (document.getElementsByTagName(MainPageLoaded).length > 0) {
-				insertMenuBar(versionerror);
+				insertMenuBar(level, versionerror);
 				utils.debug("Main (runOnReady): Instance of " + MainPageLoaded + " detected. Page is ready");
 				window.clearInterval(interval);
 				main();
@@ -214,7 +214,7 @@ function runOnReady() {
 		else if (LibraryPageDetection.test(document.URL)) {
 			utils.debug("Main (runOnReady): Library page detected. Checking if ready...");
 			if (document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0) {
-				insertMenuBar(versionerror);
+				insertMenuBar(level, versionerror);
 				utils.debug("Main (runOnReady): Instance of " + LibraryPageLoaded + " detected. Page is ready");
 				window.clearInterval(interval);
 				main();
@@ -224,7 +224,7 @@ function runOnReady() {
 		else if (TVMoviePageDetection.test(document.URL)) {
 			utils.debug("Main (runOnReady): TV/Movie page detected. Checking if ready...");
 			if ((document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0) || (document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0)) {
-				insertMenuBar(versionerror);
+				insertMenuBar(level, versionerror);
 				utils.debug("Main (runOnReady): Instance of " + TVPageLoaded + " or " + MoviePageLoaded + "detected. Page is ready");
 				window.clearInterval(interval);
 				main();
