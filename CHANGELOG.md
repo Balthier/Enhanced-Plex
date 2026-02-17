@@ -1,5 +1,12 @@
 # Enhanced Plex Changelog
 
+## **v4.0.0**
+
+### 2026-02-17
+
+- Bug: Fixed an issue with the RunOnReady loop not clearing properly
+- Bug: Fixed an issue with the condensed page checks not working properly
+
 ## **v3.4.3**
 
 ### 2026-02-16
