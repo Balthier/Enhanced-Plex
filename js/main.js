@@ -266,10 +266,7 @@ function runOnReady() {
 
 		const isMainReady = MainPageDetection.test(document.URL) && document.getElementsByTagName(MainPageLoaded).length > 0;
 		const isLibReady = LibraryPageDetection.test(document.URL) && document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0;
-		const isTVReady = TVMoviePageDetection.test(document.URL) && (
-			document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0 ||
-			document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0
-		);
+		const isTVReady = TVMoviePageDetection.test(document.URL) && (document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0 || document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0);
 
 		if (isMainReady || isLibReady || isTVReady) {
 			InsertMainMenu();
@@ -279,7 +276,6 @@ function runOnReady() {
 		}
 		else {
 			utils.debug("Main (runOnReady): runOnReady not on recognized page");
-			window.clearInterval(interval);
 		}
 	}, 1000);
 }
