@@ -263,9 +263,15 @@ function runOnReady() {
 			utils.debug("Main (runOnReady): Document URL is not the same as Page URL. Clearing Interval..");
 			window.clearInterval(interval);
 		}
-		if ((MainPageDetection.test(document.URL) && document.getElementsByTagName(MainPageLoaded).length > 0) ||
-			(LibraryPageDetection.test(document.URL) && document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0) ||
-			(TVMoviePageDetection.test(document.URL) && ((document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0) || (document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0)))) {
+
+		const isMainReady = MainPageDetection.test(document.URL) && document.getElementsByTagName(MainPageLoaded).length > 0;
+		const isLibReady = LibraryPageDetection.test(document.URL) && document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0;
+		const isTVReady = TVMoviePageDetection.test(document.URL) && (
+			document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0 ||
+			document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0
+		);
+
+		if (isMainReady || isLibReady || isTVReady) {
 			InsertMainMenu();
 			utils.debug("Main (runOnReady): Page ready condition met");
 			window.clearInterval(interval);
