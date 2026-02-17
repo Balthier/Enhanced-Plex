@@ -24,7 +24,6 @@
 				"apis/google_api.js",
 				"plugins/imdb.js",
 				"plugins/missing_episodes.js",
-				"plugins/stats.js",
 				"plugins/tmdb.js",
 				"plugins/trakt.js",
 				"plugins/tvdb.js",

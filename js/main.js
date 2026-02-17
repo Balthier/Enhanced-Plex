@@ -12,6 +12,7 @@ let plexParentBanner;
 let MinPfWVersionDisp;
 let MinPfWVersion;
 let TraktData;
+let MainMenuContainerName;
 
 const UnmatchedDetection = new RegExp(/^local\:\/\//);
 const PlexBannerID = "Enhanced-Plex-Banner";
@@ -49,6 +50,7 @@ if (plexforweb) {
 	LibraryPageLoaded = "MetadataPosterCard-cardContainer";
 	TVPageLoaded = "PrePlayListTitle-titleContainer";
 	MoviePageLoaded = "metadata-title";
+	MainMenuContainerName = "navbarAccountMenuTrigger";
 	StatsButtonParent = "NavBar-right";
 	StatsButtonContainer = "NavBarActivityButton-container";
 	plexParentBanner = "metadata-starRatings";
@@ -64,6 +66,7 @@ else {
 	LibraryPageLoaded = "MetadataPosterCard-cardContainer";
 	TVPageLoaded = "PrePlayListTitle-titleContainer";
 	MoviePageLoaded = "metadata-title";
+	MainMenuContainerName = "navbarAccountMenuTrigger";
 	StatsButtonParent = "NavBar-right";
 	StatsButtonContainer = "NavBarActivityButton-container";
 	plexParentBanner = "metadata-starRatings";
@@ -101,10 +104,98 @@ function minReqs() {
 	}
 }
 
-async function insertErrorBar(level, details) {
-	const ver_mismatch_icon = await utils.cache_get("options_ver_mismatch_icon", "sync") || {};
+async function InsertMainMenu() {
+	const optVerMismatchIcon = await utils.cache_get("options_ver_mismatch_icon", "sync") || {};
+	const optStatsLink = await utils.cache_get("options_stats_link", "sync") || {};
+	const TargetContainer = document.body.querySelector("[data-testid*=" + CSS.escape(MainMenuContainerName) + "]");
+	const MainMenu = document.createElement("div");
+	MainMenu.setAttribute("id", "ep-main-menu");
+	TargetContainer.parentElement.prepend(MainMenu);
+
+	versiondata = minReqs();
+	let versionerror;
+	let level;
+	if (versiondata) {
+		versionerror = versiondata[0];
+		level = versiondata[1];
+
+		if (versionerror) {
+			insertErrorBar(level, versionerror, optVerMismatchIcon);
+			if (level == "error") {
+				window.clearInterval(interval);
+				return;
+			}
+		}
+	}
+
+	// insert stats page link
+	if (optStatsLink === true) {
+		utils.debug("Main [async] (main): Stats plugin is enabled");
+		toggleLoadingIcon("on");
+		InsertStatsButton();
+		toggleLoadingIcon("off");
+	}
+	else {
+		utils.debug("Main [async] (main): Stats plugin is disabled");
+	}
+
+}
+
+function toggleLoadingIcon(option) {
+	if (option == "on") {
+		const nav_bar_right = document.getElementById("ep-main-menu");
+		const img = document.createElement("img");
+		img.setAttribute("src", utils.getResourcePath("loading_stats.gif"));
+		img.setAttribute("id", "loading-extension");
+		img.setAttribute("height", "30px");
+
+		utils.debug("Main (toggleLoadingIcon): Inserting Loading icon");
+		nav_bar_right.insertBefore(img, nav_bar_right.firstChild);
+	}
+	else if (option == "off") {
+		const loading_icon = document.getElementById("loading-extension");
+		if (loading_icon) {
+			utils.debug("Main (toggleLoadingIcon): Removing Loading icon");
+			loading_icon.parentNode.removeChild(loading_icon);
+		}
+	}
+}
+
+function InsertStatsButton() {
+	utils.debug("Stats plugin (init): Starting...");
+	if (document.getElementById("ep-stats-page-link")) {
+		utils.debug("Stats plugin (init): Link already exists. Passing");
+		return;
+	}
+	utils.debug("Stats plugin (init): Adding Stats Link");
+	const buttoncontainer = document.getElementById("ep-main-menu");
+
+	const stats_link = document.createElement("a");
+	stats_link.setAttribute("id", "ep-stats-page-link");
+	stats_link.setAttribute("title", "EnhancedPLEX stats");
+	stats_link.setAttribute("href", utils.getStatsURL());
+	stats_link.setAttribute("target", "_blank");
+
+	const stats_glyph = document.createElement("i");
+	stats_glyph.setAttribute("class", "glyphicon charts");
+
+	stats_link.appendChild(stats_glyph);
+	const container = document.createElement("div");
+	container.setAttribute("id", "ep-stats-page-container");
+	container.setAttribute("class", "nav-button");
+
+	container.appendChild(stats_link);
+
+	if (buttoncontainer) {
+		buttoncontainer.append(container);
+	} else {
+		utils.debug("Stats plugin (init): Error - Could not find insertion point.");
+	}
+}
+
+function insertErrorBar(level, details, ver_mismatch_icon) {
 	if (ver_mismatch_icon == true) {
-		if (document.getElementById("error-container")) {
+		if (document.getElementById("ep-error-container")) {
 			utils.debug("Main (insertErrorBar): Error already present. Skipping.");
 			return;
 		}
@@ -134,59 +225,31 @@ async function insertErrorBar(level, details) {
 		}
 
 		const errorcontainer = document.createElement("div");
-		errorcontainer.setAttribute("id", "error-container");
+		errorcontainer.setAttribute("id", "ep-error-container");
 		errorcontainer.setAttribute("class", "nav-button");
 		errorcontainer.appendChild(error_details);
 		errorcontainer.appendChild(error_link);
 
-		const container = document.getElementById("button-container");
+		const container = document.getElementById("ep-main-menu");
 		container.appendChild(errorcontainer);
 
 
 		document.getElementById("error-toggle").addEventListener("click", function () {
-			toggleErrorDetails();
+			error_element = document.getElementById("error-details");
+			current_display = window.getComputedStyle(error_element).display;
+			if ((current_display == "none") || (!current_display)) {
+				utils.debug("Main (toggleErrorDetails): Details currently hidden. Displaying...");
+				error_element.style.display = "inline";
+			}
+			else {
+				utils.debug("Main (toggleErrorDetails): Details currently set to: " + current_display + " - Hiding...");
+				error_element.style.display = "none";
+			}
 		});
 	}
 }
 
-function toggleErrorDetails() {
-	error_element = document.getElementById("error-details");
-	current_display = window.getComputedStyle(error_element).display;
-	if ((current_display == "none") || (!current_display)) {
-		utils.debug("Main (toggleErrorDetails): Details currently hidden. Displaying...");
-		error_element.style.display = "inline";
-	}
-	else {
-		utils.debug("Main (toggleErrorDetails): Details currently set to: " + current_display + " - Hiding...");
-		error_element.style.display = "none";
-	}
-}
-function insertMenuBar(level, versionerror) {
-	const nav_bar_right = document.body.querySelector("[class*=" + CSS.escape(StatsButtonContainer) + "]");
-	let container = document.getElementById("button-container");
-	if (!container) {
-		container = document.createElement("div");
-		container.setAttribute("id", "button-container");
-		container.setAttribute("class", nav_bar_right.className);
-	}
-	nav_bar_right.parentElement.prepend(container);
-	if (versionerror) {
-		insertErrorBar(level, versionerror);
-		if (level == "error") {
-			window.clearInterval(interval);
-			return;
-		}
-	}
-}
-
 function runOnReady() {
-	versiondata = minReqs();
-	let versionerror;
-	let level;
-	if (versiondata) {
-		versionerror = versiondata[0];
-		level = versiondata[1];
-	}
 	utils.debug("Main (runOnReady): runOnReady called. Starting watch");
 	const page_url = document.URL;
 	const interval = window.setInterval(function () {
@@ -200,35 +263,13 @@ function runOnReady() {
 			utils.debug("Main (runOnReady): Document URL is not the same as Page URL. Clearing Interval..");
 			window.clearInterval(interval);
 		}
-		if (MainPageDetection.test(document.URL)) {
-			utils.debug("Main (runOnReady): Main page detected. Checking if ready...");
-			if (document.getElementsByTagName(MainPageLoaded).length > 0) {
-				insertMenuBar(level, versionerror);
-				utils.debug("Main (runOnReady): Instance of " + MainPageLoaded + " detected. Page is ready");
-				window.clearInterval(interval);
-				main();
-			}
-		}
-		// page is ready when certain elements exist.
-		// check if on library section
-		else if (LibraryPageDetection.test(document.URL)) {
-			utils.debug("Main (runOnReady): Library page detected. Checking if ready...");
-			if (document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0) {
-				insertMenuBar(level, versionerror);
-				utils.debug("Main (runOnReady): Instance of " + LibraryPageLoaded + " detected. Page is ready");
-				window.clearInterval(interval);
-				main();
-			}
-		}
-		// check if on movie/tv show details page
-		else if (TVMoviePageDetection.test(document.URL)) {
-			utils.debug("Main (runOnReady): TV/Movie page detected. Checking if ready...");
-			if ((document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0) || (document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0)) {
-				insertMenuBar(level, versionerror);
-				utils.debug("Main (runOnReady): Instance of " + TVPageLoaded + " or " + MoviePageLoaded + "detected. Page is ready");
-				window.clearInterval(interval);
-				main();
-			}
+		if ((MainPageDetection.test(document.URL) && document.getElementsByTagName(MainPageLoaded).length > 0) ||
+			(LibraryPageDetection.test(document.URL) && document.body.querySelectorAll("[class*=" + CSS.escape(LibraryPageLoaded) + "]").length > 0) ||
+			(TVMoviePageDetection.test(document.URL) && ((document.body.querySelectorAll("[class*=" + CSS.escape(TVPageLoaded) + "]").length > 0) || (document.body.querySelectorAll("[data-testid*=" + CSS.escape(MoviePageLoaded) + "]").length > 0)))) {
+			InsertMainMenu();
+			utils.debug("Main (runOnReady): Page ready condition met");
+			window.clearInterval(interval);
+			main();
 		}
 		else {
 			utils.debug("Main (runOnReady): runOnReady not on recognized page");
@@ -243,26 +284,6 @@ function getPlexToken() {
 		utils.debug("Main (getPlexToken): plex_token fetched from localStorage:");
 		utils.debug(plex_token);
 		return plex_token;
-	}
-}
-
-function toggleLoadingIcon(option) {
-	if (option == "on") {
-		const nav_bar_right = document.body.querySelector("[class*=" + CSS.escape(StatsButtonContainer) + "]");
-		const img = document.createElement("img");
-		img.setAttribute("src", utils.getResourcePath("loading_stats.gif"));
-		img.setAttribute("id", "loading-extension");
-		img.setAttribute("height", "30px");
-
-		utils.debug("Main (toggleLoadingIcon): Inserting Loading icon");
-		nav_bar_right.insertBefore(img, nav_bar_right.firstChild);
-	}
-	else if (option == "off") {
-		const loading_icon = document.getElementById("loading-extension");
-		if (loading_icon) {
-			utils.debug("Main (toggleLoadingIcon): Removing Loading icon");
-			loading_icon.parentNode.removeChild(loading_icon);
-		}
 	}
 }
 
@@ -343,57 +364,15 @@ async function main() {
 		runOnReady();
 	});
 
-	// use plex.tv for API requests if we have plex token
-	const requests_url = "https://plex.tv/pms";
-
 	const server_addresses = await utils.getServerAddresses(plex_token, plexforweb) || {};
 	const timer = ms => new Promise(res => setTimeout(res, ms));
 	await timer(100);
 	if (Object.keys(server_addresses).length) {
-
-		// insert stats page link
-		if (settings["options_stats_link"] === true) {
-			utils.debug("Main [async] (main): Stats plugin is enabled");
-			toggleLoadingIcon("on");
-			stats.init();
-			toggleLoadingIcon("off");
-		}
-		else {
-			utils.debug("Main [async] (main): Stats plugin is disabled");
-		}
-
 		// check if on dashboard page
 		if (MainPageDetection.test(page_url)) {
 			utils.debug("Main [async] (main): Detected we are on dashboard page");
 			// only purge caches when viewing main page
 		}
-
-		// check if on library section
-		else if (LibraryPageDetection.test(page_url)) {
-			utils.debug("Main [async] (main): We are in library section");
-			const page_identifier = page_url.match(/\/media\/(.[^\/]+)(.*)source\=(\d+)/);
-			const machine_identifier = page_identifier[1];
-			const machine_identifier_local = page_identifier[1] + "_local";
-			const section_num = page_identifier[3];
-			utils.debug("Main [async] (main): Machine identifier - " + machine_identifier);
-			utils.debug("Main [async] (main): Library section - " + section_num);
-
-			// get library sections xml
-			const library_sections_url = requests_url + "/system/library/sections?X-Plex-Token=" + plex_token;
-			const sections_xml = await utils.getXML(library_sections_url) || {};
-			if (Object.keys(sections_xml).length) {
-				const library_sections = processLibrarySections(sections_xml);
-				let server;
-				if (server_addresses) {
-					server = server_addresses[machine_identifier_local] || server_addresses[machine_identifier];
-				}
-				else {
-					server = {};
-				}
-				const section = library_sections[machine_identifier][section_num];
-			};
-		}
-
 		// check if on movie/tv show details page
 		else if (TVMoviePageDetection.test(page_url)) {
 			insertBannerTemplate();
@@ -401,15 +380,9 @@ async function main() {
 			const page_identifier = page_url.match(/\/server\/(.[^\/]+)(.*)%2Flibrary%2Fmetadata%2F(\d+)/);
 			const machine_identifier = page_identifier[1];
 			const machine_identifier_local = page_identifier[1] + "_local";
+			server = server_addresses[machine_identifier_local] || server_addresses[machine_identifier];
 			const parent_item_id = page_identifier[3];
 			utils.debug("Main [async] (main): Metadata id - " + parent_item_id);
-			let server;
-			if (server_addresses) {
-				server = server_addresses[machine_identifier_local] || server_addresses[machine_identifier];
-			}
-			else {
-				server = {};
-			}
 
 			// construct metadata xml link
 			utils.debug("Main [async] (main): Fetching metadata for id - " + parent_item_id);
