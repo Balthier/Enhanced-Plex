@@ -1,14 +1,16 @@
+globalThis.browser = globalThis.browser || globalThis.chrome;
 importScripts('../apis/google_api.js');
 importScripts('./utils.js');
-chrome.runtime.onInstalled.addListener(async function (details) {
+
+browser.runtime.onInstalled.addListener(async function (details) {
 	if (details.reason === "install") {
-		chrome.tabs.create({ url: "/resources/extras/options.html" });
+		browser.tabs.create({ url: "/resources/extras/options.html" });
 	}
 	else if (details.reason === "update") {
 		// When extension is updated
 		const changelog_pop = await utils.cache_get("options_changelog_pop", "sync") || {};
 		if (changelog_pop == true) {
-			chrome.tabs.create({ url: "/resources/extras/changelog.html" });
+			browser.tabs.create({ url: "/resources/extras/changelog.html" });
 		}
 		const version = await utils.getExtensionInfo("version");
 		if (version == "3.0.0") {
@@ -16,7 +18,7 @@ chrome.runtime.onInstalled.addListener(async function (details) {
 		}
 		else if (version == "3.4.2") {
 			console.log("Checking for old values");
-			chrome.storage.sync.get(null, (items) => {
+			browser.storage.sync.get(null, (items) => {
 				if (!items || typeof items !== 'object') {
 					console.error("Storage data not found or invalid.");
 					return;
@@ -30,9 +32,9 @@ chrome.runtime.onInstalled.addListener(async function (details) {
 					])
 				);
 
-				chrome.storage.sync.set(fixedItems, () => {
-					if (chrome.runtime.lastError) {
-						console.error("Error saving corrected data:", chrome.runtime.lastError);
+				browser.storage.sync.set(fixedItems, () => {
+					if (browser.runtime.lastError) {
+						console.error("Error saving corrected data:", browser.runtime.lastError);
 						return;
 					}
 					console.log("Original items:", items);
@@ -41,15 +43,9 @@ chrome.runtime.onInstalled.addListener(async function (details) {
 			});
 		}
 	}
-	else if (details.reason === "chrome_update") {
-		// When browser is updated
-	}
-	else if (details.reason === "shared_module_update") {
-		// When a shared module is updated
-	}
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
 	if (message.action === "fetchData") {
 		(async () => {
 			try {

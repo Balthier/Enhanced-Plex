@@ -1,8 +1,11 @@
+if (typeof browser === "undefined") {
+	var browser = globalThis.chrome || globalThis.browser;
+}
 utils = {
 	debug: async (output) => {
 		const version = await utils.getExtensionInfo("version");
-		const debug_cache = await chrome.storage.sync.get("options_debug") || {};
-		const debug_unfiltered_cache = await chrome.storage.sync.get("options_debug_unfiltered") || {};
+		const debug_cache = await browser.storage.sync.get("options_debug") || {};
+		const debug_unfiltered_cache = await browser.storage.sync.get("options_debug_unfiltered") || {};
 		const debug = debug_cache["options_debug"];
 		const debug_unfiltered = debug_unfiltered_cache["options_debug_unfiltered"];
 		if (debug === true) {
@@ -51,17 +54,17 @@ utils = {
 	timer: ms => new Promise(res => setTimeout(res, ms)),
 
 	getExtensionInfo: function (attribute) {
-		const info = chrome.runtime.getManifest()[attribute];
+		const info = browser.runtime.getManifest()[attribute];
 		return info;
 	},
 
 	getOptionsURL: function () {
-		const options_url = chrome.runtime.getURL("resources/extras/options.html");
+		const options_url = browser.runtime.getURL("resources/extras/options.html");
 		return options_url;
 	},
 
 	getStatsURL: function () {
-		const stats_url = chrome.runtime.getURL("resources/extras/stats.html");
+		const stats_url = browser.runtime.getURL("resources/extras/stats.html");
 		return stats_url;
 	},
 
@@ -71,10 +74,10 @@ utils = {
 		for (const type of types) {
 			let command;
 			if (type === "sync") {
-				command = chrome.storage.sync;
+				command = browser.storage.sync;
 			}
 			else if (type === "local") {
-				command = chrome.storage.local;
+				command = browser.storage.local;
 			}
 			else {
 				utils.debug("Utils [async] (cache_purge): WARNING! Unrecognised storage type: " + type);
@@ -124,8 +127,8 @@ utils = {
 	cache_get: async (rawkey, type) => {
 		const key = rawkey.replace(/[^A-Za-z0-9_]/g, "_");
 		const storageMap = {
-			"sync": chrome.storage.sync,
-			"local": chrome.storage.local
+			"sync": browser.storage.sync,
+			"local": browser.storage.local
 		};
 		const command = storageMap[type];
 
@@ -173,8 +176,8 @@ utils = {
 	cache_set: async (rawkey, value, type) => {
 		const key = rawkey.replace(/[^A-Za-z0-9_]/g, "_");
 		const storageMap = {
-			"sync": chrome.storage.sync,
-			"local": chrome.storage.local
+			"sync": browser.storage.sync,
+			"local": browser.storage.local
 		};
 		const command = storageMap[type];
 
@@ -203,7 +206,7 @@ utils = {
 	},
 
 	getResourcePath: function (resource) {
-		return chrome.runtime.getURL("resources/" + resource);
+		return browser.runtime.getURL("resources/" + resource);
 	},
 
 	getApiKey: async (api_name) => {
@@ -227,10 +230,10 @@ utils = {
 
 	getBGRequest: async (message) => {
 		return new Promise((resolve, reject) => {
-			chrome.runtime.sendMessage(message, (response) => {
+			browser.runtime.sendMessage(message, (response) => {
 				console.log(response.data);
-				if (chrome.runtime.lastError) {
-					return reject(chrome.runtime.lastError);
+				if (browser.runtime.lastError) {
+					return reject(browser.runtime.lastError);
 				}
 				if (!response) {
 					return reject(new Error("Service Worker sent no response object."));

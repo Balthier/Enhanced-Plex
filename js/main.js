@@ -1,4 +1,6 @@
-// Hopefully these will make it easier to update in future Plex for Web updates.
+if (typeof browser === "undefined") {
+	var browser = globalThis.chrome || globalThis.browser;
+}// Hopefully these will make it easier to update in future Plex for Web updates.
 let MainPageDetection;
 let LibraryPageDetection;
 let TVMoviePageDetection;
@@ -352,7 +354,7 @@ function processLibrarySections(sections_xml) {
 }
 
 async function main() {
-	settings = await chrome.storage.sync.get();
+	settings = await browser.storage.sync.get();
 	utils.debug("Main [async] (main): Running main()");
 
 	const page_url = document.URL;
