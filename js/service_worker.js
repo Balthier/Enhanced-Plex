@@ -1,6 +1,10 @@
-globalThis.browser = globalThis.browser || globalThis.chrome;
-importScripts('../apis/google_api.js');
-importScripts('./utils.js');
+globalThis.browser = globalThis.chrome || globalThis.browser;
+
+if (typeof importScripts !== 'undefined') {
+	// Chrome service worker context
+	importScripts('../apis/google_api.js');
+	importScripts('./utils.js');
+}
 
 browser.runtime.onInstalled.addListener(async function (details) {
 	if (details.reason === "install") {
@@ -33,9 +37,10 @@ browser.runtime.onInstalled.addListener(async function (details) {
 				);
 
 				browser.storage.sync.set(fixedItems, () => {
-					if (browser.runtime.lastError) {
+					// Cross-browser error handling
+					if (browser.runtime && browser.runtime.lastError) {
+						// Chrome has runtime.lastError
 						console.error("Error saving corrected data:", browser.runtime.lastError);
-						return;
 					}
 					console.log("Original items:", items);
 					console.log("Corrected items:", fixedItems);
@@ -45,7 +50,24 @@ browser.runtime.onInstalled.addListener(async function (details) {
 	}
 });
 
+// Cross-browser compatible message listener
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	console.log("Message received:", message);
+	console.log("Sender:", sender);
+	// Chrome uses (message, sender, sendResponse), Firefox uses (message, sender, sendResponse)
+	// But we need to handle the case where sendResponse might be in different positions
+	if (typeof sendResponse !== 'function') {
+		// If sendResponse is not a function, then sender is actually sendResponse
+		// This happens in Firefox where the order is different
+		sendResponse = sender;
+		sender = message; // This is a fallback, but we don't really use sender anyway
+	}
+
+	if (typeof sendResponse !== 'function') {
+		console.error("sendResponse function not found");
+		return false;
+	}
+
 	if (message.action === "fetchData") {
 		(async () => {
 			try {
