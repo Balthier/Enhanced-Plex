@@ -1,9 +1,15 @@
-globalThis.browser = globalThis.chrome || globalThis.browser;
+// Cross-browser compatibility
+if (typeof browser === "undefined") {
+	var browser = chrome;
+}
 
+// Handle script imports for cross-browser compatibility
 if (typeof importScripts !== 'undefined') {
 	// Chrome service worker context
 	importScripts('../apis/google_api.js');
 	importScripts('./utils.js');
+} else {
+	// Firefox context - scripts should be loaded via manifest
 }
 
 browser.runtime.onInstalled.addListener(async function (details) {
@@ -37,10 +43,9 @@ browser.runtime.onInstalled.addListener(async function (details) {
 				);
 
 				browser.storage.sync.set(fixedItems, () => {
-					// Cross-browser error handling
-					if (browser.runtime && browser.runtime.lastError) {
-						// Chrome has runtime.lastError
+					if (browser.runtime.lastError) {
 						console.error("Error saving corrected data:", browser.runtime.lastError);
+						return;
 					}
 					console.log("Original items:", items);
 					console.log("Corrected items:", fixedItems);
@@ -50,22 +55,15 @@ browser.runtime.onInstalled.addListener(async function (details) {
 	}
 });
 
-// Cross-browser compatible message listener
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
-	console.log("Message received:", message);
-	console.log("Sender:", sender);
-	// Chrome uses (message, sender, sendResponse), Firefox uses (message, sender, sendResponse)
-	// But we need to handle the case where sendResponse might be in different positions
-	if (typeof sendResponse !== 'function') {
-		// If sendResponse is not a function, then sender is actually sendResponse
-		// This happens in Firefox where the order is different
+	// Handle Firefox vs Chrome parameter order differences
+	// Chrome: (message, sender, sendResponse)
+	// Firefox: (message, sendResponse, sender)
+	if (typeof sender !== 'object') {
+		// Firefox case: sender is actually sendResponse
+		const temp = sendResponse;
 		sendResponse = sender;
-		sender = message; // This is a fallback, but we don't really use sender anyway
-	}
-
-	if (typeof sendResponse !== 'function') {
-		console.error("sendResponse function not found");
-		return false;
+		sender = temp;
 	}
 
 	if (message.action === "fetchData") {

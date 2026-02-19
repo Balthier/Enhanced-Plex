@@ -31,7 +31,7 @@ utils = {
 			}
 			else {
 				// don't filter xml, use nodeType attribute to detect
-				if (debug_unfiltered === false && !("nodeType" in output)) {
+				if (debug_unfiltered === false && typeof output === 'object' && output !== null && !("nodeType" in output)) {
 					// clone object so we can filter out values
 					const output_ = { ...output };
 

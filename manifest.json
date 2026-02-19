@@ -44,6 +44,12 @@
 		"48": "resources/icon48.png",
 		"128": "resources/icon128.png"
 	},
+	"host_permissions": [
+		"https://api.trakt.tv/*",
+		"https://app.plex.tv/*",
+		"https://plex.tv/*",
+		"https://www.google-analytics.com/*"
+	],
 	"web_accessible_resources": [
 		{
 			"resources": [
