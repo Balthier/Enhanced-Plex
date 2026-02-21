@@ -416,5 +416,24 @@ utils = {
 		// 3. Combine into the desired format
 		const formattedDate = `${year}-${formattedMonth}-${formattedDay}`;
 		return formattedDate;
+	},
+	createLabeledElement: function (label, value, isLink = false) {
+		const element = document.createElement("p");
+		const bold = document.createElement("b");
+		bold.textContent = label + ":";
+		element.appendChild(bold);
+		element.appendChild(document.createTextNode(" "));
+
+		if (isLink && value) {
+			const link = document.createElement("a");
+			link.href = value;
+			link.target = "_blank";
+			link.textContent = value;
+			element.appendChild(link);
+		} else {
+			element.appendChild(document.createTextNode(value));
+		}
+
+		return element;
 	}
 };

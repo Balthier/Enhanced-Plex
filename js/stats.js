@@ -8,10 +8,10 @@ function sortObj(obj) {
 function setProgress(current, total, loadType, cached) {
 	const loadingTextElement = document.getElementById("loading-text");
 	if (!cached) {
-		loadingTextElement.innerHTML = "<h2>LOADING</h2></br>Loading " + loadType + " Library Data: " + current + "/" + total + "</br><i>Larger libraries will take time to process</i>";
+		loadingTextElement.insertAdjacentHTML('afterbegin', "<h2>LOADING</h2></br>Loading " + loadType + " Library Data: " + current + "/" + total + "</br><i>Larger libraries will take time to process</i>");
 	}
 	else {
-		loadingTextElement.innerHTML = "<h2>LOADING</h2></br>Loading " + loadType + " Cached Library Data: " + current + "/" + total + "</br><i>Larger libraries will take time to process</i>";
+		loadingTextElement.insertAdjacentHTML('afterbegin', "<h2>LOADING</h2></br>Loading " + loadType + " Cached Library Data: " + current + "/" + total + "</br><i>Larger libraries will take time to process</i>");
 	}
 }
 
@@ -376,7 +376,7 @@ function setLoading(value) {
 		const Container = document.getElementById("loading-container");
 		Container.style.display = "none";
 		const element = document.getElementById("loading-text");
-		element.innerHTML = "Loading Complete";
+		element.textContent = "Loading Complete";
 	}
 }
 
@@ -390,7 +390,7 @@ async function updateData() {
 
 async function insertRefreshButton(last_updated) {
 	const container = document.getElementById("refresh-data-container");
-	container.innerHTML = 'Last Updated: ' + last_updated + ' (<a id="refresh-data" href="#">Refresh Data</a>)';
+	container.insertAdjacentHTML('afterbegin', 'Last Updated: ' + last_updated + ' (<a id="refresh-data" href="#">Refresh Data</a>)');
 	document.getElementById("refresh-data").addEventListener("click", function () {
 		updateData();
 	});
@@ -545,7 +545,7 @@ async function getPlexBasics() {
 async function main() {
 	const title_element = document.getElementsByTagName("title")[0];
 	const extension_version = await utils.getExtensionInfo("version");
-	title_element.innerHTML = "EnhancedPLEX (" + extension_version + ") Stats";
+	title_element.textContent = "EnhancedPLEX (" + extension_version + ") Stats";
 
 	const data = {
 		Title: document.title,

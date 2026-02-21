@@ -314,7 +314,7 @@ function insertBannerTemplate() {
 		const links_box = document.createElement("div");
 		links_box.setAttribute("id", "ep_links");
 		links_box.classList.add("ep_box");
-		links_box.innerHTML = "<b>Links: </b> <br>";
+		links_box.insertAdjacentHTML('afterbegin', '<b>Links: </b><br>');
 		banner_element.appendChild(links_box);
 
 		utils.debug("Main [async] (insertBannerTemplate): Inserting Banner");
