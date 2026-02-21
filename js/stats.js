@@ -379,6 +379,9 @@ function setLoading(value) {
 		const Container = document.getElementById("loading-container");
 		Container.style.display = "none";
 		const element = document.getElementById("loading-text");
+		while (element.firstChild) {
+			element.removeChild(element.firstChild);
+		}
 		element.textContent = "Loading Complete";
 	}
 }
