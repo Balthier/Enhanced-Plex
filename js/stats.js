@@ -7,6 +7,9 @@ function sortObj(obj) {
 
 function setProgress(current, total, loadType, cached) {
 	const loadingTextElement = document.getElementById("loading-text");
+	while (loadingTextElement.firstChild) {
+		loadingTextElement.removeChild(loadingTextElement.firstChild);
+	}
 	if (!cached) {
 		loadingTextElement.insertAdjacentHTML('afterbegin', "<h2>LOADING</h2></br>Loading " + loadType + " Library Data: " + current + "/" + total + "</br><i>Larger libraries will take time to process</i>");
 	}
@@ -390,6 +393,9 @@ async function updateData() {
 
 async function insertRefreshButton(last_updated) {
 	const container = document.getElementById("refresh-data-container");
+	while (container.firstChild) {
+		container.removeChild(container.firstChild);
+	}
 	container.insertAdjacentHTML('afterbegin', 'Last Updated: ' + last_updated + ' (<a id="refresh-data" href="#">Refresh Data</a>)');
 	document.getElementById("refresh-data").addEventListener("click", function () {
 		updateData();
