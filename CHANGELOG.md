@@ -2,10 +2,19 @@
 
 ## **v4.0.0**
 
-### 2026-02-17
+### 2026-02-22
 
+- Enhancement: Added Firefox compatibility support
+- Enhancement: Improved browser cross-compatibility by moving away from Chrome-specific APIs
+- Enhancement: Replaced .innerHTML usage with safer DOM manipulation methods
+- Enhancement: Optimized EP Main Menu performance and reduced code complexity
+- Enhancement: Improved service worker implementation for better browser support
 - Bug: Fixed an issue with the RunOnReady loop not clearing properly
 - Bug: Fixed an issue with the condensed page checks not working properly
+- Bug: Fixed element duplication issues in the stats display
+- Bug: Fixed loading text not being cleared properly in stats
+- Miscellaneous: Refactored multiple JS files for better maintainability
+- Miscellaneous: Removed deprecated plugins/stats.js file
 
 ## **v3.4.3**
 
