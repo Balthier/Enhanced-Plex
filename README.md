@@ -1,17 +1,21 @@
 Enhanced Plex
-==============
+=====
 
-[Chrome Store](https://chrome.google.com/webstore/detail/enhanced-plex/kjmpdmgijjacblfohigcnpkeaehalmai)  
+[Chrome](https://chrome.google.com/webstore/detail/enhanced-plex/kjmpdmgijjacblfohigcnpkeaehalmai)  
+[Firefox](https://addons.mozilla.org/en-US/firefox/addon/enhanced-plex/)  
 [Issues Log](https://github.com/Balthier/Enhanced-Plex/issues)  
 [Change Log](https://github.com/Balthier/Enhanced-Plex/blob/master/changelog.md)  
 
-## NOTE
+NOTE
+-----
+
 Working is still ongoing, however slower that I would like.
 
 Please report any bugs to the Issues tab, and I'll make sure they are prioritized where possible
 
 Features
---------------
+-----
+
 - Adds link to view the TheMovieDB page for movies
 - Adds link to view the TVDB page for tv shows
 - Adds link to view the Trakt.tv page for movies and tv shows
@@ -26,4 +30,3 @@ Features
 ![Missing Seasons Feature](https://i.imgur.com/9B2D8iO.png)
 
 ![Show Information](https://i.imgur.com/BoZUIKg.png)
-
