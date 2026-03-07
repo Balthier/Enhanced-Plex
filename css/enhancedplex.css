@@ -62,14 +62,20 @@
 	opacity: 0.5;
 }
 
-#error-details {
+#ep-error-details {
 	display: none;
 	clear: both;
 	padding: 1em;
 	width: max-content;
+	font-size: 0.8em;
 }
 
-#error-container img {
+#ep-error-container {
+	display: flex;
+	align-items: center;
+}
+
+#ep-error-container img {
 	height: 24px;
 }
 
@@ -79,7 +85,20 @@
 	padding-right: 10px;
 }
 
-.nav-button {
+#ep-main-menu {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+}
+
+.ep-nav-button {
+	display: flex;
+	flex-wrap: wrap;
+	width: auto;
 	margin: 0 0.5em;
 	font-size: 1.5em;
+}
+
+#ep-error-toggle {
+	display: flex
 }
