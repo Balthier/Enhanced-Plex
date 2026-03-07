@@ -9,6 +9,7 @@
 - Enhancement: Replaced .innerHTML usage with safer DOM manipulation methods
 - Enhancement: Optimized EP Main Menu performance and reduced code complexity
 - Enhancement: Improved service worker implementation for better browser support
+- Enhancement: Added functionality for Non-Admin users
 - Bug: Fixed an issue with the RunOnReady loop not clearing properly
 - Bug: Fixed an issue with the condensed page checks not working properly
 - Bug: Fixed element duplication issues in the stats display
