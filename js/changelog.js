@@ -1,6 +1,6 @@
 title_element = document.getElementsByTagName("title")[0];
 extension_version = utils.getExtensionInfo("version");
-title_element.innerHTML = "EnhancedPLEX (" + extension_version + ") Changelog";
+title_element.textContent = "EnhancedPLEX (" + extension_version + ") Changelog";
 
 data = {
 	Title: document.title,

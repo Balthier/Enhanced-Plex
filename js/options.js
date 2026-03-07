@@ -134,20 +134,20 @@ async function main() {
 
 	const cache_element = document.getElementById("clear-cache");
 	cache_element.addEventListener("click", function (e) {
-		this.innerHTML = "Cleared";
+		this.textContent = "Cleared";
 		utils.cache_purge();
 
 		const button = this;
 		setTimeout(function () {
-			button.innerHTML = "Clear cache";
+			button.textContent = "Clear cache";
 		}, 1500);
 	});
 
 	const version_element = document.getElementById("ext_version");
 	const title_element = document.getElementsByTagName("title")[0];
 	const extension_version = utils.getExtensionInfo("version");
-	title_element.innerHTML = "EnhancedPLEX (" + extension_version + ") options";
-	version_element.innerHTML = "Version: <b>v" + extension_version + "</b>";
+	title_element.textContent = "EnhancedPLEX (" + extension_version + ") options";
+	version_element.textContent = "Version: v" + extension_version;
 
 	const data = {
 		Title: document.title,

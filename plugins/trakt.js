@@ -40,7 +40,7 @@ trakt = {
 			if (parent_box) {
 				if (TraktData?.Homepage) {
 					const homepage = document.createElement("p");
-					homepage.innerHTML = "<b>Homepage:</b> <a href='" + TraktData.Homepage + "' target='_blank'>" + TraktData.Homepage + "</a>";
+					homepage.appendChild(utils.createLabeledElement("Homepage", TraktData.Homepage, true));
 					parent_box.appendChild(homepage);
 				}
 				if (TraktData?.Status) {
@@ -50,34 +50,34 @@ trakt = {
 						status_text = "Cancelled";
 					}
 					const current_status = document.createElement("p");
-					current_status.innerHTML = "<b>Status:</b> " + status_text;
+					current_status.appendChild(utils.createLabeledElement("Status", status_text));
 					parent_box.appendChild(current_status);
 				}
 				if (TraktData?.Runtime) {
 					const runtime = document.createElement("p");
-					runtime.innerHTML = "<b>Runtime:</b> " + TraktData.Runtime + " minutes";
+					runtime.appendChild(utils.createLabeledElement("Runtime", TraktData.Runtime + " minutes"));
 					parent_box.appendChild(runtime);
 				}
 				if (TraktData?.Network) {
 					const network = document.createElement("p");
-					network.innerHTML = "<b>Network:</b> " + TraktData.Network;
+					network.appendChild(utils.createLabeledElement("Network", TraktData.Network));
 					parent_box.appendChild(network);
 				}
 				if (TraktData?.FirstAired) {
 					const FirstAired = document.createElement("p");
 					const first_aired = new Date(TraktData.FirstAired).toLocaleDateString();
-					FirstAired.innerHTML = "<b>First Aired:</b> " + first_aired;
+					FirstAired.appendChild(utils.createLabeledElement("First Aired", first_aired));
 					parent_box.appendChild(FirstAired);
 				}
 				if (TraktData?.FirstReleased) {
 					const FirstReleased = document.createElement("p");
 					const released = new Date(TraktData.FirstReleased).toLocaleDateString();
-					FirstReleased.innerHTML = "<b>Released:</b> " + released;
+					FirstReleased.appendChild(utils.createLabeledElement("Released", released));
 					parent_box.appendChild(FirstReleased);
 				}
 				if (TraktData?.Trailer) {
 					const trailer = document.createElement("p");
-					trailer.innerHTML = "<b>Trailer:</b> <a href='" + TraktData.Trailer + "' target='_blank'>" + TraktData.Trailer + "</a>";
+					trailer.appendChild(utils.createLabeledElement("Trailer", TraktData.Trailer, true));
 					parent_box.appendChild(trailer);
 				}
 			}
