@@ -46,7 +46,7 @@ trakt_api = {
 				'trakt-api-key': Trakt_Key
 			};
 			// Get Trakt Slug/ID
-			const SearchURL = "https://api.trakt.tv/search?type=" + SearchType + "&year=" + Item_Year + "&fields=title&query=" + Item_Name;
+			const SearchURL = "https://api.trakt.tv/search?type=" + SearchType + "&years=" + Item_Year + "&fields=title&query=" + Item_Name;
 			const SearchResponse = await utils.getBGRequest({
 				action: "fetchData",
 				url: SearchURL,
