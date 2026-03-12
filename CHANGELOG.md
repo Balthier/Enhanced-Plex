@@ -5,6 +5,7 @@
 ### 2026-10-14
 
 - Bug: Fixed an issue with the version mismatch error not being displayed correctly
+- Bug: Fixed an issue with the Trakt API search filters
 - Miscellaneous: Updated supported Plex.tv Plex for Web version to 4.159.0
 - Miscellaneous: Added line in to previous changelog notes regarding the introduction of the Non-Admin user functionality
 
