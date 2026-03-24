@@ -56,7 +56,7 @@ if (plexforweb) {
 	StatsButtonParent = "NavBar-right";
 	StatsButtonContainer = "NavBarActivityButton-container";
 	plexParentBanner = "metadata-starRatings";
-	MinPfWVersionDisp = "4.158.0";
+	MinPfWVersionDisp = "4.159.0";
 	MinPfWVersion = (MinPfWVersionDisp).replaceAll(".", "");
 }
 else {
@@ -184,7 +184,7 @@ function InsertStatsButton() {
 	stats_link.appendChild(stats_glyph);
 	const container = document.createElement("div");
 	container.setAttribute("id", "ep-stats-page-container");
-	container.setAttribute("class", "nav-button");
+	container.setAttribute("class", "ep-nav-button");
 
 	container.appendChild(stats_link);
 
@@ -202,13 +202,13 @@ function insertErrorBar(level, details, ver_mismatch_icon) {
 			return;
 		}
 		const error_link = document.createElement("a");
-		error_link.setAttribute("id", "error-toggle");
+		error_link.setAttribute("id", "ep-error-toggle");
 
 		const error_img = document.createElement("img");
 		error_link.appendChild(error_img);
 
 		const error_details = document.createElement("div");
-		error_details.setAttribute("id", "error-details");
+		error_details.setAttribute("id", "ep-error-details");
 		error_details.setAttribute("title", "EnhancedPLEX Error");
 
 		if (level == "warn") {
@@ -228,7 +228,7 @@ function insertErrorBar(level, details, ver_mismatch_icon) {
 
 		const errorcontainer = document.createElement("div");
 		errorcontainer.setAttribute("id", "ep-error-container");
-		errorcontainer.setAttribute("class", "nav-button");
+		errorcontainer.setAttribute("class", "ep-nav-button");
 		errorcontainer.appendChild(error_details);
 		errorcontainer.appendChild(error_link);
 
@@ -236,12 +236,12 @@ function insertErrorBar(level, details, ver_mismatch_icon) {
 		container.appendChild(errorcontainer);
 
 
-		document.getElementById("error-toggle").addEventListener("click", function () {
-			error_element = document.getElementById("error-details");
+		document.getElementById("ep-error-toggle").addEventListener("click", function () {
+			error_element = document.getElementById("ep-error-details");
 			current_display = window.getComputedStyle(error_element).display;
 			if ((current_display == "none") || (!current_display)) {
 				utils.debug("Main (toggleErrorDetails): Details currently hidden. Displaying...");
-				error_element.style.display = "inline";
+				error_element.style.display = "inline-flex";
 			}
 			else {
 				utils.debug("Main (toggleErrorDetails): Details currently set to: " + current_display + " - Hiding...");

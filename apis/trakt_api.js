@@ -35,7 +35,7 @@ trakt_api = {
 			Item_Name = MetaBase.getAttribute("title");
 		}
 
-		const Cache_Name = "TraktData_" + Item_Name;
+		const Cache_Name = "TraktData_" + Item_Name + "_" + Item_Year;
 		const Dimensions = Math.round((window.screen.width * window.devicePixelRatio)) + "x" + Math.round((window.screen.height * window.devicePixelRatio));
 		const Cached_Data = await utils.cache_get(Cache_Name, "local");
 		if (!Cached_Data) {
@@ -46,7 +46,7 @@ trakt_api = {
 				'trakt-api-key': Trakt_Key
 			};
 			// Get Trakt Slug/ID
-			const SearchURL = "https://api.trakt.tv/search?type=" + SearchType + "&year=" + Item_Year + "&fields=title&query=" + Item_Name;
+			const SearchURL = "https://api.trakt.tv/search?type=" + SearchType + "&years=" + Item_Year + "&fields=title&query=" + Item_Name;
 			const SearchResponse = await utils.getBGRequest({
 				action: "fetchData",
 				url: SearchURL,
